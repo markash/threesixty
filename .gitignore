@@ -57,3 +57,12 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+*.project
+
+.apt_generated/*
+.mvn/*
+.settings/*
+bin/*
+target/*
+mvnw
+mvnw.cmd
