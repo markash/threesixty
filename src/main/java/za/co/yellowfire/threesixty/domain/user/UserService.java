@@ -1,5 +1,6 @@
 package za.co.yellowfire.threesixty.domain.user;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import za.co.yellowfire.threesixty.RequestResult;
 import za.co.yellowfire.threesixty.Response;
+import za.co.yellowfire.threesixty.domain.GridFsClient;
 	
 @Service		
 public class UserService {
@@ -19,17 +21,20 @@ public class UserService {
 	private UserRepository userRepository;
 	private RoleRepository roleRepository;
 	private CountryRepository countryRepository;
+	private final GridFsClient client;
 	
 	@Autowired
 	public UserService(
 			UserRepository userRepository, 
 			RoleRepository roleRepository,
-			CountryRepository countryRepository) {
+			CountryRepository countryRepository,
+			final GridFsClient client) {
 		
 		super();
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
 		this.countryRepository = countryRepository;
+		this.client = client;
 	}
 
 	@PostConstruct
@@ -59,11 +64,16 @@ public class UserService {
 		return new Response<>(RequestResult.OK, user);
 	}
 	
-	public User findUser(final String id) {
-		return userRepository.findOne(id);
+	public User findUser(final String id) throws IOException {
+		User user =  userRepository.findOne(id);
+		if (user != null) {
+			user.retrievePicture(client);
+		}
+		return user;
 	}
 	
-	public User save(final User user) {
+	public User save(final User user) throws IOException {
+		user.storePicture(client);
 		return userRepository.save(user);
 	}
 	

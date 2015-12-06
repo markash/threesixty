@@ -1,15 +1,23 @@
 package za.co.yellowfire.threesixty.domain.user;
 
+import java.io.File;
+import java.io.IOException;
+
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.AccessType;
 import org.springframework.data.annotation.AccessType.Type;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Auditable;
 import org.springframework.data.mongodb.core.mapping.DBRef;
+
+import za.co.yellowfire.threesixty.domain.GridFsClient;
 
 
 @AccessType(Type.FIELD)
@@ -38,7 +46,10 @@ public final class User implements Auditable<User, String> {
     private Integer newsletterSubscription;
     private String website;
     private String bio;
-
+    private String image;
+    @Transient
+    private byte[] imageContent = new byte[0];
+    
     public User() {}
     
     public User(String id, String password, Role role) {
@@ -96,14 +107,42 @@ public final class User implements Auditable<User, String> {
     public String getLastName() { return lastName; }
     public void setLastName(final String lastName) { this.lastName = lastName; }
 	
+    public byte[] getPictureContent() { return this.imageContent; };
+    public String getPictureName() { return this.image; }
+    
+    public void retrievePicture(final GridFsClient client) throws IOException {
+    	if (client != null && image != null) {
+    		this.imageContent = client.retrieveFileContents(image);
+    	}
+    }
+    
+    public boolean hasPicture() { return this.image != null && this.imageContent.length > 0; }
+    
+    public void setPicture(final File file) throws IOException {
+    	if (file == null) { return; }
+    	
+    	String fileName = file.getName();
+    	String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
+    	
+    	this.image = "user-" + getId() + "." + extension;
+    	this.imageContent = FileUtils.readFileToByteArray(file);
+    }
+    
+    public void storePicture(final GridFsClient client) throws IOException {
+    	if (client == null) { return; }
+    	if (hasPicture()) {
+    		client.storeFile(this.imageContent, this.image);
+    	}
+    }
+    
 	@Override
-	public boolean isNew() {
-		return false;
-	}
+	public boolean isNew() { return StringUtils.isBlank(this.id); }
+	
 	@Override
 	public User getCreatedBy() {
 		return null;
 	}
+	
 	@Override
 	public void setCreatedBy(User createdBy) {
 	}

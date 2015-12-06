@@ -94,6 +94,11 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		-->
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-core</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 	
 	<dependencyManagement>
@@ -113,6 +118,17 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin> 
+				<groupId>com.heroku.sdk</groupId> 
+				<artifactId>heroku-maven-plugin</artifactId> 
+				<version>0.5.7</version> 
+				<configuration> 
+					<appName>yellowfire-threesixty</appName>
+					<includes> 
+						<!-- <include>target/dependency/newrelic-agent.jar</include> -->
+					</includes> 
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

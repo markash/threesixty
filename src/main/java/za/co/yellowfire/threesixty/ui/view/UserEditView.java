@@ -1,5 +1,9 @@
 package za.co.yellowfire.threesixty.ui.view;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.dialogs.ConfirmDialog;
 
@@ -10,12 +14,12 @@ import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Responsive;
+import com.vaadin.server.StreamResource;
+import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
@@ -27,6 +31,7 @@ import com.vaadin.ui.RichTextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
@@ -35,6 +40,8 @@ import za.co.yellowfire.threesixty.ui.component.BeanBinder;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
 import za.co.yellowfire.threesixty.ui.component.HeaderButtons;
 import za.co.yellowfire.threesixty.ui.component.NotificationBuilder;
+import za.co.yellowfire.threesixty.ui.component.ProfilePictureForm;
+import za.co.yellowfire.threesixty.ui.component.ProfilePictureForm.FileEvent;
 import za.co.yellowfire.threesixty.ui.view.RatingQuestionWindow.SaveEvent;
 import za.co.yellowfire.threesixty.ui.view.RatingQuestionWindow.SaveListener;
 
@@ -51,6 +58,7 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
     public static final String[] TABLE_HEADERS = {"Phrase"};
     protected static final String[] FILTER_PROPERTIES = {"phrase"};
     
+    private static final String WINDOW_PICTURE = "Profile picture";
     private static final String BUTTON_SAVE = "Save";
     //private static final String BUTTON_EDIT = "Edit";
     private static final String BUTTON_RESET = "Reset";
@@ -81,6 +89,7 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
     private RichTextArea bioField = new RichTextArea("Bio");
     
     private Image pictureField = new Image(null, new ThemeResource("img/profile-pic-300px.jpg"));
+    private Window pictureWindow = new Window(WINDOW_PICTURE, new ProfilePictureForm(this::savePicture));
     
     private Button pictureButton = ButtonBuilder.build(BUTTON_CHANGE, this::changePicture);
     private Button saveButton = ButtonBuilder.build(BUTTON_SAVE, this::save);
@@ -132,7 +141,7 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
 		details.setSizeFull();
 		
         idField.setWidth(100.0f, Unit.PERCENTAGE);
-        idField.setEnabled(false);
+        idField.setEnabled(getUser().isNew());
         idField.setNullRepresentation("");
         
         passwordField.setWidth(100.0f, Unit.PERCENTAGE);
@@ -147,6 +156,7 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
         salutationField.setWidth(100.0f, Unit.PERCENTAGE);
         genderField.setWidth(100.0f, Unit.PERCENTAGE);
         pictureField.setWidth(100.0f, Unit.PIXELS);
+        pictureButton.setWidth(100.0f, Unit.PIXELS);
         
         emailField.setNullRepresentation("");
         emailField.setWidth(100.0f, Unit.PERCENTAGE);
@@ -211,11 +221,16 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
     public void enter(final ViewChangeEvent event) {
 		String[] parameters = event.getParameters().split("/");
 		if (parameters.length > 0) {
-			User object = getService().findUser(parameters[0]);
-			this.fieldGroup = BeanBinder.bind(object != null ? object : User.EMPTY(), this, true);
+			try {
+				User object = getService().findUser(parameters[0]);
+				this.fieldGroup = BeanBinder.bind(object != null ? object : User.EMPTY(), this, true);
+			} catch (IOException e) {
+				NotificationBuilder.showNotification("Loading user error", e.getMessage(), 10);
+			}
 		}
 		
 		build();
+		updatePicture();
     }
 	
 	@Override
@@ -231,7 +246,8 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
 	        //Notify the user of the outcome
 	        NotificationBuilder.showNotification("Update", "User " + user.getId() + " updated successfully.", 2000);
 	        //DashboardEventBus.post(new ProfileUpdatedEvent());
-	        
+		} catch (IOException exception) {
+            Notification.show("Error while updating user profile picture", exception.getMessage(), Type.ERROR_MESSAGE);
 		} catch (CommitException exception) {
             Notification.show("Error while updating user", Type.ERROR_MESSAGE);
         }
@@ -293,14 +309,34 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
 	}
 	
 	protected void create(ClickEvent event) {
-		//ratingQuestionWindow.reset();
-		//ratingQuestionWindow.setQuestionaire(getQuestionaire());
-		//ratingQuestionWindow.center();
-		//UI.getCurrent().addWindow(ratingQuestionWindow);
+		UI.getCurrent().getNavigator().navigateTo(UserEditView.VIEW_NAME + "/new-user");
 	}
 	
 	protected void changePicture(ClickEvent event) {
-		Notification.show("Not implemented in this demo");
+		UI.getCurrent().addWindow(pictureWindow);
+	}
+	
+	protected void savePicture(FileEvent event) {
+		try {
+			if (getUser() != null) {
+				getUser().setPicture(event.getFile());
+				updatePicture();
+			}
+		} catch (IOException e) {
+			Notification.show("Error changing profile picture", e.getMessage(), Type.ERROR_MESSAGE);
+		}
+		
+		pictureWindow.close();
+	}
+	
+	protected void updatePicture() {
+		
+		if (getUser().hasPicture()) {
+			this.pictureField.setSource(new StreamResource(new StreamSource() {@Override
+			public InputStream getStream() {
+				return new ByteArrayInputStream(getUser().getPictureContent());
+			} }, getUser().getPictureName()));
+		}
 	}
 	
 	protected User getUser() {

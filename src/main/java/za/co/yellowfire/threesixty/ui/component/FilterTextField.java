@@ -18,6 +18,7 @@ public class FilterTextField<T> extends TextField {
 	private final MTable<T> table;
 	private final String[] properties;
 	
+	@SuppressWarnings("serial")
 	public FilterTextField(final MTable<T> table, final String[] propertiesToFilterOn) {
 		super();
 		
@@ -38,6 +39,7 @@ public class FilterTextField<T> extends TextField {
         });
 	}
 	
+	@SuppressWarnings("serial")
 	public void onFilter(final TextChangeEvent event) {
 		Filterable data = (Filterable) table.getContainerDataSource();
         data.removeAllContainerFilters();
