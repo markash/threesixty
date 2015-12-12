@@ -19,6 +19,8 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import za.co.yellowfire.threesixty.ui.Style;
 import za.co.yellowfire.threesixty.ui.component.BeanBinder;
+import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
+import za.co.yellowfire.threesixty.ui.component.FormButtons;
 import za.co.yellowfire.threesixty.ui.component.SpringEntityProvider;
 
 /**
@@ -29,16 +31,11 @@ import za.co.yellowfire.threesixty.ui.component.SpringEntityProvider;
 public abstract class AbstractTableEditorView<T, ID extends Serializable> extends AbstractDashboardPanel {
 	private static final long serialVersionUID = 1L;
 
-	protected static final String BUTTON_OK = "Save";
-	protected static final String BUTTON_RESET = "Reset";
-	protected static final String BUTTON_DELETE = "Delete";
-	protected static final String BUTTON_ADD = "New";
-	
-    private Button ok;
-    private Button reset;
-    private Button add;
-    private Button delete;
-    private HorizontalLayout buttonLayout;
+    private Button saveButton = ButtonBuilder.SAVE(this::save, ValoTheme.BUTTON_PRIMARY);
+    private Button resetButton = ButtonBuilder.RESET(this::reset, ValoTheme.BUTTON_DANGER);
+    private Button newButton = ButtonBuilder.NEW(this::add, ValoTheme.BUTTON_FRIENDLY);
+    private Button deleteButton = ButtonBuilder.DELETE(this::delete, ValoTheme.BUTTON_DANGER);
+    private FormButtons buttonLayout = new FormButtons(saveButton, resetButton, newButton, deleteButton);
     
     private final Class<T> beanType;
     private final BeanFieldGroup<T> fieldGroup;
@@ -90,7 +87,7 @@ public abstract class AbstractTableEditorView<T, ID extends Serializable> extend
         formLayout.setSizeFull();
         
         formLayout.addComponent(buildForm());
-        formLayout.addComponent(buildButtons());
+        formLayout.addComponent(buttonLayout);
             
         layout.addComponent(formLayout);
         layout.setExpandRatio(formLayout, 5f);
@@ -109,63 +106,11 @@ public abstract class AbstractTableEditorView<T, ID extends Serializable> extend
                 .withColumnHeaders(getTablePropertyHeaders());
         
 		table.addMValueChangeListener(event -> {
-            	ok.setEnabled(true);
+			saveButton.setEnabled(true);
             	fieldGroup.setItemDataSource(event.getValue());
             });
 		
 		return table;
-	}
-
-	//TODO Replace with FormButtons
-	protected Component buildButtons() {
-        buttonLayout = new HorizontalLayout();
-        buttonLayout.setStyleName(Style.Rating.BUTTONS);
-        buttonLayout.setWidth(100.0f, Unit.PERCENTAGE);
-        buttonLayout.setMargin(false);
-        buttonLayout.setSpacing(true);
-        
-        this.ok = buildOKButton();
-        this.ok.focus();
-        buttonLayout.addComponent(this.ok);
-        
-        this.add = buildAddButton();
-        buttonLayout.addComponent(this.add);
-        
-        this.delete = buildDeleteButton();
-        buttonLayout.addComponent(this.delete);
-        
-        this.reset = buildResetButton();
-        buttonLayout.addComponent(this.reset);
-        return buttonLayout;
-    }
-	
-	protected Button buildOKButton() {
-		Button button = new Button("Save");
-        button.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        button.setWidth(100.0f, Unit.PERCENTAGE);
-        button.addClickListener(e -> { save(e); });
-        return button;
-	}
-	
-	protected Button buildResetButton() {
-		Button button = new Button("Reset");
-		button.setWidth(100.0f, Unit.PERCENTAGE);
-        button.addClickListener(e -> { reset(e); });
-        return button;
-	}
-	
-	protected Button buildAddButton() {
-		Button button = new Button(BUTTON_ADD);
-		button.setWidth(100.0f, Unit.PERCENTAGE);
-        button.addClickListener( e -> { add(e); });
-        return button;
-	}
-	
-	protected Button buildDeleteButton() {
-		Button button = new Button("Delete");
-		button.setWidth(100.0f, Unit.PERCENTAGE);
-        button.addClickListener(e -> { delete(e); });
-        return button;
 	}
 
 	protected BeanFieldGroup<T> getFieldGroup() { return this.fieldGroup; }

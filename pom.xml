@@ -93,12 +93,18 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
-		-->
+		
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-core</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+		-->
 	</dependencies>
 	
 	<dependencyManagement>
@@ -106,7 +112,7 @@
 			<dependency>
 				<groupId>com.vaadin</groupId>
 				<artifactId>vaadin-bom</artifactId>
-				<version>7.5.9</version>
+				<version>7.6.0.beta2</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -153,6 +159,11 @@
 		<repository>
 		   <id>vaadin-addons</id>
 		   <url>http://maven.vaadin.com/vaadin-addons</url>
+		</repository>
+		<repository>
+		    <id>vaadin-prereleases</id>
+		    <name>Vaadin Pre-releases</name>
+		    <url>https://maven.vaadin.com/vaadin-prereleases</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>

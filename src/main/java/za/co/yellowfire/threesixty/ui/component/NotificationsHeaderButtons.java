@@ -120,7 +120,7 @@ public class NotificationsHeaderButtons extends HorizontalLayout {
             notificationsWindow.setClosable(false);
             notificationsWindow.setResizable(false);
             notificationsWindow.setDraggable(false);
-            notificationsWindow.setCloseShortcut(KeyCode.ESCAPE, null);
+            notificationsWindow.addCloseShortcut(KeyCode.ESCAPE, null);
             notificationsWindow.setContent(notificationsLayout);
         }
 

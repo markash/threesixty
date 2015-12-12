@@ -26,6 +26,7 @@ public final class User implements Auditable<User, String> {
 	
 	public static final String USER_ADMIN = "admin";
 	public static final String USER_ADMIN_PASSWORD = "password";
+	public static final String PROPERTY_FULL_NAME = "fullName";
 	
 	@Id
 	private String id;
@@ -47,6 +48,18 @@ public final class User implements Auditable<User, String> {
     private String website;
     private String bio;
     private String image;
+    @DBRef
+    private User reportsTo;
+    @DBRef
+    private Position position;
+    @DBRef
+    private User createdBy;
+    @DBRef
+	private User modifiedBy;
+	private DateTime createdDate;
+	private DateTime modifiedDate;
+	private boolean active;
+	
     @Transient
     private byte[] imageContent = new byte[0];
     
@@ -101,13 +114,27 @@ public final class User implements Auditable<User, String> {
     public Role getRole() { return role; }
     public void setRole(final Role role) { this.role = role; }
 
-    public String getFirstName() { return firstName; }
+    public User getReportsTo() { return reportsTo; }
+	public void setReportsTo(User reportsTo) { this.reportsTo = reportsTo; }
+
+	public Position getPosition() { return position; }
+	public void setPosition(Position position) { this.position = position; }
+
+	public String getFirstName() { return firstName; }
     public void setFirstName(final String firstName) { this.firstName = firstName; }
 
     public String getLastName() { return lastName; }
     public void setLastName(final String lastName) { this.lastName = lastName; }
 	
-    public byte[] getPictureContent() { return this.imageContent; };
+    public String getFullName() { 
+    	return (!StringUtils.isBlank(lastName) ? lastName  + "," : "") +
+    			(!StringUtils.isBlank(firstName) ? firstName : "");    	
+    }
+    
+    public boolean isActive() { return active; }
+	public void setActive(boolean active) { this.active = active; }
+
+	public byte[] getPictureContent() { return this.imageContent; };
     public String getPictureName() { return this.image; }
     
     public void retrievePicture(final GridFsClient client) throws IOException {
@@ -139,40 +166,41 @@ public final class User implements Auditable<User, String> {
 	public boolean isNew() { return StringUtils.isBlank(this.id); }
 	
 	@Override
-	public User getCreatedBy() {
-		return null;
-	}
+	public User getCreatedBy() { return this.createdBy; }
 	
 	@Override
-	public void setCreatedBy(User createdBy) {
-	}
+	public void setCreatedBy(User createdBy) { this.createdBy = createdBy; }
 	
 	@Override
-	public DateTime getCreatedDate() {
-		return null;
-	}
+	public DateTime getCreatedDate() { return this.createdDate; }
+	
 	@Override
-	public void setCreatedDate(DateTime creationDate) {
+	public void setCreatedDate(DateTime creationDate) { this.createdDate = creationDate; }
+	
+	@Override
+	public User getLastModifiedBy() { return this.modifiedBy; }
+	
+	@Override
+	public void setLastModifiedBy(User lastModifiedBy) { this.modifiedBy = lastModifiedBy; }
+	
+	@Override
+	public DateTime getLastModifiedDate() { return this.modifiedDate; }
+	
+	@Override
+	public void setLastModifiedDate(DateTime lastModifiedDate) { this.modifiedDate = lastModifiedDate; }
+	
+	public void auditChangedBy(final User user) {
+		if (isNew()) {
+			setCreatedBy(user);
+			setCreatedDate(DateTime.now());
+		} else {
+			setLastModifiedBy(user);
+			setLastModifiedDate(DateTime.now());
+		}
+	}
 
-		
-	}
 	@Override
-	public User getLastModifiedBy() {
-		return null;
-	}
-	@Override
-	public void setLastModifiedBy(User lastModifiedBy) {
-
-		
-	}
-	@Override
-	public DateTime getLastModifiedDate() {
-
-		return null;
-	}
-	@Override
-	public void setLastModifiedDate(DateTime lastModifiedDate) {
-
-		
+	public String toString() {
+		return getFullName();
 	}
 }

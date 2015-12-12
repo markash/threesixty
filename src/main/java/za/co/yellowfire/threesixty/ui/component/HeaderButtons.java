@@ -20,11 +20,13 @@ public class HeaderButtons extends HorizontalLayout {
 	}
 	
 	private static Component[] combine(final Component component, final Component...components) {
-		Component[] result = new Component[components.length + 1];
+		Component[] result = new Component[components != null ? components.length + 1 : 1];
 		
 		result[0] = component;
-		for(int i = 0; i < components.length; i++) {
-			result[i+1] = components[i];
+		if (components != null) {
+			for(int i = 0; i < components.length; i++) {
+				result[i+1] = components[i];
+			}
 		}
 		return result;
 	}

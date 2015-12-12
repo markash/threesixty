@@ -1,24 +1,14 @@
 package za.co.yellowfire.threesixty.domain;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
 
-import za.co.yellowfire.threesixty.domain.user.Country;
-import za.co.yellowfire.threesixty.domain.user.Role;
-import za.co.yellowfire.threesixty.domain.user.User;
-import za.co.yellowfire.threesixty.domain.user.UserService;
 
 /**
  * A dummy implementation for the backend API.
@@ -26,16 +16,16 @@ import za.co.yellowfire.threesixty.domain.user.UserService;
 public class DummyDataProvider implements DataProvider {
 
     // TODO: Get API key from http://developer.rottentomatoes.com
-    private static final String ROTTEN_TOMATOES_API_KEY = null;
+//    private static final String ROTTEN_TOMATOES_API_KEY = null;
 
     /* List of countries and cities for them */
-    private static Multimap<String, String> countryToCities;
+//    private static Multimap<String, String> countryToCities;
     private static Date lastDataUpdate;
     //private static Collection<Movie> movies;
     //private static Multimap<Long, Transaction> transactions;
     //private static Multimap<Long, MovieRevenue> revenue;
 
-    private static Random rand = new Random();
+//    private static Random rand = new Random();
 
     private final Collection<DashboardNotification> notifications = DummyDataGenerator.randomNotifications();
 
@@ -230,47 +220,47 @@ public class DummyDataProvider implements DataProvider {
     /**
      * Parse the list of countries and cities
      */
-    private static Multimap<String, String> loadTheaterData() {
-
-        /* First, read the text file into a string */
-        StringBuffer fileData = new StringBuffer(2000);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(
-                DummyDataProvider.class.getResourceAsStream("cities.txt")));
-
-        char[] buf = new char[1024];
-        int numRead = 0;
-        try {
-            while ((numRead = reader.read(buf)) != -1) {
-                String readData = String.valueOf(buf, 0, numRead);
-                fileData.append(readData);
-                buf = new char[1024];
-            }
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String list = fileData.toString();
-
-        /*
-         * The list has rows with tab delimited values. We want the second (city
-         * name) and last (country name) values, and build a Map from that.
-         */
-        Multimap<String, String> countryToCities = MultimapBuilder.hashKeys()
-                .arrayListValues().build();
-        for (String line : list.split("\n")) {
-            String[] tabs = line.split("\t");
-            String city = tabs[1];
-            String country = tabs[tabs.length - 2];
-
-            if (!countryToCities.containsKey(country)) {
-                countryToCities.putAll(country, new ArrayList<String>());
-            }
-            countryToCities.get(country).add(city);
-        }
-
-        return countryToCities;
-
-    }
+//    private static Multimap<String, String> loadTheaterData() {
+//
+//        /* First, read the text file into a string */
+//        StringBuffer fileData = new StringBuffer(2000);
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(
+//                DummyDataProvider.class.getResourceAsStream("cities.txt")));
+//
+//        char[] buf = new char[1024];
+//        int numRead = 0;
+//        try {
+//            while ((numRead = reader.read(buf)) != -1) {
+//                String readData = String.valueOf(buf, 0, numRead);
+//                fileData.append(readData);
+//                buf = new char[1024];
+//            }
+//            reader.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        String list = fileData.toString();
+//
+//        /*
+//         * The list has rows with tab delimited values. We want the second (city
+//         * name) and last (country name) values, and build a Map from that.
+//         */
+//        Multimap<String, String> countryToCities = MultimapBuilder.hashKeys()
+//                .arrayListValues().build();
+//        for (String line : list.split("\n")) {
+//            String[] tabs = line.split("\t");
+//            String city = tabs[1];
+//            String country = tabs[tabs.length - 2];
+//
+//            if (!countryToCities.containsKey(country)) {
+//                countryToCities.putAll(country, new ArrayList<String>());
+//            }
+//            countryToCities.get(country).add(city);
+//        }
+//
+//        return countryToCities;
+//
+//    }
 
     /**
      * Create a list of dummy transactions
@@ -359,21 +349,21 @@ public class DummyDataProvider implements DataProvider {
 //        return null;
 //    }
 
-    @Override
-    public User authenticate(String userName, String password) {
-        User user = new User();
-        user.setFirstName("Mark");
-        user.setLastName("Ashworth");
-        user.setRole(new Role("admin"));
-        String email = user.getFirstName().toLowerCase() + "."
-                + user.getLastName().toLowerCase() + "@"
-                + "test.com";
-        user.setEmail(email.replaceAll(" ", ""));
-        user.setLocation(new Country (160,"South Africa","Republic of South Africa","Independent State",null,null,"Pretoria (administrative), Cape Town (legislative), and Bloemfontein (judical)","ZAR","Rand","+27","ZA","ZAF","710",".za"));
-        user.setBio("Quis aute iure reprehenderit in voluptate velit esse."
-                + "Cras mattis iudicium purus sit amet fermentum.");
-        return user;
-    }
+//    @Override
+//    public User authenticate(String userName, String password) {
+//        User user = new User();
+//        user.setFirstName("Mark");
+//        user.setLastName("Ashworth");
+//        user.setRole(new Role("admin"));
+//        String email = user.getFirstName().toLowerCase() + "."
+//                + user.getLastName().toLowerCase() + "@"
+//                + "test.com";
+//        user.setEmail(email.replaceAll(" ", ""));
+//        user.setLocation(new Country (160,"South Africa","Republic of South Africa","Independent State",null,null,"Pretoria (administrative), Cape Town (legislative), and Bloemfontein (judical)","ZAR","Rand","+27","ZA","ZAF","710",".za"));
+//        user.setBio("Quis aute iure reprehenderit in voluptate velit esse."
+//                + "Cras mattis iudicium purus sit amet fermentum.");
+//        return user;
+//    }
 
 //    @Override
 //    public Collection<Transaction> getRecentTransactions(int count) {
@@ -433,15 +423,15 @@ public class DummyDataProvider implements DataProvider {
 //        return Collections.unmodifiableCollection(revenue.get(id));
 //    }
 
-    private Date getDay(Date time) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(time);
-        cal.set(Calendar.MILLISECOND, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        return cal.getTime();
-    }
+//    private Date getDay(Date time) {
+//        Calendar cal = Calendar.getInstance();
+//        cal.setTime(time);
+//        cal.set(Calendar.MILLISECOND, 0);
+//        cal.set(Calendar.SECOND, 0);
+//        cal.set(Calendar.MINUTE, 0);
+//        cal.set(Calendar.HOUR_OF_DAY, 0);
+//        return cal.getTime();
+//    }
 
 //    @Override
 //    public Collection<MovieRevenue> getTotalMovieRevenues() {

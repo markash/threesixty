@@ -1,8 +1,9 @@
 package za.co.yellowfire.threesixty.domain;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.data.mongodb.gridfs.GridFsResource;
 import org.springframework.stereotype.Component;
@@ -21,12 +22,14 @@ public class GridFsClient {
 	  GridFsOperations operations;
 
 	  public void storeFile(final File file, final String fileName) throws FileNotFoundException, IOException {
+		  operations.delete(new Query(Criteria.where("filename").is(fileName)));
 		  try (FileInputStream fs = new FileInputStream(file)) {
 			  operations.store(fs, fileName);
 		  }
 	  }
 	  
 	  public void storeFile(final byte[] content, final String fileName) throws FileNotFoundException, IOException {
+		  operations.delete(new Query(Criteria.where("filename").is(fileName)));
 		  try (InputStream is = new ByteArrayInputStream(content)) {
 			  operations.store(is, fileName);
 		  }

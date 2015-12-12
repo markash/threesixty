@@ -78,21 +78,19 @@ public class MainUI extends UI {
      * Otherwise login view is shown.
      */
     private void updateContent() {
-        User user = (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+        User user = getCurrentUser();
         
-        if (user != null && user.isAdmin()) {
-            // Authenticated user
-        	
-            //setContent((Component) viewProvider.getView(MainView.VIEW_NAME));
-            //removeStyleName("loginview");
+        if (user != null) {
             getNavigator().navigateTo(MainView.VIEW_NAME);
         } else {
-            //setContent((Component) viewProvider.getView(LoginView.VIEW_NAME));
-            //addStyleName("loginview");
         	getNavigator().navigateTo(LoginView.VIEW_NAME);
         }
     }
 
+    public User getCurrentUser() {
+    	return (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
+    }
+    
     @Subscribe
     public void userLogin(final UserLoginEvent event) {
         VaadinSession.getCurrent().setAttribute(User.class.getName(), event.getUser());

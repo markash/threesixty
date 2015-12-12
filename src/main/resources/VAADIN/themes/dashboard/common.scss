@@ -89,7 +89,7 @@
     font-size: round($v-font-size * 0.9);
     pointer-events: none;
   }
-
+  
   .dashboard-view .notifications.unread .v-button-caption {
     display: block;
     top: round($v-unit-size / -5);

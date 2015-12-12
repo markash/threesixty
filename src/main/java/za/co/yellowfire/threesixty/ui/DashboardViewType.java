@@ -9,16 +9,20 @@ import com.vaadin.navigator.View;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 
+import za.co.yellowfire.threesixty.domain.user.Role;
+import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.view.DashboardView;
+import za.co.yellowfire.threesixty.ui.view.OutcomesSearchView;
 import za.co.yellowfire.threesixty.ui.view.QuestionaireSearchView;
 import za.co.yellowfire.threesixty.ui.view.RatingView;
 import za.co.yellowfire.threesixty.ui.view.UserSearchView;
 
 public enum DashboardViewType {
-    DASHBOARD("dashboard", DashboardView.class, FontAwesome.HOME, true), 
-    USER_SEARCH(UserSearchView.VIEW_NAME, UserSearchView.class, FontAwesome.USERS, true),
-    RATING(RatingView.VIEW_NAME, RatingView.class, FontAwesome.QUESTION_CIRCLE, true),
-    QUESTIONAIRE_SEARCH(QuestionaireSearchView.VIEW_NAME, QuestionaireSearchView.class, FontAwesome.BRIEFCASE, true),
+    DASHBOARD("dashboard", DashboardView.class, FontAwesome.HOME, true, null), 
+    USER_SEARCH(UserSearchView.VIEW_NAME, UserSearchView.class, FontAwesome.USERS, true, Role.ADMIN),
+    RATING(RatingView.VIEW_NAME, RatingView.class, FontAwesome.QUESTION_CIRCLE, true, Role.ADMIN),
+    QUESTIONAIRE_SEARCH(QuestionaireSearchView.VIEW_NAME, QuestionaireSearchView.class, FontAwesome.BRIEFCASE, true, Role.ADMIN),
+    OUTCOME_SEARCH(OutcomesSearchView.VIEW_NAME, OutcomesSearchView.class, FontAwesome.GROUP, true, Role.ADMIN),
     //SALES("sales", SalesView.class, FontAwesome.BAR_CHART_O, false), 
     //TRANSACTIONS("transactions", TransactionsView.class, FontAwesome.TABLE, false), 
     //REPORTS("reports", ReportsView.class, FontAwesome.FILE_TEXT_O, true), 
@@ -29,32 +33,31 @@ public enum DashboardViewType {
     private final Class<? extends View> viewClass;
     private final Resource icon;
     private final boolean stateful;
-
+    private final Role role;
+    
     private DashboardViewType(final String viewName,
             final Class<? extends View> viewClass, final Resource icon,
-            final boolean stateful) {
+            final boolean stateful,
+            final Role role) {
         this.viewName = viewName;
         this.viewClass = viewClass;
         this.icon = icon;
         this.stateful = stateful;
+        this.role = role;
     }
 
-    public boolean isStateful() {
-        return stateful;
+    public boolean isStateful() { return stateful; }
+    public String getViewName() { return viewName; }
+    public Class<? extends View> getViewClass() { return viewClass; }
+    public Resource getIcon() { return icon; }
+    
+    public boolean isAccessibleBy(final User user) {
+    	if (this.role == null) { return true; }
+    	if (user == null || user.getRole() == null) { return false; }
+    	
+    	return user.getRole().equals(this.role);
     }
-
-    public String getViewName() {
-        return viewName;
-    }
-
-    public Class<? extends View> getViewClass() {
-        return viewClass;
-    }
-
-    public Resource getIcon() {
-        return icon;
-    }
-
+    
     public static DashboardViewType getByViewName(final String viewName) {
         DashboardViewType result = null;
         for (DashboardViewType viewType : values()) {

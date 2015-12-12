@@ -27,7 +27,8 @@ import za.co.yellowfire.threesixty.ui.DashboardEvent.PostViewChangeEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.ProfileUpdatedEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.ReportsCountUpdatedEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLogoutEvent;
-import za.co.yellowfire.threesixty.ui.component.ProfilePreferencesWindow;
+import za.co.yellowfire.threesixty.ui.component.ByteArrayStreamResource;
+import za.co.yellowfire.threesixty.ui.view.UserEditView;
 
 @SuppressWarnings("serial")
 public class DashboardMenu extends CustomComponent {
@@ -86,27 +87,16 @@ public class DashboardMenu extends CustomComponent {
         final MenuBar settings = new MenuBar();
         settings.addStyleName("user-menu");
         final User user = getCurrentUser();
-        settingsItem = settings.addItem("", new ThemeResource("img/profile-pic-300px.jpg"), null);
+        if (user.hasPicture()) {
+        	settingsItem = settings.addItem("", new ByteArrayStreamResource(user.getPictureContent(), user.getPictureName()), null);
+        } else {
+        	settingsItem = settings.addItem("", new ThemeResource("img/profile-pic-300px.jpg"), null);
+        }
         updateUserName(null);
-        settingsItem.addItem("Edit Profile", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-                ProfilePreferencesWindow.open(user, false);
-            }
-        });
-        settingsItem.addItem("Preferences", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-                ProfilePreferencesWindow.open(user, true);
-            }
-        });
+        settingsItem.addItem("Edit Profile", new NavigateToProfileCommand());
+        settingsItem.addItem("Preferences", new NavigateToProfileCommand());
         settingsItem.addSeparator();
-        settingsItem.addItem("Sign Out", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-                DashboardEventBus.post(new UserLogoutEvent());
-            }
-        });
+        settingsItem.addItem("Sign Out", new SignoutCommand());
         return settings;
     }
 
@@ -133,8 +123,14 @@ public class DashboardMenu extends CustomComponent {
         menuItemsLayout.addStyleName("valo-menuitems");
 
         for (final DashboardViewType view : DashboardViewType.values()) {
-            Component menuItemComponent = new ValoMenuItemButton(view);
+            
+        	if (!view.isAccessibleBy(getCurrentUser())) {
+        		continue;
+        	}
+        	
+        	Component menuItemComponent = new ValoMenuItemButton(view);
 
+            
 //            if (view == DashboardViewType.REPORTS) {
 //                // Add drop target to reports button
 //                DragAndDropWrapper reports = new DragAndDropWrapper(
@@ -267,4 +263,17 @@ public class DashboardMenu extends CustomComponent {
         }
     }
 
+    public class NavigateToProfileCommand implements Command {
+		@Override
+		public void menuSelected(MenuItem selectedItem) {
+			UI.getCurrent().getNavigator().navigateTo(UserEditView.VIEW(getCurrentUser().getId()));
+		}
+    }
+    
+    public class SignoutCommand implements Command {
+		@Override
+		public void menuSelected(MenuItem selectedItem) {
+			DashboardEventBus.post(new UserLogoutEvent());
+		}
+    }
 }

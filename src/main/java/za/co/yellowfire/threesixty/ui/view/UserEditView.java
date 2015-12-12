@@ -1,9 +1,8 @@
 package za.co.yellowfire.threesixty.ui.view;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.dialogs.ConfirmDialog;
 
@@ -12,10 +11,7 @@ import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.fieldgroup.PropertyId;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Responsive;
-import com.vaadin.server.StreamResource;
-import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button;
@@ -27,21 +23,24 @@ import com.vaadin.ui.Image;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.RichTextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
+import za.co.yellowfire.threesixty.MainUI;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.Style;
 import za.co.yellowfire.threesixty.ui.component.BeanBinder;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
+import za.co.yellowfire.threesixty.ui.component.ByteArrayStreamResource;
 import za.co.yellowfire.threesixty.ui.component.HeaderButtons;
 import za.co.yellowfire.threesixty.ui.component.NotificationBuilder;
-import za.co.yellowfire.threesixty.ui.component.ProfilePictureForm;
-import za.co.yellowfire.threesixty.ui.component.ProfilePictureForm.FileEvent;
+import za.co.yellowfire.threesixty.ui.component.PictureSelectionForm;
+import za.co.yellowfire.threesixty.ui.component.PictureSelectionForm.FileEvent;
 import za.co.yellowfire.threesixty.ui.view.RatingQuestionWindow.SaveEvent;
 import za.co.yellowfire.threesixty.ui.view.RatingQuestionWindow.SaveListener;
 
@@ -54,21 +53,18 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
 	public static final String EDIT_ID = "user-edit";
     public static final String TITLE_ID = "user-title";
     public static final String VIEW_NAME = "user";
+    public static final String VIEW(final String userName) { return VIEW_NAME + (StringUtils.isBlank(userName) ? "" : "/" + userName); } 
     public static final String[] TABLE_PROPERTIES = {"phrase"};
     public static final String[] TABLE_HEADERS = {"Phrase"};
     protected static final String[] FILTER_PROPERTIES = {"phrase"};
     
     private static final String WINDOW_PICTURE = "Profile picture";
-    private static final String BUTTON_SAVE = "Save";
-    //private static final String BUTTON_EDIT = "Edit";
-    private static final String BUTTON_RESET = "Reset";
-    private static final String BUTTON_NEW = "New...";
-    private static final String BUTTON_CHANGE = "Change...";
-    
+
+       
     @PropertyId("id")
     private TextField idField = new TextField("User name");
     @PropertyId("password")
-    private TextField passwordField = new TextField("Password");
+    private PasswordField passwordField = new PasswordField("Password");
     @PropertyId("firstName")
     private TextField firstNameField = new TextField("Name");
     @PropertyId("lastName")
@@ -87,17 +83,22 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
     private ComboBox countryField;
     @PropertyId("bio")
     private RichTextArea bioField = new RichTextArea("Bio");
+    @PropertyId("role")
+    private ComboBox roleField;
+    @PropertyId("position")
+    private ComboBox positionField;
+    @PropertyId("reportsTo")
+    private ComboBox reportsToField;
     
     private Image pictureField = new Image(null, new ThemeResource("img/profile-pic-300px.jpg"));
-    private Window pictureWindow = new Window(WINDOW_PICTURE, new ProfilePictureForm(this::savePicture));
+    private Window pictureWindow = new Window(WINDOW_PICTURE, new PictureSelectionForm(this::onSelectedPicture));
     
-    private Button pictureButton = ButtonBuilder.build(BUTTON_CHANGE, this::changePicture);
-    private Button saveButton = ButtonBuilder.build(BUTTON_SAVE, this::save);
-	private Button resetButton = ButtonBuilder.build(BUTTON_RESET, this::reset);
-	private Button createButton = ButtonBuilder.build(BUTTON_NEW, FontAwesome.ASTERISK, this::create);	
+    private Button pictureButton = ButtonBuilder.CHANGE(this::onChangePicture);
+    private Button saveButton = ButtonBuilder.SAVE(this::save);
+	private Button resetButton = ButtonBuilder.RESET(this::reset);
+	private Button createButton = ButtonBuilder.NEW(this::create);	
     private Button[] buttons = new Button[] {saveButton, resetButton, createButton};
-    
-
+   
     private BeanFieldGroup<User> fieldGroup;
     private UserService service;
 
@@ -109,6 +110,9 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
     	this.salutationField = new ComboBox("Salutation", new IndexedContainer(service.findSalutations()));
     	this.genderField = new ComboBox("Gender", new IndexedContainer(service.findGenders()));
     	this.countryField = new ComboBox("Country", new IndexedContainer(service.findCountries()));
+    	this.roleField = new ComboBox("Role", new IndexedContainer(service.findRoles()));
+    	this.reportsToField = new ComboBox("Reports To");
+    	this.positionField = new ComboBox("Position", new IndexedContainer(service.findPositions()));
     }
 
     @Override
@@ -141,7 +145,6 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
 		details.setSizeFull();
 		
         idField.setWidth(100.0f, Unit.PERCENTAGE);
-        idField.setEnabled(getUser().isNew());
         idField.setNullRepresentation("");
         
         passwordField.setWidth(100.0f, Unit.PERCENTAGE);
@@ -170,6 +173,11 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
         countryField.setWidth(100.0f, Unit.PERCENTAGE);
         
         bioField.setWidth(100.0f, Unit.PERCENTAGE);
+        bioField.setNullRepresentation("");
+        
+        roleField.setWidth(100.0f, Unit.PERCENTAGE);
+        positionField.setWidth(100.0f, Unit.PERCENTAGE);
+        reportsToField.setWidth(100.0f, Unit.PERCENTAGE);
         
         details.addComponent(buildPanel(
         		buildHorizontalPanel(
@@ -177,7 +185,10 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
         				buildVerticalPanel(idField, passwordField)), 
         		firstNameField, 
         		lastNameField, 
-        		buildHorizontalPanel(salutationField, genderField)));
+        		buildHorizontalPanel(salutationField, genderField),
+        		positionField,
+        		buildHorizontalPanel(roleField, reportsToField)
+        		));
         details.addComponent(buildPanel(
         		emailField, 
         		phoneField, 
@@ -188,37 +199,11 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
         return details;
 	}
 	
-	protected Layout buildPanel(final Component...components) {
-		VerticalLayout layout = new VerticalLayout();
-		layout.addStyleName(Style.Rating.FIELDS);
-		
-		for (Component component : components) {
-			layout.addComponent(component);
-		}
-		return layout;
-	}
-	
-	protected Layout buildVerticalPanel(final Component...components) {
-		VerticalLayout layout = new VerticalLayout();
-		layout.addStyleName(Style.Rating.FIELDS);
-		for (Component component : components) {
-			layout.addComponent(component);
-		}
-		return layout;
-	}
-	
-	protected Layout buildHorizontalPanel(final Component...components) {
-		HorizontalLayout layout = new HorizontalLayout();
-		layout.setWidth(100.0f, Unit.PERCENTAGE);
-		
-		for (Component component : components) {
-			layout.addComponent(component);
-		}
-		return layout;
-	}
-	
 	@Override
     public void enter(final ViewChangeEvent event) {
+		
+		reportsToField.setContainerDataSource(new IndexedContainer(service.findUsersExcept(getUser())));
+		
 		String[] parameters = event.getParameters().split("/");
 		if (parameters.length > 0) {
 			try {
@@ -228,8 +213,9 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
 				NotificationBuilder.showNotification("Loading user error", e.getMessage(), 10);
 			}
 		}
-		
+			
 		build();
+		updateFieldContraints();
 		updatePicture();
     }
 	
@@ -242,7 +228,7 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
 			//Validate the field group
 	        getFieldGroup().commit();
 	        //Persist the user
-	        User user = getService().save(getFieldGroup().getItemDataSource().getBean());
+	        User user = getService().save(getFieldGroup().getItemDataSource().getBean(), getCurrentUser());
 	        //Notify the user of the outcome
 	        NotificationBuilder.showNotification("Update", "User " + user.getId() + " updated successfully.", 2000);
 	        //DashboardEventBus.post(new ProfileUpdatedEvent());
@@ -290,7 +276,7 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
 			            public void onClose(ConfirmDialog dialog) {
 			                if (dialog.isConfirmed()) {
 			                	//Delete the user
-			                    getService().delete(getFieldGroup().getItemDataSource().getBean());
+			                    getService().delete(getFieldGroup().getItemDataSource().getBean(), getCurrentUser());
 			                    //Notify the user of the outcome
 			                    NotificationBuilder.showNotification("Update", "Rating question updated successfully", 2000);
 			                    //Discard the field group
@@ -312,11 +298,11 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
 		UI.getCurrent().getNavigator().navigateTo(UserEditView.VIEW_NAME + "/new-user");
 	}
 	
-	protected void changePicture(ClickEvent event) {
+	protected void onChangePicture(ClickEvent event) {
 		UI.getCurrent().addWindow(pictureWindow);
 	}
 	
-	protected void savePicture(FileEvent event) {
+	protected void onSelectedPicture(FileEvent event) {
 		try {
 			if (getUser() != null) {
 				getUser().setPicture(event.getFile());
@@ -325,18 +311,33 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
 		} catch (IOException e) {
 			Notification.show("Error changing profile picture", e.getMessage(), Type.ERROR_MESSAGE);
 		}
+	}
+	
+	protected void updateFieldContraints() {
+		idField.setEnabled(getUser().isNew());
 		
-		pictureWindow.close();
+		User user = getCurrentUser();
+		if (user != null && user.isAdmin()) {
+			roleField.setEnabled(true);
+			positionField.setEnabled(true);
+			reportsToField.setEnabled(true);
+		} else {
+			roleField.setEnabled(false);
+			positionField.setEnabled(false);
+			reportsToField.setEnabled(false);
+		}
 	}
 	
 	protected void updatePicture() {
 		
 		if (getUser().hasPicture()) {
-			this.pictureField.setSource(new StreamResource(new StreamSource() {@Override
-			public InputStream getStream() {
-				return new ByteArrayInputStream(getUser().getPictureContent());
-			} }, getUser().getPictureName()));
+			this.pictureField.setSource(new ByteArrayStreamResource(getUser().getPictureContent(), getUser().getPictureName()));
+			this.pictureField.setImmediate(true);
 		}
+	}
+	
+	protected User getCurrentUser() {
+		return ((MainUI) UI.getCurrent()).getCurrentUser();
 	}
 	
 	protected User getUser() {

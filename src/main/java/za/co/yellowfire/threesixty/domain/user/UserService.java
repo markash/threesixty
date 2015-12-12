@@ -7,6 +7,9 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -17,23 +20,30 @@ import za.co.yellowfire.threesixty.domain.GridFsClient;
 	
 @Service		
 public class UserService {
-	
+	private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 	private UserRepository userRepository;
 	private RoleRepository roleRepository;
 	private CountryRepository countryRepository;
+	private JobProfileRepository jobProfileRepository;
+	private PositionRepository positionRepository;
+	
 	private final GridFsClient client;
 	
 	@Autowired
 	public UserService(
-			UserRepository userRepository, 
-			RoleRepository roleRepository,
-			CountryRepository countryRepository,
+			final UserRepository userRepository, 
+			final RoleRepository roleRepository,
+			final CountryRepository countryRepository,
+			final JobProfileRepository jobProfileRepository,
+			final PositionRepository positionRepository,
 			final GridFsClient client) {
 		
 		super();
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
 		this.countryRepository = countryRepository;
+		this.jobProfileRepository = jobProfileRepository;
+		this.positionRepository = positionRepository;
 		this.client = client;
 	}
 
@@ -46,11 +56,30 @@ public class UserService {
 			admin = roleRepository.save(admin);
 		}
 		
+		Role user = roleRepository.findOne(Role.ROLE_USER);
+		if (user == null) {
+			user = new Role(Role.ROLE_USER);
+			user = roleRepository.save(user);
+		}
+		
 		/* Ensure that the administrator user is configured */
 		User administrator = userRepository.findOne(User.USER_ADMIN);
 		if (administrator == null) {
 			administrator = new User(User.USER_ADMIN, User.USER_ADMIN_PASSWORD, admin);
+			administrator.setCreatedDate(DateTime.now());
 			administrator = userRepository.save(administrator);
+		}
+		
+		/* Sample job profiles */
+		for(Position position : samplePositions) {
+			Position persisted = positionRepository.findOne(position.getId());
+			if (persisted == null) {
+				JobProfile profile = jobProfileRepository.findOne(position.getJobProfile().getId());
+				if (profile == null) {
+					position.setJobProfile(jobProfileRepository.save(position.getJobProfile()));
+				}
+				positionRepository.save(position);
+			}
 		}
 		
 		/* Ensure the countries are defined */
@@ -61,6 +90,12 @@ public class UserService {
 		User user = userRepository.findOne(userName);
 		if (user == null) { return new Response<>(RequestResult.UNAUTHORIZED.setDescription("The user is invalid")); }
 		if (!user.getPassword().equals(password)) { return new Response<>(RequestResult.UNAUTHORIZED.setDescription("The user is invalid")); }
+		
+		try {
+			user.retrievePicture(client);
+		} catch (IOException e) {
+			LOG.warn("Unable to retrieve the profile picture for user {} : {}", user.getId(), e.getMessage());
+		}
 		return new Response<>(RequestResult.OK, user);
 	}
 	
@@ -72,12 +107,19 @@ public class UserService {
 		return user;
 	}
 	
-	public User save(final User user) throws IOException {
+	public List<User> findUsersExcept(final User user) {
+		return userRepository.findByIdNot(user.getId());
+	}
+	
+	public User save(final User user, final User changedBy) throws IOException {
 		user.storePicture(client);
+		user.auditChangedBy(changedBy);
 		return userRepository.save(user);
 	}
 	
-	public void delete(final User user) {
+	public void delete(final User user, final User changedBy) {
+		user.setActive(false);
+		user.auditChangedBy(changedBy);
 		userRepository.delete(user);
 	}
 	
@@ -89,8 +131,16 @@ public class UserService {
 		return countryRepository.findAll(new Sort("commonName"));
 	}
 	
+	public List<Role> findRoles() {
+		return roleRepository.findAll(new Sort("id"));
+	}
+	
 	public List<String> findGenders() {
 		return new ArrayList<String>(Arrays.asList(genders));
+	}
+	
+	public List<Position> findPositions() {
+		return positionRepository.findAll(new Sort("id"));
 	}
 	
 	private static String[] genders = {
@@ -386,4 +436,17 @@ public class UserService {
 			new Country (271,"Queen Maud Land",null,"Antarctic Territory","Territory","Norway",null,null,null,null,"AQ","ATA","010",".aq"),
 			new Country (272,"British Antarctic Territory",null,"Antarctic Territory","Overseas Territory","United Kingdom",null,null,null,null,"AQ","ATA","010",".aq")
 	};		
+	
+	private JobProfile[] sampleJobProfiles = {
+			new JobProfile("Solution Architect"),
+			new JobProfile("Application Delivery Manager"),
+			new JobProfile("Human Resources Manager"),
+	};
+	
+	private Position[] samplePositions = {
+			new Position("SA-101", sampleJobProfiles[0]),
+			new Position("SA-102", sampleJobProfiles[0]),
+			new Position("AD-099", sampleJobProfiles[1]),
+			new Position("HR-042", sampleJobProfiles[2])
+	};
 }

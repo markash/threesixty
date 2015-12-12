@@ -2,7 +2,6 @@ package za.co.yellowfire.threesixty.domain;
 
 import java.util.Collection;
 
-import za.co.yellowfire.threesixty.domain.user.User;
 
 
 public interface DataProvider {
@@ -30,7 +29,7 @@ public interface DataProvider {
      * @param password
      * @return Authenticated used.
      */
-    User authenticate(String userName, String password);
+//    User authenticate(String userName, String password);
 
     /**
      * @return The number of unread notifications for the current user.

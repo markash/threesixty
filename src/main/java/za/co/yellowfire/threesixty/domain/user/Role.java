@@ -10,6 +10,9 @@ public class Role implements Persistable<String> {
 	private static final long serialVersionUID = 1L;
 	
 	public static final String ROLE_ADMIN = "Admin";
+	public static final String ROLE_USER = "User";
+	public static final Role ADMIN = new Role(ROLE_ADMIN);
+	public static final Role USER = new Role(ROLE_USER);
 	
 	@Id
 	private String id;
@@ -55,6 +58,6 @@ public class Role implements Persistable<String> {
 	
 	@Override
 	public String toString() {
-		return String.format("Role [id=%s]", id);
+		return id;
 	}
 }
