@@ -1,4 +1,4 @@
-package za.co.yellowfire.threesixty.ui.view;
+package za.co.yellowfire.threesixty.ui.view.rating;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -7,9 +7,11 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.UI;
 
-import za.co.yellowfire.threesixty.domain.question.Outcome;
-import za.co.yellowfire.threesixty.domain.question.OutcomeRepository;
+import za.co.yellowfire.threesixty.domain.rating.Outcome;
+import za.co.yellowfire.threesixty.domain.rating.OutcomeRepository;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
+import za.co.yellowfire.threesixty.ui.component.SpringEntityProvider;
+import za.co.yellowfire.threesixty.ui.view.AbstractTableSearchView;
 
 @SpringView(name = OutcomesSearchView.VIEW_NAME)
 public final class OutcomesSearchView extends AbstractTableSearchView<Outcome, String> {
@@ -28,7 +30,7 @@ public final class OutcomesSearchView extends AbstractTableSearchView<Outcome, S
     
     @Autowired
     public OutcomesSearchView(OutcomeRepository repository) {
-    	super(Outcome.class, repository, TABLE_FILTERS);
+    	super(Outcome.class, new SpringEntityProvider<Outcome>(repository), TABLE_FILTERS);
     }
 
     @Override

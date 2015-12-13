@@ -1,4 +1,4 @@
-package za.co.yellowfire.threesixty.domain.question;
+package za.co.yellowfire.threesixty.domain;
 
 import java.io.Serializable;
 import java.time.LocalDate;

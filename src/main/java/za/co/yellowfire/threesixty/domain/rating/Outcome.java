@@ -1,4 +1,4 @@
-package za.co.yellowfire.threesixty.domain.question;
+package za.co.yellowfire.threesixty.domain.rating;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;

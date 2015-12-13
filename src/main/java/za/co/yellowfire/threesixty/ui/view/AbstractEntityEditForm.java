@@ -16,9 +16,11 @@ import za.co.yellowfire.threesixty.ui.component.PanelBuilder;
 public abstract class AbstractEntityEditForm<T extends Persistable<String>> extends HorizontalLayout {
 	
 	@PropertyId("id")
-    private TextField idField = new TextField("Id");
+    protected TextField idField = new TextField("Id");
 	
 	private BeanFieldGroup<T> fieldGroup;
+	
+	private boolean layoutCompleted = false;
 	
 	public AbstractEntityEditForm() {
 		setSpacing(true);
@@ -27,10 +29,6 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
 		
         idField.setWidth(100.0f, Unit.PERCENTAGE);
         idField.setNullRepresentation("");
-        
-        addComponent(PanelBuilder.FORM(
-        		idField));
-        addComponent(new Label(""));
 	}
 
 	public T getValue() { return this.fieldGroup.getItemDataSource().getBean(); }
@@ -63,4 +61,17 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
 	}
 	
 	protected abstract T buildEmpty();
+	
+	public void layout() {
+		if (!layoutCompleted) {
+			internalLayout();
+			layoutCompleted = true;
+		}
+	}
+	
+	protected void internalLayout() {
+		addComponent(PanelBuilder.FORM(
+        		idField));
+        addComponent(new Label(""));
+	}
 }

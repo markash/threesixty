@@ -58,7 +58,7 @@ public final class User implements Auditable<User, String> {
 	private User modifiedBy;
 	private DateTime createdDate;
 	private DateTime modifiedDate;
-	private boolean active;
+	private boolean active = true;
 	
     @Transient
     private byte[] imageContent = new byte[0];
@@ -127,7 +127,7 @@ public final class User implements Auditable<User, String> {
     public void setLastName(final String lastName) { this.lastName = lastName; }
 	
     public String getFullName() { 
-    	return (!StringUtils.isBlank(lastName) ? lastName  + "," : "") +
+    	return (!StringUtils.isBlank(lastName) ? lastName  + ", " : "") +
     			(!StringUtils.isBlank(firstName) ? firstName : "");    	
     }
     
@@ -189,6 +189,31 @@ public final class User implements Auditable<User, String> {
 	@Override
 	public void setLastModifiedDate(DateTime lastModifiedDate) { this.modifiedDate = lastModifiedDate; }
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
 	public void auditChangedBy(final User user) {
 		if (isNew()) {
 			setCreatedBy(user);

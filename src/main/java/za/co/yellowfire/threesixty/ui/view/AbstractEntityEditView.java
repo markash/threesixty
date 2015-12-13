@@ -49,6 +49,7 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
         root.setMargin(false);
         Responsive.makeResponsive(root);
         
+        form.layout();
         root.addComponent(form); 
 		return root;
 	}
@@ -70,7 +71,9 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
 	@Override
 	public void entitySaved(SaveEvent e) { }
 	
-	protected abstract T findEntity(final String id);
+	protected T findEntity(final String id) {
+		return getService().findById(id);
+	}
 	
 	protected void onSave(ClickEvent event) {
 		try {

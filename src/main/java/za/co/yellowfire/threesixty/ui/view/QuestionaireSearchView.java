@@ -14,6 +14,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import za.co.yellowfire.threesixty.domain.question.Questionaire;
 import za.co.yellowfire.threesixty.domain.question.QuestionaireRepository;
 import za.co.yellowfire.threesixty.domain.user.User;
+import za.co.yellowfire.threesixty.ui.component.SpringEntityProvider;
 
 @SpringView(name = QuestionaireSearchView.VIEW_NAME)
 public final class QuestionaireSearchView extends AbstractTableSearchView<Questionaire, String> /*, DashboardEditListener*/ {
@@ -28,10 +29,12 @@ public final class QuestionaireSearchView extends AbstractTableSearchView<Questi
     public static final String[] TABLE_HEADERS = {"#", "Name", "Start", "End"};
     
     protected Button[] tableButtons;
+    protected QuestionaireRepository repository;
     
     @Autowired
-    public QuestionaireSearchView(QuestionaireRepository questionaireRepository) {
-    	super(Questionaire.class, questionaireRepository, TABLE_FILTERS);
+    public QuestionaireSearchView(QuestionaireRepository repository) {
+    	super(Questionaire.class, new SpringEntityProvider<Questionaire>(repository), TABLE_FILTERS);
+    	this.repository = repository;
     }
 
     @Override
@@ -61,7 +64,7 @@ public final class QuestionaireSearchView extends AbstractTableSearchView<Questi
 				.closingOn(LocalDate.of(2015, 10, 31))
 				.audit((User) VaadinSession.getCurrent().getAttribute(User.class.getName()));
 		
-		questionaire = getRepository().save(questionaire);
+		questionaire = repository.save(questionaire);
 		
 		getUI().getNavigator().navigateTo(QuestionaireEditView.VIEW_NAME + "/" + questionaire.getId());
 	}

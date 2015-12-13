@@ -29,8 +29,8 @@ public class SpringEntityProvider<T> implements SortablePagingProvider<T>, Count
     		int firstRow, 
     		boolean sortAscending,
             String property) {
-		Iterable<T> results = repository.findAll();
-		return (List<T>) results;
+		
+		return (List<T>) getResults();
 	}
 
 	/**
@@ -38,7 +38,14 @@ public class SpringEntityProvider<T> implements SortablePagingProvider<T>, Count
      */
 	@Override
 	public int size() {
-		Iterable<T> results = repository.findAll();
-		return ((List<T>) results).size();
+		return ((List<T>) getResults()).size();
+	}
+	
+	protected PagingAndSortingRepository<T, String> getRepository() { 
+		return this.repository;
+	}
+	
+	protected Iterable<T> getResults() {
+		return repository.findAll();
 	}
 }

@@ -2,7 +2,6 @@ package za.co.yellowfire.threesixty.ui.view;
 
 import java.io.Serializable;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.vaadin.viritin.SortableLazyList;
 import org.vaadin.viritin.fields.FilterableTable;
 import org.vaadin.viritin.fields.MTable;
@@ -35,7 +34,7 @@ public abstract class AbstractTableSearchView<T, ID extends Serializable> extend
 	protected static final String BUTTON_VIEW = "View";
 	
 	private final Class<T> beanType;
-    private PagingAndSortingRepository<T, String> repository;
+    private SpringEntityProvider<T> entityProvider;
     private MTable<T> table;
     private final String[] propertiesToFilterOn;
     
@@ -47,9 +46,9 @@ public abstract class AbstractTableSearchView<T, ID extends Serializable> extend
 	protected abstract String[] getTablePropertyHeaders();
 	protected abstract Button[] getTableButtons();
 	
-	protected AbstractTableSearchView(final Class<T> beanType, final PagingAndSortingRepository<T, String> repository, final String[] propertiesToFilterOn) {
+	protected AbstractTableSearchView(final Class<T> beanType, final SpringEntityProvider<T> entityProvider, final String[] propertiesToFilterOn) {
 		this.beanType = beanType;
-		this.repository = repository;
+		this.entityProvider = entityProvider;
 		
 		this.propertiesToFilterOn = propertiesToFilterOn;
 		this.table = buildTable(); 
@@ -98,10 +97,7 @@ public abstract class AbstractTableSearchView<T, ID extends Serializable> extend
 	
 	@SuppressWarnings({"unchecked", "serial"})
 	private MTable<T> buildTable() {
-		
-		SpringEntityProvider<T> entityProvider = new SpringEntityProvider<T>(repository);
-		
-		
+			
 		MTable<T> table = new FilterableTable<T>(beanType)
 				.setBeans(new SortableLazyList<T>(entityProvider, entityProvider, 100))
                 .withProperties(getTablePropertyNames())
@@ -124,7 +120,7 @@ public abstract class AbstractTableSearchView<T, ID extends Serializable> extend
 	}
 
 	
-	protected void setRepository(final PagingAndSortingRepository<T, String> repository) { this.repository = repository; }
-	protected PagingAndSortingRepository<T, String> getRepository() { return this.repository; }
+	//protected void setRepository(final PagingAndSortingRepository<T, String> repository) { this.repository = repository; }
+	//protected PagingAndSortingRepository<T, String> getRepository() { return this.repository; }
 	protected MTable<T> getTable() { return this.table; }
 }

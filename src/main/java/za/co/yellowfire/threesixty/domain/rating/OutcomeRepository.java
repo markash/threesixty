@@ -1,4 +1,4 @@
-package za.co.yellowfire.threesixty.domain.question;
+package za.co.yellowfire.threesixty.domain.rating;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 

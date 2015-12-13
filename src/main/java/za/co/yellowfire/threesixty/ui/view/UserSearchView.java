@@ -8,8 +8,10 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Button.ClickEvent;
 
+import za.co.yellowfire.threesixty.domain.question.Questionaire;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserRepository;
+import za.co.yellowfire.threesixty.ui.component.SpringEntityProvider;
 
 @SpringView(name = UserSearchView.VIEW_NAME)
 public final class UserSearchView extends AbstractTableSearchView<User, String> /*, DashboardEditListener*/ {
@@ -27,7 +29,7 @@ public final class UserSearchView extends AbstractTableSearchView<User, String> 
     
     @Autowired
     public UserSearchView(UserRepository repository) {
-    	super(User.class, repository, TABLE_FILTERS);
+    	super(User.class, new SpringEntityProvider<User>(repository), TABLE_FILTERS);
     }
 
     @Override
