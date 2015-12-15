@@ -1,6 +1,7 @@
 package za.co.yellowfire.threesixty.ui.component;
 
 import com.vaadin.server.Sizeable.Unit;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Layout;
@@ -25,6 +26,16 @@ public class PanelBuilder {
 		layout.addStyleName(Style.Rating.FIELDS);
 		for (Component component : components) {
 			layout.addComponent(component);
+		}
+		return layout;
+	}
+	
+	public static Layout VERTICAL_CENTERED(final Component...components) {
+		VerticalLayout layout = new VerticalLayout();
+		layout.addStyleName(Style.Rating.FIELDS);
+		for (Component component : components) {
+			layout.addComponent(component);
+			layout.setComponentAlignment(component, Alignment.MIDDLE_CENTER);
 		}
 		return layout;
 	}

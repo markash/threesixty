@@ -3,11 +3,13 @@ package za.co.yellowfire.threesixty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 
+@EnableMongoAuditing
 @Configuration
 public class MongoConfiguration extends AbstractMongoConfiguration {
 

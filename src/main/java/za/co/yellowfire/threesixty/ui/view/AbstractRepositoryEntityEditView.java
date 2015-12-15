@@ -1,6 +1,9 @@
 package za.co.yellowfire.threesixty.ui.view;
 
+import java.io.Serializable;
+
 import org.springframework.data.domain.Persistable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
@@ -15,14 +18,13 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 import za.co.yellowfire.threesixty.MainUI;
-import za.co.yellowfire.threesixty.domain.question.Service;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
 import za.co.yellowfire.threesixty.ui.component.HeaderButtons;
 import za.co.yellowfire.threesixty.ui.component.NotificationBuilder;
 
 @SuppressWarnings("serial")
-public abstract class AbstractEntityEditView<T extends Persistable<String>> extends AbstractDashboardPanel /*, DashboardEditListener*/ {
+public abstract class AbstractRepositoryEntityEditView<T extends Persistable<String>, ID extends Serializable> extends AbstractDashboardPanel /*, DashboardEditListener*/ {
 	private static final long serialVersionUID = 1L;
 	          
     private Button saveButton = ButtonBuilder.SAVE(this::onSave);
@@ -30,12 +32,12 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
 	private Button createButton = ButtonBuilder.NEW(this::onCreate);	
     private Button[] buttons = new Button[] {saveButton, resetButton, createButton};
    
-    private final Service<T> service;
+    private final PagingAndSortingRepository<T, ID> repository;
     private final AbstractEntityEditForm<T> form;
     
-    public AbstractEntityEditView(Service<T> service, AbstractEntityEditForm<T> form) {
+    public AbstractRepositoryEntityEditView(PagingAndSortingRepository<T, ID> repository, AbstractEntityEditForm<T> form) {
 		super();
-		this.service = service;
+		this.repository = repository;
 		this.form = form;
 	}
 
@@ -60,14 +62,14 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
     public void enter(final ViewChangeEvent event) {
 		String[] parameters = event.getParameters().split("/");
 		if (parameters.length > 0) {
-			form.bind(findEntity(parameters[0]));
+			form.bind(findEntity((ID)parameters[0]));
 		}
 			
 		build();
     }
-	
-	protected T findEntity(final String id) {
-		return getService().findById(id);
+		
+	protected T findEntity(final ID id) {
+		return getRepository().findOne(id);
 	}
 	
 	protected void onSave(ClickEvent event) {
@@ -75,14 +77,17 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
 			//Validate the field group
 	        form.commit();
 	        //Persist the outcome
-	        T result = getService().save(form.getValue(), getCurrentUser());
+	        T result = getRepository().save(form.getValue());
+	        onPostSave(event);
 	        //Notify the user of the outcome
-	        NotificationBuilder.showNotification("Update", "Outcome " + result.getId() + " updated successfully.", 2000);
+	        NotificationBuilder.showNotification("Update", getTitle() + " " + result.getId() + " updated successfully.", 2000);
 	        //DashboardEventBus.post(new ProfileUpdatedEvent());
 		} catch (CommitException exception) {
-            Notification.show("Error while updating user", Type.ERROR_MESSAGE);
+            Notification.show("Error while updating", Type.ERROR_MESSAGE);
         }
 	}
+	
+	protected void onPostSave(final ClickEvent event) {}
 	
 	protected void add(ClickEvent event) {
 		if (form.isModified()) {
@@ -114,16 +119,16 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
 			ConfirmDialog.show(
 					UI.getCurrent(), 
 					"Confirmation", 
-					"Are you sure you would like to delete this rating question?",
+					"Are you sure you would like to delete?",
 					"Yes",
 					"No",
 			        new ConfirmDialog.Listener() {
 			            public void onClose(ConfirmDialog dialog) {
 			                if (dialog.isConfirmed()) {
 			                	//Delete the entity
-			                    getService().delete(form.getValue(), getCurrentUser());
+			                    getRepository().delete(form.getValue());
 			                    //Notify the user of the outcome
-			                    NotificationBuilder.showNotification("Update", "Rating question updated successfully", 2000);
+			                    NotificationBuilder.showNotification("Update", getTitle() + " updated successfully", 2000);
 			                    //Discard the field group
 			                    form.discard();
 			                    //DashboardEventBus.post(new ProfileUpdatedEvent());
@@ -131,7 +136,7 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
 			            }
 			        });
 		} catch (Exception e) {
-            Notification.show("Error while deleting outcome", Type.ERROR_MESSAGE);
+            Notification.show("Error while deleting", Type.ERROR_MESSAGE);
         }
 	}
 	
@@ -145,6 +150,7 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
 		return ((MainUI) UI.getCurrent()).getCurrentUser();
 	}
 		
-	protected Service<T> getService() { return this.service; }
+	protected AbstractEntityEditForm<T> getForm() { return this.form; }
+	protected PagingAndSortingRepository<T, ID> getRepository() { return this.repository; }
 }
 

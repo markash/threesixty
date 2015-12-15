@@ -15,6 +15,8 @@ import za.co.yellowfire.threesixty.ui.view.DashboardView;
 import za.co.yellowfire.threesixty.ui.view.QuestionaireSearchView;
 import za.co.yellowfire.threesixty.ui.view.RatingView;
 import za.co.yellowfire.threesixty.ui.view.UserSearchView;
+import za.co.yellowfire.threesixty.ui.view.kudos.BadgeSearchView;
+import za.co.yellowfire.threesixty.ui.view.kudos.IdealSearchView;
 import za.co.yellowfire.threesixty.ui.view.rating.AssessmentSearchView;
 import za.co.yellowfire.threesixty.ui.view.rating.OutcomesSearchView;
 
@@ -25,6 +27,8 @@ public enum DashboardViewType {
     QUESTIONAIRE_SEARCH(QuestionaireSearchView.VIEW_NAME, QuestionaireSearchView.class, FontAwesome.BRIEFCASE, true, Role.ADMIN),
     OUTCOME_SEARCH(OutcomesSearchView.VIEW_NAME, OutcomesSearchView.class, FontAwesome.BUILDING_O, true, Role.ADMIN),
     ASSESSMENT_SEARCH(AssessmentSearchView.VIEW_NAME, AssessmentSearchView.class, FontAwesome.BRIEFCASE, true, null),
+    BADGE_SEARCH(BadgeSearchView.VIEW_NAME, BadgeSearchView.class, FontAwesome.STAR_O, true, Role.ADMIN),
+    IDEAL_SEARCH(IdealSearchView.VIEW_NAME, IdealSearchView.class, FontAwesome.DIAMOND, true, Role.ADMIN),
     //SALES("sales", SalesView.class, FontAwesome.BAR_CHART_O, false), 
     //TRANSACTIONS("transactions", TransactionsView.class, FontAwesome.TABLE, false), 
     //REPORTS("reports", ReportsView.class, FontAwesome.FILE_TEXT_O, true), 
