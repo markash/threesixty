@@ -2,18 +2,14 @@ package za.co.yellowfire.threesixty.domain;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 
 
 /**
  * A dummy implementation for the backend API.
  */
-public class DummyDataProvider implements DataProvider {
+public class DummyDataProvider /*implements DataProvider*/ {
 
     // TODO: Get API key from http://developer.rottentomatoes.com
 //    private static final String ROTTEN_TOMATOES_API_KEY = null;
@@ -27,7 +23,6 @@ public class DummyDataProvider implements DataProvider {
 
 //    private static Random rand = new Random();
 
-    private final Collection<DashboardNotification> notifications = DummyDataGenerator.randomNotifications();
 
     /**
      * Initialize the data for this application.
@@ -444,34 +439,34 @@ public class DummyDataProvider implements DataProvider {
 //                    }
 //                });
 //    }
-
-    @Override
-    public int getUnreadNotificationsCount() {
-        Predicate<DashboardNotification> unreadPredicate = new Predicate<DashboardNotification>() {
-            @Override
-            public boolean apply(DashboardNotification input) {
-                return !input.isRead();
-            }
-        };
-        return Collections2.filter(notifications, unreadPredicate).size();
-    }
-
-    @Override
-    public Collection<DashboardNotification> getNotifications() {
-        for (DashboardNotification notification : notifications) {
-            notification.setRead(true);
-        }
-        return java.util.Collections.unmodifiableCollection(notifications);
-    }
-
-    @Override
-    public double getTotalSum() {
-        double result = 0;
-//        for (Transaction transaction : transactions.values()) {
-//            result += transaction.getPrice();
+//
+//    @Override
+//    public int getUnreadNotificationsCount() {
+//        Predicate<UserNotification> unreadPredicate = new Predicate<UserNotification>() {
+//            @Override
+//            public boolean apply(UserNotification input) {
+//                return !input.isRead();
+//            }
+//        };
+//        return Collections2.filter(notifications, unreadPredicate).size();
+//    }
+//
+//    @Override
+//    public Collection<UserNotification> getNotifications() {
+//        for (UserNotification notification : notifications) {
+//            notification.setRead(true);
 //        }
-        return result;
-    }
+//        return java.util.Collections.unmodifiableCollection(notifications);
+//    }
+
+//    @Override
+//    public double getTotalSum() {
+//        double result = 0;
+////        for (Transaction transaction : transactions.values()) {
+////            result += transaction.getPrice();
+////        }
+//        return result;
+//    }
 
 //    @Override
 //    public Movie getMovie(final long movieId) {

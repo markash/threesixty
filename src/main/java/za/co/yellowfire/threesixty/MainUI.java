@@ -20,17 +20,14 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
-import za.co.yellowfire.threesixty.domain.DataProvider;
-import za.co.yellowfire.threesixty.domain.DummyDataProvider;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.BrowserResizeEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.CloseOpenWindowsEvent;
+import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLoginEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLogoutEvent;
+import za.co.yellowfire.threesixty.ui.DashboardEventBus;
 import za.co.yellowfire.threesixty.ui.view.LoginView;
 import za.co.yellowfire.threesixty.ui.view.MainView;
-import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLoginEvent;
-import za.co.yellowfire.threesixty.ui.DashboardEventBus;
-import za.co.yellowfire.threesixty.ui.converter.DefaultConverterFactory;
 
 @SuppressWarnings("serial")
 @Theme("dashboard")
@@ -39,12 +36,12 @@ import za.co.yellowfire.threesixty.ui.converter.DefaultConverterFactory;
 public class MainUI extends UI {
 	private static final long serialVersionUID = 1L;
 
-	private final DashboardEventBus dashboardEventbus = new DashboardEventBus();
-	private final DataProvider dataProvider = new DummyDataProvider();
-	private final ConverterFactory converterFactory = new DefaultConverterFactory();
-	
+	@Autowired
+	private ConverterFactory converterFactory;
     @Autowired
     private SpringViewProvider viewProvider;   
+    @Autowired
+    private DashboardEventBus dashboardEventbus;
     
     @Override
     protected void init(VaadinRequest request) {
@@ -78,22 +75,17 @@ public class MainUI extends UI {
      * Otherwise login view is shown.
      */
     private void updateContent() {
-        User user = getCurrentUser();
         
-        if (user != null) {
+        if (getCurrentUser() != null) {
             getNavigator().navigateTo(MainView.VIEW_NAME);
         } else {
         	getNavigator().navigateTo(LoginView.VIEW_NAME);
         }
     }
-
-    public User getCurrentUser() {
-    	return (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
-    }
     
     @Subscribe
     public void userLogin(final UserLoginEvent event) {
-        VaadinSession.getCurrent().setAttribute(User.class.getName(), event.getUser());
+        VaadinSession.getCurrent().setAttribute(User.class, event.getUser());
         updateContent();
     }
 
@@ -112,14 +104,11 @@ public class MainUI extends UI {
             window.close();
         }
     }
-
-    /**
-     * @return An instance for accessing the (dummy) services layer.
-     */
-    public static DataProvider getDataProvider() {
-        return ((MainUI) getCurrent()).dataProvider;
+    
+    public User getCurrentUser() {
+    	return (User) VaadinSession.getCurrent().getAttribute(User.class);
     }
-
+    
     public static DashboardEventBus getDashboardEventbus() { 
     	return ((MainUI) getCurrent()).dashboardEventbus; 
     } 

@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "user.notification.limit",
+  "type": "int",
+  "description": "The number of user notification messages to show the user"
+}]}

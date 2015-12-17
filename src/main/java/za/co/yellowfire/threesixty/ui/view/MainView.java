@@ -1,5 +1,7 @@
 package za.co.yellowfire.threesixty.ui.view;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.spring.annotation.SpringView;
@@ -8,6 +10,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 
 import za.co.yellowfire.threesixty.MainUI;
+import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.DashboardMenu;
 import za.co.yellowfire.threesixty.ui.DashboardNavigator;
 
@@ -18,14 +21,15 @@ import za.co.yellowfire.threesixty.ui.DashboardNavigator;
 @SpringView(name = MainView.VIEW_NAME, ui = MainUI.class)
 public class MainView extends HorizontalLayout implements View {
 	private static final long serialVersionUID = 1L;
-	
 	public static final String VIEW_NAME = "main";
 	
-    public MainView() {
+	@Autowired
+    public MainView(final UserService userService) {
+		
         setSizeFull();
         addStyleName("mainview");
 
-        addComponent(new DashboardMenu());
+        addComponent(new DashboardMenu(userService));
 
         ComponentContainer content = new CssLayout();
         content.addStyleName("view-content");
@@ -37,8 +41,5 @@ public class MainView extends HorizontalLayout implements View {
     }
     
     @Override
-    public void enter(ViewChangeEvent event) {
-        // This view is constructed in the init() method()
-    	System.out.println("Entering main view");
-    }
+    public void enter(ViewChangeEvent event) { }
 }

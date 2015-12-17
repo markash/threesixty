@@ -1,9 +1,5 @@
 package za.co.yellowfire.threesixty.domain;
 
-import java.util.Collection;
-
-
-
 public interface DataProvider {
     /**
      * @param count
@@ -34,17 +30,17 @@ public interface DataProvider {
     /**
      * @return The number of unread notifications for the current user.
      */
-    int getUnreadNotificationsCount();
+    //int getUnreadNotificationsCount();
 
     /**
      * @return Notifications for the current user.
      */
-    Collection<DashboardNotification> getNotifications();
+    //Collection<UserNotification> getNotifications();
 
     /**
      * @return The total summed up revenue of sold movie tickets
      */
-    double getTotalSum();
+    //double getTotalSum();
 
     /**
      * @return A Collection of movies.

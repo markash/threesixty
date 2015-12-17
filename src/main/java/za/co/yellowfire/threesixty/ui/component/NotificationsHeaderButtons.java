@@ -12,18 +12,22 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import za.co.yellowfire.threesixty.MainUI;
-import za.co.yellowfire.threesixty.domain.DashboardNotification;
+import za.co.yellowfire.threesixty.domain.user.User;
+import za.co.yellowfire.threesixty.domain.user.UserNotification;
+import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.NotificationsCountUpdatedEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEventBus;
 
 public class NotificationsHeaderButtons extends HorizontalLayout {
 	private static final long serialVersionUID = 1L;
 
+	private final UserService userService;
 	private final NotificationsButton notificationsButton;
 	private final Button editButton;
 	private Window notificationsWindow;
@@ -32,8 +36,9 @@ public class NotificationsHeaderButtons extends HorizontalLayout {
 	 * 
 	 * @param editButtonId The id of the edit button. If null then the button is not added to the header
 	 */
-	public NotificationsHeaderButtons(final String editButtonId) {
-		this.notificationsButton = buildNotificationsButton();
+	public NotificationsHeaderButtons(final UserService userService, final String editButtonId) {
+		this.userService = userService;
+		this.notificationsButton = buildNotificationsButton(userService);
         this.editButton = StringUtils.isNotBlank(editButtonId) ? buildEditButton(editButtonId) : null;
         
         addComponent(notificationsButton);
@@ -46,8 +51,8 @@ public class NotificationsHeaderButtons extends HorizontalLayout {
         addStyleName("toolbar");
 	}
 	
-	private NotificationsButton buildNotificationsButton() {
-        NotificationsButton result = new NotificationsButton();
+	private NotificationsButton buildNotificationsButton(final UserService userService) {
+        NotificationsButton result = new NotificationsButton(userService, getCurrentUser());
         result.addClickListener(event -> { openNotificationsPopup(event); });
         return result;
     }
@@ -80,10 +85,10 @@ public class NotificationsHeaderButtons extends HorizontalLayout {
         title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         notificationsLayout.addComponent(title);
 
-        Collection<DashboardNotification> notifications = MainUI.getDataProvider().getNotifications();
+        Collection<UserNotification> notifications = userService.findNotifications(getCurrentUser(), 10);
         DashboardEventBus.post(new NotificationsCountUpdatedEvent());
 
-        for (DashboardNotification notification : notifications) {
+        for (UserNotification notification : notifications) {
             VerticalLayout notificationLayout = new VerticalLayout();
             notificationLayout.addStyleName("notification-item");
 
@@ -92,7 +97,7 @@ public class NotificationsHeaderButtons extends HorizontalLayout {
                     + notification.getAction());
             titleLabel.addStyleName("notification-title");
 
-            Label timeLabel = new Label(notification.getPrettyTime());
+            Label timeLabel = new Label(notification.getTimeAsIso());
             timeLabel.addStyleName("notification-time");
 
             Label contentLabel = new Label(notification.getContent());
@@ -133,4 +138,8 @@ public class NotificationsHeaderButtons extends HorizontalLayout {
             notificationsWindow.close();
         }
     }
+	
+	protected User getCurrentUser() {
+		return ((MainUI) UI.getCurrent()).getCurrentUser();
+	}
 }

@@ -20,8 +20,8 @@ import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 
-import za.co.yellowfire.threesixty.MainUI;
 import za.co.yellowfire.threesixty.domain.user.User;
+import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.NotificationsCountUpdatedEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.PostViewChangeEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.ProfileUpdatedEvent;
@@ -42,7 +42,11 @@ public class DashboardMenu extends CustomComponent {
     private Label reportsBadge;
     private MenuItem settingsItem;
     
-	public DashboardMenu() { 
+    private final UserService userService;
+    
+	public DashboardMenu(final UserService userService) {
+		this.userService = userService;
+		
 		setPrimaryStyleName("valo-menu"); 
 		setId(ID); 
 		setSizeUndefined(); 
@@ -77,10 +81,6 @@ public class DashboardMenu extends CustomComponent {
         logoWrapper.setComponentAlignment(logo, Alignment.MIDDLE_CENTER);
         logoWrapper.addStyleName("valo-menu-title");
         return logoWrapper;
-    }
-
-    private User getCurrentUser() {
-        return (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
     }
 
     private Component buildUserMenu() {
@@ -204,9 +204,9 @@ public class DashboardMenu extends CustomComponent {
     }
 
     @Subscribe
-    public void updateNotificationsCount(
-            final NotificationsCountUpdatedEvent event) {
-        int unreadNotificationsCount = MainUI.getDataProvider().getUnreadNotificationsCount();
+    public void updateNotificationsCount(final NotificationsCountUpdatedEvent event) {
+    	
+        int unreadNotificationsCount = this.userService.getUnreadNotificationsCount(getCurrentUser());
         notificationsBadge.setValue(String.valueOf(unreadNotificationsCount));
         notificationsBadge.setVisible(unreadNotificationsCount > 0);
     }
@@ -275,5 +275,9 @@ public class DashboardMenu extends CustomComponent {
 		public void menuSelected(MenuItem selectedItem) {
 			DashboardEventBus.post(new UserLogoutEvent());
 		}
+    }
+    
+    public User getCurrentUser() {
+    	return (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
     }
 }

@@ -6,17 +6,20 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import za.co.yellowfire.threesixty.RequestResult;
 import za.co.yellowfire.threesixty.Response;
 import za.co.yellowfire.threesixty.domain.GridFsClient;
+import za.co.yellowfire.threesixty.domain.InvalidUserException;
 	
 @Service		
 public class UserService {
@@ -26,6 +29,9 @@ public class UserService {
 	private CountryRepository countryRepository;
 	private JobProfileRepository jobProfileRepository;
 	private PositionRepository positionRepository;
+	private UserNotificationRepository userNotificationRepository;
+	
+	private UserConfiguration userConfiguration;
 	
 	private final GridFsClient client;
 	
@@ -36,6 +42,8 @@ public class UserService {
 			final CountryRepository countryRepository,
 			final JobProfileRepository jobProfileRepository,
 			final PositionRepository positionRepository,
+			final UserNotificationRepository userNotificationRepository,
+			final UserConfiguration userConfiguration,
 			final GridFsClient client) {
 		
 		super();
@@ -44,6 +52,7 @@ public class UserService {
 		this.countryRepository = countryRepository;
 		this.jobProfileRepository = jobProfileRepository;
 		this.positionRepository = positionRepository;
+		this.userNotificationRepository = userNotificationRepository;
 		this.client = client;
 	}
 
@@ -84,6 +93,9 @@ public class UserService {
 		
 		/* Ensure the countries are defined */
 		countryRepository.save(Arrays.asList(countries));
+		
+		/*Notify that the server is running */
+		notify(administrator, administrator, "Server started.");
 	}
 	
 	public Response<User> authenticate(final String userName, final String password) {
@@ -142,6 +154,46 @@ public class UserService {
 	public List<Position> findPositions() {
 		return positionRepository.findAll(new Sort("id"));
 	}
+	
+	public int getUnreadNotificationsCount(@NotNull final User user) {
+		if (user == null) { throw new InvalidUserException("User was null"); }
+		
+		List<UserNotification> notifications = this.userNotificationRepository.findUnread(user.getId());
+		return  (notifications != null) ? notifications.size() : 0;
+	}
+	
+	public List<UserNotification> findNotifications(@NotNull final User user, int limit) {
+		if (user == null) { throw new InvalidUserException("User was null"); }
+		
+		Sort sort = new Sort(Direction.DESC, "time");
+		List<UserNotification> notifications = this.userNotificationRepository.findNotifications(user.getId(), limit, sort);
+		if (notifications != null && notifications.size() > limit) {
+			return notifications.subList(0, limit - 1);
+		}
+		return notifications;
+	}
+	
+	public List<UserNotification> findNotifications(@NotNull final User user) {
+		if (user == null) { throw new InvalidUserException("User was null"); }
+		
+		int limit = 10; //userConfiguration.getNotification().getLimit();
+		Sort sort = new Sort(Direction.DESC, "time");
+		
+		List<UserNotification> notifications = this.userNotificationRepository.findNotifications(user.getId(), limit, sort);
+		if (notifications != null && notifications.size() > limit) {
+			return notifications.subList(0, limit - 1);
+		}
+		return notifications;
+	}
+	
+	public void notify(final User to, final String message) {
+		notify(to, null, message);
+	}
+	
+	public void notify(final User to, User from, final String message) {
+		this.userNotificationRepository.save(UserNotification.to(to).from(from).at(DateTime.now()).content(message));
+	}
+	
 	
 	private static String[] genders = {
 			"Male",

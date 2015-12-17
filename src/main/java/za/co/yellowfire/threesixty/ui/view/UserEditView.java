@@ -30,10 +30,8 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-import za.co.yellowfire.threesixty.MainUI;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
-import za.co.yellowfire.threesixty.ui.Style;
 import za.co.yellowfire.threesixty.ui.component.BeanBinder;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
 import za.co.yellowfire.threesixty.ui.component.ByteArrayStreamResource;
@@ -60,7 +58,6 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
     
     private static final String WINDOW_PICTURE = "Profile picture";
 
-       
     @PropertyId("id")
     private TextField idField = new TextField("User name");
     @PropertyId("password")
@@ -101,12 +98,15 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
    
     private BeanFieldGroup<User> fieldGroup;
     private UserService service;
-
+    private User currentUser;
+    
     @Autowired
-    public UserEditView(final UserService service) {
+    public UserEditView(final UserService service, final User currentUser) {
     	super();
     	
     	this.service = service;
+    	this.currentUser = currentUser;
+    	
     	this.salutationField = new ComboBox("Salutation", new IndexedContainer(service.findSalutations()));
     	this.genderField = new ComboBox("Gender", new IndexedContainer(service.findGenders()));
     	this.countryField = new ComboBox("Country", new IndexedContainer(service.findCountries()));
@@ -228,7 +228,7 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
 			//Validate the field group
 	        getFieldGroup().commit();
 	        //Persist the user
-	        User user = getService().save(getFieldGroup().getItemDataSource().getBean(), getCurrentUser());
+	        User user = getService().save(getFieldGroup().getItemDataSource().getBean(), currentUser);
 	        //Notify the user of the outcome
 	        NotificationBuilder.showNotification("Update", "User " + user.getId() + " updated successfully.", 2000);
 	        //DashboardEventBus.post(new ProfileUpdatedEvent());
@@ -276,7 +276,7 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
 			            public void onClose(ConfirmDialog dialog) {
 			                if (dialog.isConfirmed()) {
 			                	//Delete the user
-			                    getService().delete(getFieldGroup().getItemDataSource().getBean(), getCurrentUser());
+			                    getService().delete(getFieldGroup().getItemDataSource().getBean(), currentUser);
 			                    //Notify the user of the outcome
 			                    NotificationBuilder.showNotification("Update", "Rating question updated successfully", 2000);
 			                    //Discard the field group
@@ -316,8 +316,7 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
 	protected void updateFieldContraints() {
 		idField.setEnabled(getUser().isNew());
 		
-		User user = getCurrentUser();
-		if (user != null && user.isAdmin()) {
+		if (currentUser != null && currentUser.isAdmin()) {
 			roleField.setEnabled(true);
 			positionField.setEnabled(true);
 			reportsToField.setEnabled(true);
@@ -334,10 +333,6 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
 			this.pictureField.setSource(new ByteArrayStreamResource(getUser().getPictureContent(), getUser().getPictureName()));
 			this.pictureField.setImmediate(true);
 		}
-	}
-	
-	protected User getCurrentUser() {
-		return ((MainUI) UI.getCurrent()).getCurrentUser();
 	}
 	
 	protected User getUser() {

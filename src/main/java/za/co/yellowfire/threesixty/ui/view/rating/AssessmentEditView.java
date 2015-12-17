@@ -7,10 +7,8 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.UI;
 
-import za.co.yellowfire.threesixty.MainUI;
 import za.co.yellowfire.threesixty.domain.rating.Assessment;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
-import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditView;
 
 @SpringView(name = AssessmentEditView.VIEW_NAME)
@@ -21,7 +19,7 @@ public final class AssessmentEditView extends AbstractEntityEditView<Assessment>
 	public static final String EDIT_ID = "assessment-edit";
     public static final String TITLE_ID = "assessment-title";
     public static final String VIEW_NAME = "assessment";
-    public static final String VIEW(final String outcome) { return VIEW_NAME + (StringUtils.isBlank(outcome) ? "" : "/" + outcome); } 
+    public static final String VIEW(final String id) { return VIEW_NAME + (StringUtils.isBlank(id) ? "" : "/" + id); } 
 
     @Autowired
     public AssessmentEditView(final AssessmentService service) {
@@ -37,11 +35,7 @@ public final class AssessmentEditView extends AbstractEntityEditView<Assessment>
 	
 	@Override
 	protected void onCreate(ClickEvent event) {
-		UI.getCurrent().getNavigator().navigateTo(AssessmentEditView.VIEW_NAME + "/new-assessment");
-	}
-	
-	protected User getCurrentUser() {
-		return ((MainUI) UI.getCurrent()).getCurrentUser();
+		UI.getCurrent().getNavigator().navigateTo(AssessmentEditView.VIEW("new-assessment"));
 	}
 }
 

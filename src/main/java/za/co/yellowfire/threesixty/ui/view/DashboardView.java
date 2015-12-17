@@ -2,6 +2,8 @@ package za.co.yellowfire.threesixty.ui.view;
 
 import java.util.Collection;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
@@ -21,12 +23,15 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import za.co.yellowfire.threesixty.MainUI;
-import za.co.yellowfire.threesixty.domain.DashboardNotification;
+import za.co.yellowfire.threesixty.domain.user.User;
+import za.co.yellowfire.threesixty.domain.user.UserNotification;
+import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.CloseOpenWindowsEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.NotificationsCountUpdatedEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEventBus;
@@ -46,8 +51,13 @@ public final class DashboardView extends Panel implements View /*, DashboardEdit
     private final VerticalLayout root;
     private Window notificationsWindow;
 
-    public DashboardView() {
-        addStyleName(ValoTheme.PANEL_BORDERLESS);
+    private final UserService userService;
+    
+    @Autowired
+    public DashboardView(final UserService userService) {
+        this.userService = userService;
+        
+    	addStyleName(ValoTheme.PANEL_BORDERLESS);
         setSizeFull();
         DashboardEventBus.register(this);
 
@@ -260,10 +270,10 @@ public final class DashboardView extends Panel implements View /*, DashboardEdit
         title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         notificationsLayout.addComponent(title);
 
-        Collection<DashboardNotification> notifications = MainUI.getDataProvider().getNotifications();
+        Collection<UserNotification> notifications = this.userService.findNotifications(getCurrentUser());
         DashboardEventBus.post(new NotificationsCountUpdatedEvent());
 
-        for (DashboardNotification notification : notifications) {
+        for (UserNotification notification : notifications) {
             VerticalLayout notificationLayout = new VerticalLayout();
             notificationLayout.addStyleName("notification-item");
 
@@ -272,7 +282,7 @@ public final class DashboardView extends Panel implements View /*, DashboardEdit
                     + notification.getAction());
             titleLabel.addStyleName("notification-title");
 
-            Label timeLabel = new Label(notification.getPrettyTime());
+            Label timeLabel = new Label(notification.getTimeAsIso());
             timeLabel.addStyleName("notification-time");
 
             Label contentLabel = new Label(notification.getContent());
@@ -349,7 +359,7 @@ public final class DashboardView extends Panel implements View /*, DashboardEdit
 //        }
 //    }
 //
-    public static final class NotificationsButton extends Button {
+    public final class NotificationsButton extends Button {
         private static final String STYLE_UNREAD = "unread";
         public static final String ID = "dashboard-notifications";
 
@@ -363,8 +373,7 @@ public final class DashboardView extends Panel implements View /*, DashboardEdit
 
         @Subscribe
         public void updateNotificationsCount(final NotificationsCountUpdatedEvent event) {
-            setUnreadCount(MainUI.getDataProvider()
-                    .getUnreadNotificationsCount());
+            setUnreadCount(userService.getUnreadNotificationsCount(getCurrentUser()));
         }
 
         public void setUnreadCount(final int count) {
@@ -380,6 +389,9 @@ public final class DashboardView extends Panel implements View /*, DashboardEdit
             setDescription(description);
         }
     }
-
+    
+    protected User getCurrentUser() {
+    	return ((MainUI) UI.getCurrent()).getCurrentUser();
+    }
 }
 

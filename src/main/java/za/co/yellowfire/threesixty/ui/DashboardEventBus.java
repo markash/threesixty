@@ -6,16 +6,16 @@ import com.google.common.eventbus.SubscriberExceptionHandler;
 
 import za.co.yellowfire.threesixty.MainUI;
 
-/**
- * A simple wrapper for Guava event bus. Defines static convenience methods for
- * relevant actions.
- */
 public class DashboardEventBus implements SubscriberExceptionHandler {
 
-    private final EventBus eventBus = new EventBus(this);
+    private final EventBus eventBus;
 
+    public DashboardEventBus() {
+    	this.eventBus = new EventBus(this);
+    }
+    
     public static void post(final Object event) {
-        MainUI.getDashboardEventbus().eventBus.post(event);
+    	MainUI.getDashboardEventbus().eventBus.post(event);
     }
 
     public static void register(final Object object) {

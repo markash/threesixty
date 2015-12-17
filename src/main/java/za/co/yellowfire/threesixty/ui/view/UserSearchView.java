@@ -5,10 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.UI;
 
-import za.co.yellowfire.threesixty.domain.question.Questionaire;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserRepository;
 import za.co.yellowfire.threesixty.ui.component.SpringEntityProvider;

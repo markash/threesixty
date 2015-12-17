@@ -5,9 +5,10 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.themes.ValoTheme;
 
-import za.co.yellowfire.threesixty.MainUI;
-import za.co.yellowfire.threesixty.ui.DashboardEventBus;
+import za.co.yellowfire.threesixty.domain.user.User;
+import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.NotificationsCountUpdatedEvent;
+import za.co.yellowfire.threesixty.ui.DashboardEventBus;
 
 public class NotificationsButton extends Button {
 	private static final long serialVersionUID = 1L;
@@ -15,7 +16,13 @@ public class NotificationsButton extends Button {
 	private static final String STYLE_UNREAD = "unread";
     public static final String ID = "dashboard-notifications";
 
-    public NotificationsButton() {
+    private User currentUser;
+    private final UserService userService;
+    
+    public NotificationsButton(final UserService userService, final User currentUser) {
+    	this.userService = userService;
+    	this.currentUser = currentUser;
+    	
         setIcon(FontAwesome.BELL);
         setId(ID);
         addStyleName("notifications");
@@ -25,7 +32,7 @@ public class NotificationsButton extends Button {
 
     @Subscribe
     public void updateNotificationsCount(final NotificationsCountUpdatedEvent event) {
-        setUnreadCount(MainUI.getDataProvider().getUnreadNotificationsCount());
+        setUnreadCount(this.userService.getUnreadNotificationsCount(this.currentUser));
     }
 
     public void setUnreadCount(final int count) {
