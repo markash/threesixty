@@ -6,6 +6,7 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.themes.ValoTheme;
 
 public class ButtonBuilder {
 	
@@ -17,7 +18,9 @@ public class ButtonBuilder {
 		Button button = new Button(caption);
 		button.setIcon(fontIcon);
 		button.setWidth(100.0f, Unit.PERCENTAGE);
-        button.addClickListener(listener);
+		if (listener != null) {
+			button.addClickListener(listener);
+		}
         return button;
 	}
 	
@@ -37,7 +40,9 @@ public class ButtonBuilder {
 			button.setStyleName(styleName);
 		}
 		button.setWidth(100.0f, Unit.PERCENTAGE);
-        button.addClickListener(listener);
+		if (listener != null) {
+			button.addClickListener(listener);
+		}
         return button;
 	}
 	
@@ -61,10 +66,18 @@ public class ButtonBuilder {
 		return ButtonBuilder.build(BUTTON_CHANGE, FontAwesome.UPLOAD, listener, styles);	
 	}
 	
+	public static Button DASHBOARD_EDIT(final String id, final ClickListener listener) {
+		Button button =  ButtonBuilder.build(BUTTON_EDIT, FontAwesome.EDIT, listener, "icon-edit", ValoTheme.BUTTON_ICON_ONLY);
+		button.setId(id);
+		button.setDescription("Edit Dashboard");
+		return button;
+	}
+	
 	protected static final String BUTTON_SAVE = "Save";
 	protected static final String BUTTON_RESET = "Reset";
 	protected static final String BUTTON_DELETE = "Delete";
 	protected static final String BUTTON_NEW = "New...";
 	protected static final String BUTTON_CHANGE = "Change...";
+	protected static final String BUTTON_EDIT = "Edit...";
 }
 

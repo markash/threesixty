@@ -1,4 +1,4 @@
-package za.co.yellowfire.threesixty.domain.user;
+package za.co.yellowfire.threesixty.domain.user.notification;
 
 import java.util.List;
 

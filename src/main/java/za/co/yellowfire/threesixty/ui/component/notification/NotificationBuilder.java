@@ -1,4 +1,4 @@
-package za.co.yellowfire.threesixty.ui.component;
+package za.co.yellowfire.threesixty.ui.component.notification;
 
 import com.vaadin.server.Page;
 import com.vaadin.shared.Position;

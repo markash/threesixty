@@ -1,4 +1,4 @@
-package za.co.yellowfire.threesixty.domain.user;
+package za.co.yellowfire.threesixty.domain.user.notification;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -8,6 +8,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.domain.Auditable;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
+import za.co.yellowfire.threesixty.domain.user.User;
+
 @AccessType(Type.FIELD)
 public final class UserNotification implements Auditable<User, String> {
 	private static final long serialVersionUID = 1L;
@@ -15,6 +17,7 @@ public final class UserNotification implements Auditable<User, String> {
 	
 	@Id
 	private String id;
+	private NotificationCategory category;
     private String content;
     private boolean read = false;
     
@@ -42,7 +45,10 @@ public final class UserNotification implements Auditable<User, String> {
     public String getId() { return id; }
     public void setId(final String id) { this.id = id; }
 
-    public String getContent() { return content; }
+    public NotificationCategory getCategory() { return category; }
+	public void setCategory(NotificationCategory category) { this.category = category; }
+	
+	public String getContent() { return content; }
     public void setContent(final String content) { this.content = content; }
 
     public boolean isRead() { return read; }
@@ -137,6 +143,11 @@ public final class UserNotification implements Auditable<User, String> {
 	
 	public UserNotification at(final DateTime time) {
 		this.setTime(time);
+		return this;
+	}
+	
+	public UserNotification category(final NotificationCategory category) {
+		this.setCategory(category);
 		return this;
 	}
 	

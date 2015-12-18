@@ -22,8 +22,8 @@ import za.co.yellowfire.threesixty.domain.question.RatingQuestion;
 import za.co.yellowfire.threesixty.domain.question.RatingQuestionConfiguration;
 import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.component.FormButtons;
-import za.co.yellowfire.threesixty.ui.component.NotificationBuilder;
 import za.co.yellowfire.threesixty.ui.component.RatingQuestionForm;
+import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
 
 public class RatingQuestionWindow extends Window {
 	private static final long serialVersionUID = 1L;

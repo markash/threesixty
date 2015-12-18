@@ -39,7 +39,7 @@ import za.co.yellowfire.threesixty.ui.component.BeanBinder;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
 import za.co.yellowfire.threesixty.ui.component.FilterTextField;
 import za.co.yellowfire.threesixty.ui.component.HeaderButtons;
-import za.co.yellowfire.threesixty.ui.component.NotificationBuilder;
+import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
 import za.co.yellowfire.threesixty.ui.view.RatingQuestionWindow.SaveEvent;
 import za.co.yellowfire.threesixty.ui.view.RatingQuestionWindow.SaveListener;
 

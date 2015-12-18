@@ -14,12 +14,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
+
+import com.mongodb.DBRef;
+import com.vaadin.server.VaadinSession;
 
 import za.co.yellowfire.threesixty.RequestResult;
 import za.co.yellowfire.threesixty.Response;
 import za.co.yellowfire.threesixty.domain.GridFsClient;
 import za.co.yellowfire.threesixty.domain.InvalidUserException;
+import za.co.yellowfire.threesixty.domain.user.notification.NotificationCategory;
+import za.co.yellowfire.threesixty.domain.user.notification.NotificationSummary;
+import za.co.yellowfire.threesixty.domain.user.notification.UserNotification;
+import za.co.yellowfire.threesixty.domain.user.notification.UserNotificationRepository;
 	
 @Service		
 public class UserService {
@@ -32,6 +42,9 @@ public class UserService {
 	private UserNotificationRepository userNotificationRepository;
 	
 	private UserConfiguration userConfiguration;
+	
+	@Autowired
+	private MongoTemplate template;
 	
 	private final GridFsClient client;
 	
@@ -95,7 +108,7 @@ public class UserService {
 		countryRepository.save(Arrays.asList(countries));
 		
 		/*Notify that the server is running */
-		notify(administrator, administrator, "Server started.");
+		notify(administrator, administrator, NotificationCategory.System,  "Server started.");
 	}
 	
 	public Response<User> authenticate(final String userName, final String password) {
@@ -186,14 +199,32 @@ public class UserService {
 		return notifications;
 	}
 	
+	public List<NotificationSummary> getNotificationSummaries(@NotNull User user) {
+		
+		Aggregation aggregation = Aggregation.newAggregation(
+				Aggregation.match(Criteria.where("user").is(new DBRef("user", user.getId()))),
+				Aggregation.group("category").count().as("count"),
+				Aggregation.project("count").and("category").previousOperation(),
+				Aggregation.sort(Sort.Direction.DESC, "category")
+				);
+		
+		return template.aggregate(
+						aggregation, 
+						UserNotification.class, 
+						NotificationSummary.class).getMappedResults();
+	}
+	
 	public void notify(final User to, final String message) {
-		notify(to, null, message);
+		notify(to, null, NotificationCategory.System, message);
 	}
 	
-	public void notify(final User to, User from, final String message) {
-		this.userNotificationRepository.save(UserNotification.to(to).from(from).at(DateTime.now()).content(message));
+	public void notify(final User to, final User from, final NotificationCategory category, final String message) {
+		this.userNotificationRepository.save(UserNotification.to(to).from(from).at(DateTime.now()).category(category).content(message));
 	}
 	
+	public User getCurrentUser() {
+		return VaadinSession.getCurrent().getAttribute(User.class);
+	}
 	
 	private static String[] genders = {
 			"Male",

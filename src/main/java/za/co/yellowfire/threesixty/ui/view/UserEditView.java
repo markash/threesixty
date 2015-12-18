@@ -36,9 +36,9 @@ import za.co.yellowfire.threesixty.ui.component.BeanBinder;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
 import za.co.yellowfire.threesixty.ui.component.ByteArrayStreamResource;
 import za.co.yellowfire.threesixty.ui.component.HeaderButtons;
-import za.co.yellowfire.threesixty.ui.component.NotificationBuilder;
 import za.co.yellowfire.threesixty.ui.component.PictureSelectionForm;
 import za.co.yellowfire.threesixty.ui.component.PictureSelectionForm.FileEvent;
+import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
 import za.co.yellowfire.threesixty.ui.view.RatingQuestionWindow.SaveEvent;
 import za.co.yellowfire.threesixty.ui.view.RatingQuestionWindow.SaveListener;
 

@@ -30,6 +30,17 @@ public class PanelBuilder {
 		return layout;
 	}
 	
+	public static Layout VERTICAL(final String style, final Component...components) {
+		VerticalLayout layout = new VerticalLayout();
+		if (style != null) {
+			layout.addStyleName(style);
+		}
+		for (Component component : components) {
+			layout.addComponent(component);
+		}
+		return layout;
+	}
+	
 	public static Layout VERTICAL_CENTERED(final Component...components) {
 		VerticalLayout layout = new VerticalLayout();
 		layout.addStyleName(Style.Rating.FIELDS);
@@ -44,6 +55,18 @@ public class PanelBuilder {
 		HorizontalLayout layout = new HorizontalLayout();
 		layout.setWidth(100.0f, Unit.PERCENTAGE);
 		
+		for (Component component : components) {
+			layout.addComponent(component);
+		}
+		return layout;
+	}
+	
+	public static HorizontalLayout HORIZONTAL(final String style, final Component...components) {
+		HorizontalLayout layout = new HorizontalLayout();
+		layout.setWidth(100.0f, Unit.PERCENTAGE);
+		if (style != null) {
+			layout.setStyleName(style);
+		}
 		for (Component component : components) {
 			layout.addComponent(component);
 		}

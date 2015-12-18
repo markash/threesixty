@@ -21,7 +21,7 @@ import za.co.yellowfire.threesixty.domain.question.RatingQuestion;
 import za.co.yellowfire.threesixty.domain.question.RatingQuestionConfiguration;
 import za.co.yellowfire.threesixty.domain.question.RatingQuestionRepository;
 import za.co.yellowfire.threesixty.ui.Style;
-import za.co.yellowfire.threesixty.ui.component.NotificationBuilder;
+import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
 
 @SuppressWarnings("serial")
 @SpringView(name = RatingView.VIEW_NAME)

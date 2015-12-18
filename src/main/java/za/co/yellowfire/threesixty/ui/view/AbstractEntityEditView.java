@@ -19,7 +19,7 @@ import za.co.yellowfire.threesixty.domain.question.Service;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
 import za.co.yellowfire.threesixty.ui.component.HeaderButtons;
-import za.co.yellowfire.threesixty.ui.component.NotificationBuilder;
+import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
 
 @SuppressWarnings("serial")
 public abstract class AbstractEntityEditView<T extends Persistable<String>> extends AbstractDashboardPanel /*, DashboardEditListener*/ {

@@ -27,8 +27,8 @@ import za.co.yellowfire.threesixty.Response;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLoginEvent;
+import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
 import za.co.yellowfire.threesixty.ui.DashboardEventBus;
-import za.co.yellowfire.threesixty.ui.component.NotificationBuilder;
 
 @SpringView(name = LoginView.VIEW_NAME)
 public class LoginView extends VerticalLayout implements View {
