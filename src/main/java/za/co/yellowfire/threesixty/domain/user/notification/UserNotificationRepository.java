@@ -8,12 +8,15 @@ import org.springframework.data.mongodb.repository.Query;
 
 public interface UserNotificationRepository extends MongoRepository<UserNotification, String> {
 	
-	@Query("{user.id: {$eq: ?0}, read: {$eq: false}}")
+	@Query("{active: true}")
+	List<UserNotification> findAll();
+	
+	@Query("{user.id: {$eq: ?0}, read: false, active: true}")
 	List<UserNotification> findUnread(final String userName);
 	
-	@Query(count = true, value = "{user.id: {$eq: ?0}, read: {$eq: false}}")
+	@Query(count = true, value = "{user.id: {$eq: ?0}, read: false, active: true}")
 	int findUnreadCount(final String userName);
 	
-	@Query("{user.id: {$eq: ?0}, read: {$eq: false}}")
+	@Query("{user.id: {$eq: ?0}, active: true}")
 	List<UserNotification> findNotifications(final String userName, final int limit, final Sort sort);
 }

@@ -15,7 +15,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -27,6 +26,7 @@ import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.CloseOpenWindowsEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEventBus;
 import za.co.yellowfire.threesixty.ui.component.notification.NotificationsButton;
+import za.co.yellowfire.threesixty.ui.view.user.notification.UserNotificationSearchView;
 
 @SuppressWarnings("serial")
 @SpringView(name = DashboardView.VIEW_NAME)
@@ -42,11 +42,9 @@ public final class DashboardView extends Panel implements View /*, DashboardEdit
     private CssLayout dashboardPanels;
     private final VerticalLayout root;
     
-    private final UserService userService;
     
     @Autowired
     public DashboardView(final UserService userService) {
-        this.userService = userService;
         this.notificationsButton = NotificationsButton.BELL("dashboard-notifications", userService, this::onViewNotifications);
         
     	addStyleName(ValoTheme.PANEL_BORDERLESS);
@@ -241,9 +239,8 @@ public final class DashboardView extends Panel implements View /*, DashboardEdit
 //    }
 //
     
-
     public void onViewNotifications(final ClickEvent event) {
-    	Notification.show("Not implemented in this demo");
+    	UI.getCurrent().getNavigator().navigateTo(UserNotificationSearchView.VIEW_NAME);
     }
     
     @Override

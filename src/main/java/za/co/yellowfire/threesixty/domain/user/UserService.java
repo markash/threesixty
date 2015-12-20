@@ -180,29 +180,31 @@ public class UserService {
 		
 		Sort sort = new Sort(Direction.DESC, "time");
 		List<UserNotification> notifications = this.userNotificationRepository.findNotifications(user.getId(), limit, sort);
-		if (notifications != null && notifications.size() > limit) {
+		if (notifications != null && limit > 0 && notifications.size() > limit) {
 			return notifications.subList(0, limit - 1);
 		}
 		return notifications;
 	}
 	
 	public List<UserNotification> findNotifications(@NotNull final User user) {
-		if (user == null) { throw new InvalidUserException("User was null"); }
-		
-		int limit = 10; //userConfiguration.getNotification().getLimit();
-		Sort sort = new Sort(Direction.DESC, "time");
-		
-		List<UserNotification> notifications = this.userNotificationRepository.findNotifications(user.getId(), limit, sort);
-		if (notifications != null && notifications.size() > limit) {
-			return notifications.subList(0, limit - 1);
+		return findNotifications(user, 10);
+	}
+	
+	public void clearNotifications(@NotNull final User user) {
+		List<UserNotification> notifications = findNotifications(user, 1000);
+		for(UserNotification notification : notifications) {
+			notification.setActive(false);
 		}
-		return notifications;
+		userNotificationRepository.save(notifications);
 	}
 	
 	public List<NotificationSummary> getNotificationSummaries(@NotNull User user) {
 		
+		Criteria isActive = Criteria.where("active").is(true);
+		Criteria isForUser = Criteria.where("user").is(new DBRef("user", user.getId()));
+		
 		Aggregation aggregation = Aggregation.newAggregation(
-				Aggregation.match(Criteria.where("user").is(new DBRef("user", user.getId()))),
+				Aggregation.match(isForUser.andOperator(isActive)),
 				Aggregation.group("category").count().as("count"),
 				Aggregation.project("count").and("category").previousOperation(),
 				Aggregation.sort(Sort.Direction.DESC, "category")

@@ -9,7 +9,6 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.VerticalLayout;
@@ -20,14 +19,14 @@ import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.domain.user.notification.NotificationSummary;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.NotificationsCountUpdatedEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEventBus;
+import za.co.yellowfire.threesixty.ui.I8n;
+import za.co.yellowfire.threesixty.ui.Style;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
 import za.co.yellowfire.threesixty.ui.component.LabelBuilder;
 import za.co.yellowfire.threesixty.ui.component.PanelBuilder;
 
 public class NotificationsButton extends Button {
 	private static final long serialVersionUID = 1L;
-	
-	private static final String STYLE_UNREAD = "unread";
     public static final String ID = "dashboard-notifications";
     
     private final UserService userService;
@@ -52,10 +51,10 @@ public class NotificationsButton extends Button {
 
         String description = "Notifications";
         if (count > 0) {
-            addStyleName(STYLE_UNREAD);
+            addStyleName(Style.Notification.STYLE_UNREAD);
             description += " (" + count + " unread)";
         } else {
-            removeStyleName(STYLE_UNREAD);
+            removeStyleName(Style.Notification.STYLE_UNREAD);
         }
         setDescription(description);
     }
@@ -104,13 +103,29 @@ public class NotificationsButton extends Button {
     
     protected static final String BUTTON_BELL = "Notifications";
     
+    protected void onReadMore(final ClickEvent event) {
+    	
+    }
+    
+    protected void onClearAllNotifications(final ClickEvent event) {
+    	this.userService.clearNotifications(this.userService.getCurrentUser());
+    }
+    
     protected void onOpenNotificationsPopup(final ClickEvent event) {
         VerticalLayout notificationsLayout = new VerticalLayout();
         notificationsLayout.setMargin(true);
         notificationsLayout.setSpacing(true);
 
-        Label title = LabelBuilder.build("Notifications", ValoTheme.LABEL_H3, ValoTheme.LABEL_NO_MARGIN);
-        notificationsLayout.addComponent(title);
+        
+        Label title = LabelBuilder.build(I8n.Notifications.HEADER, ValoTheme.LABEL_H3, ValoTheme.LABEL_NO_MARGIN, Style.Notification.HEADER);
+        Button clearAllButton = ButtonBuilder.CLEAR_ALL(this::onClearAllNotifications, ValoTheme.BUTTON_BORDERLESS_COLORED, ValoTheme.BUTTON_SMALL);
+        
+        HorizontalLayout titlePanel = PanelBuilder.HORIZONTAL(Style.Notification.HEADER, title, clearAllButton);
+        titlePanel.addStyleName(ValoTheme.WINDOW_TOP_TOOLBAR);
+        titlePanel.setExpandRatio(title, 2.0f);
+        titlePanel.setExpandRatio(clearAllButton, 1.0f);
+    	
+        notificationsLayout.addComponent(titlePanel);
         
         DashboardEventBus.post(new NotificationsCountUpdatedEvent());
 
@@ -131,14 +146,14 @@ public class NotificationsButton extends Button {
 	        	}
         	}
         	
-        	Label icon = LabelBuilder.build(font.getHtml(), ContentMode.HTML, "notification-icon");
+        	Label icon = LabelBuilder.build(font.getHtml(), ContentMode.HTML, Style.Notification.ICON);
         	
         	Layout content = PanelBuilder.VERTICAL(
-    				LabelBuilder.build(summary.getTitle(), "notification-title"),
-    				LabelBuilder.build("Read more", "notification-content")
+    				LabelBuilder.build(summary.getTitle(), Style.Notification.TITLE),
+    				ButtonBuilder.build("Read more", null, this::onReadMore, ValoTheme.BUTTON_BORDERLESS_COLORED, ValoTheme.BUTTON_SMALL, Style.Notification.CONTENT)
     				);
         	
-        	HorizontalLayout notification = PanelBuilder.HORIZONTAL("notification-item", icon, content);
+        	HorizontalLayout notification = PanelBuilder.HORIZONTAL(Style.Notification.ITEM, icon, content);
         	notification.setExpandRatio(icon, 1.0f);
         	notification.setExpandRatio(content, 5.0f);
         	
@@ -148,10 +163,10 @@ public class NotificationsButton extends Button {
 
         HorizontalLayout footer = new HorizontalLayout();
         footer.addStyleName(ValoTheme.WINDOW_BOTTOM_TOOLBAR);
-        footer.setWidth("100%");
+        footer.setWidth(100.0f, Unit.PERCENTAGE);
         
         Button showAll = ButtonBuilder.build(
-        		"View All Notifications", 
+        		I8n.Notifications.BUTTON_VIEW_ALL, 
         		null, 
         		viewNotificationsClickListner, 
         		ValoTheme.BUTTON_BORDERLESS_COLORED, ValoTheme.BUTTON_SMALL);

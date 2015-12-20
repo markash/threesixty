@@ -8,6 +8,9 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.themes.ValoTheme;
 
+import za.co.yellowfire.threesixty.ui.I8n;
+import za.co.yellowfire.threesixty.ui.Style;
+
 public class ButtonBuilder {
 	
 	public static Button build(final String caption, final ClickListener listener) {
@@ -47,37 +50,40 @@ public class ButtonBuilder {
 	}
 	
 	public static Button SAVE(final ClickListener listener, final String...styles) {
-		return ButtonBuilder.build(BUTTON_SAVE, FontAwesome.CHECK_CIRCLE, listener, styles);	
+		return ButtonBuilder.build(I8n.Button.SAVE, FontAwesome.CHECK_CIRCLE, listener, styles);	
+	}
+	
+	public static Button CANCEL(final ClickListener listener, final String...styles) {
+		return ButtonBuilder.build(I8n.Button.CANCEL, null, listener, styles);	
 	}
 	
 	public static Button RESET(final ClickListener listener, final String...styles) {
-		return ButtonBuilder.build(BUTTON_RESET, FontAwesome.REFRESH, listener, styles);	
+		return ButtonBuilder.build(I8n.Button.RESET, FontAwesome.REFRESH, listener, styles);	
 	}
 	
 	public static Button NEW(final ClickListener listener, final String...styles) {
-		return ButtonBuilder.build(BUTTON_NEW, FontAwesome.ASTERISK, listener, styles);	
+		return ButtonBuilder.build(I8n.Button.NEW, FontAwesome.ASTERISK, listener, styles);	
 	}
 	
 	public static Button DELETE(final ClickListener listener, final String...styles) {
-		return ButtonBuilder.build(BUTTON_DELETE, FontAwesome.REMOVE, listener, styles);	
+		return ButtonBuilder.build(I8n.Button.DELETE, FontAwesome.REMOVE, listener, styles);	
 	}
 	
 	public static Button CHANGE(final ClickListener listener, final String...styles) {
-		return ButtonBuilder.build(BUTTON_CHANGE, FontAwesome.UPLOAD, listener, styles);	
+		return ButtonBuilder.build(I8n.Button.CHANGE, FontAwesome.UPLOAD, listener, styles);	
+	}
+	
+	public static Button CLEAR_ALL(final ClickListener listener, final String...styles) {
+		Button button = ButtonBuilder.build(I8n.Button.CLEAR_ALL, null, listener, styles);	
+		button.setWidthUndefined();
+		return button;
 	}
 	
 	public static Button DASHBOARD_EDIT(final String id, final ClickListener listener) {
-		Button button =  ButtonBuilder.build(BUTTON_EDIT, FontAwesome.EDIT, listener, "icon-edit", ValoTheme.BUTTON_ICON_ONLY);
+		Button button =  ButtonBuilder.build(I8n.Button.EDIT, FontAwesome.EDIT, listener, Style.Button.ICON_EDIT, ValoTheme.BUTTON_ICON_ONLY);
 		button.setId(id);
 		button.setDescription("Edit Dashboard");
 		return button;
 	}
-	
-	protected static final String BUTTON_SAVE = "Save";
-	protected static final String BUTTON_RESET = "Reset";
-	protected static final String BUTTON_DELETE = "Delete";
-	protected static final String BUTTON_NEW = "New...";
-	protected static final String BUTTON_CHANGE = "Change...";
-	protected static final String BUTTON_EDIT = "Edit...";
 }
 

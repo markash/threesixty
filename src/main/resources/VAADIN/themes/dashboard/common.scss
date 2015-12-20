@@ -314,5 +314,10 @@
   .notification-icon {
   	font-size: 38px;
   }
+  
+  .notification-header {
+  	background-color: $v-background-color;
+  	color: $v-shade;
+  }
 }
 

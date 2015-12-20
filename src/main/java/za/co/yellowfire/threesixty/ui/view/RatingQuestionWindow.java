@@ -20,7 +20,7 @@ import za.co.yellowfire.threesixty.domain.question.Questionaire;
 import za.co.yellowfire.threesixty.domain.question.QuestionaireService;
 import za.co.yellowfire.threesixty.domain.question.RatingQuestion;
 import za.co.yellowfire.threesixty.domain.question.RatingQuestionConfiguration;
-import za.co.yellowfire.threesixty.ui.I8n;
+import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
 import za.co.yellowfire.threesixty.ui.component.FormButtons;
 import za.co.yellowfire.threesixty.ui.component.RatingQuestionForm;
 import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
@@ -31,9 +31,10 @@ public class RatingQuestionWindow extends Window {
 	private Questionaire questionaire;
 	private final RatingQuestionForm form;
 	private final QuestionaireService service;
-	private final Button saveButton = new Button(I8n.BUTTON_OK, event -> { save(event); });
-	private final Button cancelButton = new Button(I8n.BUTTON_CANCEL, event -> { cancel(event); });
-	private final Button resetButton = new Button(I8n.BUTTON_RESET);
+	private final Button saveButton = ButtonBuilder.SAVE(this::onSave);
+	private final Button cancelButton = ButtonBuilder.CANCEL(this::onCancel);
+	private final Button resetButton = ButtonBuilder.RESET(this::onReset);
+	
 	private final List<SaveListener> saveListeners = new ArrayList<>();
 	
 	public RatingQuestionWindow(
@@ -88,7 +89,7 @@ public class RatingQuestionWindow extends Window {
 		}
 	}
 	
-	protected void save(ClickEvent event) {
+	protected void onSave(ClickEvent event) {
 		try {
 			//Validate the field group
 	        form.commit();
@@ -106,7 +107,7 @@ public class RatingQuestionWindow extends Window {
         }
 	}
 
-	protected void cancel(ClickEvent event) {
+	protected void onCancel(ClickEvent event) {
 		if (form.isModified()) {
 			ConfirmDialog.show(
 					UI.getCurrent(), 
@@ -123,6 +124,22 @@ public class RatingQuestionWindow extends Window {
 			            });
 		} else {
 			UI.getCurrent().removeWindow(this);
+		}
+	}
+	
+	protected void onReset(ClickEvent event) {
+		if (form.isModified()) {
+			ConfirmDialog.show(
+					UI.getCurrent(), 
+					"Confirmation", 
+					"Would you like to discard you changes?",
+					"Yes",
+					"No",
+			        dialog -> {
+			                if (dialog.isConfirmed()) {
+			                	form.discard();
+			                }
+			            });
 		}
 	}
 	
