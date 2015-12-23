@@ -12,6 +12,7 @@ public interface Style {
 		String ITEM = "notification-item";
 		String TITLE = "notification-title";
 		String CONTENT = "notification-content";
+		String TIME = "notification-time";
 		String STYLE_UNREAD = "unread";
 	}
 	

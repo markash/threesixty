@@ -23,7 +23,7 @@ public class IdealEntityEditForm extends AbstractEntityEditForm<Ideal> {
 	protected void internalLayout() {
 		
 		addComponent(PanelBuilder.FORM(
-        		PanelBuilder.HORIZONTAL(idField, descriptionField),
+        		idField, descriptionField,
         		PanelBuilder.HORIZONTAL(new Label(""), new Label(""))
         ));
         addComponent(new Label(""));

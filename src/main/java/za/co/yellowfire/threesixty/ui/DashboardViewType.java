@@ -19,8 +19,8 @@ import za.co.yellowfire.threesixty.ui.view.user.notification.UserNotificationSea
 public enum DashboardViewType {
     DASHBOARD("dashboard", DashboardView.class, FontAwesome.HOME, true, null), 
     USER_SEARCH(UserSearchView.VIEW_NAME, UserSearchView.class, FontAwesome.USERS, true, Role.ADMIN),
-    RATING(RatingView.VIEW_NAME, RatingView.class, FontAwesome.QUESTION_CIRCLE, true, Role.ADMIN),
-    QUESTIONAIRE_SEARCH(QuestionaireSearchView.VIEW_NAME, QuestionaireSearchView.class, FontAwesome.BRIEFCASE, true, Role.ADMIN),
+    //RATING(RatingView.VIEW_NAME, RatingView.class, FontAwesome.QUESTION_CIRCLE, true, Role.ADMIN),
+    //QUESTIONAIRE_SEARCH(QuestionaireSearchView.VIEW_NAME, QuestionaireSearchView.class, FontAwesome.BRIEFCASE, true, Role.ADMIN),
     OUTCOME_SEARCH(OutcomesSearchView.VIEW_NAME, OutcomesSearchView.class, FontAwesome.BUILDING_O, true, Role.ADMIN),
     ASSESSMENT_SEARCH(AssessmentSearchView.VIEW_NAME, AssessmentSearchView.class, FontAwesome.BRIEFCASE, true, null),
     BADGE_SEARCH(BadgeSearchView.VIEW_NAME, BadgeSearchView.class, FontAwesome.STAR_O, true, Role.ADMIN),

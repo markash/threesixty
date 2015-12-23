@@ -313,11 +313,18 @@
   
   .notification-icon {
   	font-size: 38px;
+  	line-height: 38px;
   }
   
   .notification-header {
   	background-color: $v-background-color;
   	color: $v-shade;
+  }
+  
+  .notification-time {
+  	border-style: solid;
+	border-color: $v-shade;
+    border-width: 0px 0px 0px 1px;
   }
 }
 

@@ -20,6 +20,7 @@ import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
 import za.co.yellowfire.threesixty.ui.component.HeaderButtons;
 import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
+import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm.DirtyEvent;
 
 @SuppressWarnings("serial")
 public abstract class AbstractEntityEditView<T extends Persistable<String>> extends AbstractDashboardPanel /*, DashboardEditListener*/ {
@@ -37,6 +38,7 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
 		super();
 		this.service = service;
 		this.form = form;
+		this.form.addDirtyListener(this::onDirty);
 	}
 
 	@Override
@@ -64,6 +66,7 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
 		}
 			
 		build();
+		onClean();
     }
 	
 	protected T findEntity(final String id) {
@@ -79,6 +82,7 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
 	        //Notify the user of the outcome
 	        NotificationBuilder.showNotification("Update", "Outcome " + result.getId() + " updated successfully.", 2000);
 	        //DashboardEventBus.post(new ProfileUpdatedEvent());
+	        onClean();
 		} catch (CommitException exception) {
             Notification.show("Error while updating user", Type.ERROR_MESSAGE);
         }
@@ -100,12 +104,14 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
 			                    //DashboardEventBus.post(new ProfileUpdatedEvent());
 			                    //Set a new data source
 			                	form.bindToEmpty();
+			                	onClean();
 			                }
 			            }
 			        });
 		} else {
 			form.discard();
 			form.bindToEmpty();
+			onClean();
 		}
 	}
 	
@@ -127,6 +133,7 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
 			                    //Discard the field group
 			                    form.discard();
 			                    //DashboardEventBus.post(new ProfileUpdatedEvent());
+			                    onClean();
 			                }
 			            }
 			        });
@@ -136,9 +143,38 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
 	}
 	
 	protected void onReset(ClickEvent event) {
+		if (form.isModified()) {
+			ConfirmDialog.show(
+					UI.getCurrent(), 
+					"Confirmation", 
+					"Would you like to discard you changes?",
+					"Yes",
+					"No",
+			        new ConfirmDialog.Listener() {
+			            public void onClose(ConfirmDialog dialog) {
+			                if (dialog.isConfirmed()) {
+			                	form.discard();
+			                	onClean();
+			                }
+			            }
+			        });
+		} else {
+			form.discard();
+			onClean();
+		}
 	}
 	
 	protected void onCreate(ClickEvent event) {
+	}
+	
+	protected void onDirty(final DirtyEvent event) {
+		this.saveButton.setEnabled(true);
+		this.resetButton.setEnabled(true);
+	}
+	
+	protected void onClean() {
+		this.saveButton.setEnabled(false);
+		this.resetButton.setEnabled(false);
 	}
 	
 	protected User getCurrentUser() {

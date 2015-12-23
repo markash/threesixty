@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.data.fieldgroup.PropertyId;
+import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.TextArea;
@@ -57,6 +58,7 @@ public class UserNotificationEntityEditForm extends AbstractEntityEditForm<UserN
 	@Override
 	protected void internalLayout() {
 		
+		
 		addComponent(PanelBuilder.FORM(
 				idField,
 				PanelBuilder.HORIZONTAL(categoryField, actionField),
@@ -71,26 +73,26 @@ public class UserNotificationEntityEditForm extends AbstractEntityEditForm<UserN
         );
 	}
 	
-	
 	@Override
 	protected void updateFieldContraints() {
 		super.updateFieldContraints();
 	
-		if (!getValue().isNew()) {
-			com.vaadin.ui.Component[] components = 
-					new com.vaadin.ui.Component[] {
-							createdByField,
-							createdAtField,
-							modifiedByField,
-							modifiedAtField,
-							categoryField,
-							actionField,
-							timeField,
-							userField,
-							contentField};
-			for(com.vaadin.ui.Component component : components) {
-				component.setEnabled(false);
-			}
+		AbstractField<?>[] fields = 
+				new AbstractField<?>[] {
+						createdByField,
+						createdAtField,
+						modifiedByField,
+						modifiedAtField,
+						categoryField,
+						actionField,
+						timeField,
+						userField,
+						contentField};
+						
+		for(AbstractField<?> field : fields) {
+			field.setEnabled(false);
+			field.removeValueChangeListener(this::onValueChange);
+			field.addValueChangeListener(this::onValueChange);
 		}
 	}
 

@@ -109,6 +109,7 @@ public class NotificationsButton extends Button {
     
     protected void onClearAllNotifications(final ClickEvent event) {
     	this.userService.clearNotifications(this.userService.getCurrentUser());
+    	DashboardEventBus.post(new NotificationsCountUpdatedEvent());
     }
     
     protected void onOpenNotificationsPopup(final ClickEvent event) {
@@ -149,13 +150,17 @@ public class NotificationsButton extends Button {
         	Label icon = LabelBuilder.build(font.getHtml(), ContentMode.HTML, Style.Notification.ICON);
         	
         	Layout content = PanelBuilder.VERTICAL(
-    				LabelBuilder.build(summary.getTitle(), Style.Notification.TITLE),
-    				ButtonBuilder.build("Read more", null, this::onReadMore, ValoTheme.BUTTON_BORDERLESS_COLORED, ValoTheme.BUTTON_SMALL, Style.Notification.CONTENT)
+    				LabelBuilder.build(summary.getTitle(), ContentMode.HTML, Style.Notification.TITLE),
+    				LabelBuilder.blank()
+    				//ButtonBuilder.build("Read more", null, this::onReadMore, ValoTheme.BUTTON_BORDERLESS_COLORED, ValoTheme.BUTTON_SMALL, Style.Notification.CONTENT)
     				);
         	
-        	HorizontalLayout notification = PanelBuilder.HORIZONTAL(Style.Notification.ITEM, icon, content);
+        	Label time = LabelBuilder.build("Multi", Style.Notification.TIME);
+        	
+        	HorizontalLayout notification = PanelBuilder.HORIZONTAL(Style.Notification.ITEM, icon, content, time);
         	notification.setExpandRatio(icon, 1.0f);
         	notification.setExpandRatio(content, 5.0f);
+        	notification.setExpandRatio(time, 1.0f);
         	
         	notificationsLayout.addComponent(notification);
         	
@@ -184,6 +189,8 @@ public class NotificationsButton extends Button {
             notificationsWindow.setDraggable(false);
             notificationsWindow.addCloseShortcut(KeyCode.ESCAPE, null);
             notificationsWindow.setContent(notificationsLayout);
+        } else {
+        	notificationsWindow.setContent(notificationsLayout);
         }
 
         if (!notificationsWindow.isAttached()) {

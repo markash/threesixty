@@ -5,6 +5,10 @@ import com.vaadin.ui.Label;
 
 public class LabelBuilder {
 
+	public static Label blank() {
+		return new Label("");
+	}
+	
 	public static Label build(final String content) {
 		return new Label(content);
 	}

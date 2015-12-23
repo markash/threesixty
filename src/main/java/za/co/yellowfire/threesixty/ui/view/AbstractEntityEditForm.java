@@ -1,10 +1,16 @@
 package za.co.yellowfire.threesixty.ui.view;
 
+import java.io.Serializable;
+import java.util.LinkedHashSet;
+
 import org.springframework.data.domain.Persistable;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.fieldgroup.PropertyId;
+import com.vaadin.ui.Field;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
@@ -19,6 +25,7 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
     protected TextField idField = new TextField("Id");
 	
 	private BeanFieldGroup<T> fieldGroup;
+	private LinkedHashSet<DirtyListener> dirtyListeners = new LinkedHashSet<>();
 	
 	private boolean layoutCompleted = false;
 	
@@ -40,8 +47,9 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
 	public void bind(final T newValue) {
 		T value = newValue != null ? newValue : buildEmpty();
 		this.fieldGroup = BeanBinder.bind(value, this, true);
-		
+				
 		updateFieldContraints();
+		registerDirtyListener();
 	}
 	
 	public void discard() {
@@ -54,6 +62,25 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
 	
 	public boolean isModified() {
 		return this.fieldGroup.isModified();
+	}
+	
+	public void addDirtyListener(final DirtyListener listener) {
+		if (listener != null) {
+			this.dirtyListeners.add(listener);
+		}
+	}
+	
+	public void removeDirtyListener(final DirtyListener listener) {
+		if (listener != null) {
+			this.dirtyListeners.remove(listener);
+		}
+	}
+	
+	protected void registerDirtyListener() {
+		for(Field<?> field : this.fieldGroup.getFields()) {
+			field.removeValueChangeListener(this::onValueChange);
+			field.addValueChangeListener(this::onValueChange);
+		}
 	}
 	
 	protected void updateFieldContraints() {
@@ -74,4 +101,31 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
         		idField));
         addComponent(new Label(""));
 	}
+	
+	protected void onValueChange(final ValueChangeEvent event) {
+		if (isModified()) {
+			for (DirtyListener listener : dirtyListeners) {
+				listener.onDirty(new FormDirtyEvent(event.getProperty()));
+			}
+		}
+	}
+	
+	/**
+	 * 
+     */
+    public interface DirtyListener extends Serializable {
+        public void onDirty(DirtyEvent event);
+    }
+    
+    public interface DirtyEvent extends Serializable {
+        public Property<?> getProperty();
+    }
+    
+    public static class FormDirtyEvent implements DirtyEvent {
+    	private final Property<?> property;
+    	public FormDirtyEvent(Property<?> property) {
+    		this.property = property;
+    	}
+    	public Property<?> getProperty() { return this.property; }
+    }
 }

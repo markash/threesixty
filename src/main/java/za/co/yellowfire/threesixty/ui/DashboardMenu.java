@@ -166,12 +166,12 @@ public class DashboardMenu extends CustomComponent {
                 menuItemComponent = buildBadgeWrapper(menuItemComponent,
                         notificationsBadge);
             }
-            if (view == DashboardViewType.RATING) {
-                reportsBadge = new Label();
-                reportsBadge.setId(RATING_BADGE_ID);
-                menuItemComponent = buildBadgeWrapper(menuItemComponent,
-                        reportsBadge);
-            }
+            //if (view == DashboardViewType.RATING) {
+            //    reportsBadge = new Label();
+            //    reportsBadge.setId(RATING_BADGE_ID);
+            //    menuItemComponent = buildBadgeWrapper(menuItemComponent,
+            //            reportsBadge);
+            //}
             
             menuItemsLayout.addComponent(menuItemComponent);
         }
