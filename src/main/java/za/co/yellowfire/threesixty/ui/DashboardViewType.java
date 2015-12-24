@@ -7,11 +7,10 @@ import com.vaadin.server.Resource;
 import za.co.yellowfire.threesixty.domain.user.Role;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.view.DashboardView;
-import za.co.yellowfire.threesixty.ui.view.QuestionaireSearchView;
-import za.co.yellowfire.threesixty.ui.view.RatingView;
 import za.co.yellowfire.threesixty.ui.view.UserSearchView;
 import za.co.yellowfire.threesixty.ui.view.kudos.BadgeSearchView;
 import za.co.yellowfire.threesixty.ui.view.kudos.IdealSearchView;
+import za.co.yellowfire.threesixty.ui.view.kudos.KudosEditView;
 import za.co.yellowfire.threesixty.ui.view.rating.AssessmentSearchView;
 import za.co.yellowfire.threesixty.ui.view.rating.OutcomesSearchView;
 import za.co.yellowfire.threesixty.ui.view.user.notification.UserNotificationSearchView;
@@ -25,7 +24,8 @@ public enum DashboardViewType {
     ASSESSMENT_SEARCH(AssessmentSearchView.VIEW_NAME, AssessmentSearchView.class, FontAwesome.BRIEFCASE, true, null),
     BADGE_SEARCH(BadgeSearchView.VIEW_NAME, BadgeSearchView.class, FontAwesome.STAR_O, true, Role.ADMIN),
     IDEAL_SEARCH(IdealSearchView.VIEW_NAME, IdealSearchView.class, FontAwesome.DIAMOND, true, Role.ADMIN),
-    NOTIFICATION_SEARCH(UserNotificationSearchView.VIEW_NAME, UserNotificationSearchView.class, FontAwesome.ENVELOPE_O, true, null)
+    NOTIFICATION_SEARCH(UserNotificationSearchView.VIEW_NAME, UserNotificationSearchView.class, FontAwesome.ENVELOPE_O, true, null),
+    KUDOS(KudosEditView.VIEW_NAME, KudosEditView.class, FontAwesome.HEART_O, true, null)
     //SALES("sales", SalesView.class, FontAwesome.BAR_CHART_O, false), 
     //TRANSACTIONS("transactions", TransactionsView.class, FontAwesome.TABLE, false), 
     //REPORTS("reports", ReportsView.class, FontAwesome.FILE_TEXT_O, true), 

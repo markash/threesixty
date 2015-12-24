@@ -326,5 +326,26 @@
 	border-color: $v-shade;
     border-width: 0px 0px 0px 1px;
   }
+  
+  .kudos-received-header {
+  	background-color: $v-background-color;
+  	color: $v-shade;
+  }
+  
+  .kudos-received-item {
+  	margin: 5px;
+  }
+  
+  .kudos-received-image {
+  	width: 60px;
+  }
+  
+  .bolded {
+  	font-weight: bold;
+  }
+  
+  .italicized {
+  	font-style: italic;
+  }
 }
 

@@ -30,13 +30,27 @@ public class PanelBuilder {
 		return layout;
 	}
 	
-	public static Layout VERTICAL(final String style, final Component...components) {
+	public static VerticalLayout VERTICAL(final String style, final Component...components) {
 		VerticalLayout layout = new VerticalLayout();
 		if (style != null) {
 			layout.addStyleName(style);
 		}
 		for (Component component : components) {
 			layout.addComponent(component);
+		}
+		return layout;
+	}
+	
+	public static VerticalLayout VERTICAL(final String style, final Component component, final Component...components) {
+		VerticalLayout layout = new VerticalLayout();
+		if (style != null) {
+			layout.addStyleName(style);
+		}
+		
+		layout.addComponent(component);
+		
+		for (Component c : components) {
+			layout.addComponent(c);
 		}
 		return layout;
 	}

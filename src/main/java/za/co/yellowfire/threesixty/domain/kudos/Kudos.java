@@ -18,22 +18,25 @@ import za.co.yellowfire.threesixty.domain.VisualEntity;
 import za.co.yellowfire.threesixty.domain.user.User;
 
 @AccessType(Type.FIELD)
-public class Badge implements Auditable<User, String>, VisualEntity {
+public class Kudos implements Auditable<User, String>, VisualEntity {
 	private static final long serialVersionUID = 1L;
-	private static final String IMAGE_PREFIX = "badge_";
-	public static final Badge EMPTY() { return new Badge(); }
+	private static final String IMAGE_PREFIX = "kudos_";
+	public static final Kudos EMPTY() { return new Kudos(); }
 	
 	@Id
 	private String id;
-	private String description;
+	private String message;
 	@DBRef
-	private Ideal ideal;
-	private String motivation;
+	private Badge badge;
+	@DBRef
+	private User recipient;
 	
+	/* Image */
 	private String image;
 	@Transient
     private byte[] imageContent = new byte[0];
 	
+	/* Auditing & Existence */
 	private boolean active = true;
 	@DBRef
 	private User createdBy;
@@ -47,14 +50,14 @@ public class Badge implements Auditable<User, String>, VisualEntity {
 	public String getId() { return this.id; }
     public void setId(String id) { this.id = id; }
     
-    public String getDescription() { return description; }
-	public void setDescription(String description) { this.description = description; }
+    public String getMessage() { return this.message; }
+	public void setMessage(final String message) { this.message = message; }
 	
-	public Ideal getIdeal() { return ideal; }
-	public void setIdeal(Ideal ideal) { this.ideal = ideal; }
+	public Badge getBadge() { return badge; }
+	public void setBadge(final Badge badge) { this.badge = badge; }
 	
-	public String getMotivation() { return motivation; }
-	public void setMotivation(String motivation) { this.motivation = motivation; }
+	public User getRecipient() { return this.recipient; }
+	public void setRecipient(final User recipient) { this.recipient = recipient; }
 	
 	public byte[] getPictureContent() { return this.imageContent; };
     public String getPictureName() { return this.image; }
@@ -123,8 +126,4 @@ public class Badge implements Auditable<User, String>, VisualEntity {
 			setLastModifiedDate(DateTime.now());
 		}
 	}
-	@Override
-	public String toString() {
-		return this.id;
-	}	
 }

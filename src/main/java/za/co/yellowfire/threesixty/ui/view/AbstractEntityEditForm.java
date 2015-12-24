@@ -10,6 +10,7 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.fieldgroup.PropertyId;
+import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -85,6 +86,11 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
 	
 	protected void updateFieldContraints() {
 		idField.setEnabled(getValue().isNew());
+		
+		for(Field<?> field : fieldGroup.getFields()) {
+			field.removeValueChangeListener(this::onValueChange);
+			field.addValueChangeListener(this::onValueChange);
+		}
 	}
 	
 	protected abstract T buildEmpty();

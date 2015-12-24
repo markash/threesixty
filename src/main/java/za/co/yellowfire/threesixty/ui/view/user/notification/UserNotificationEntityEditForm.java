@@ -77,6 +77,7 @@ public class UserNotificationEntityEditForm extends AbstractEntityEditForm<UserN
 	protected void updateFieldContraints() {
 		super.updateFieldContraints();
 	
+	
 		AbstractField<?>[] fields = 
 				new AbstractField<?>[] {
 						createdByField,
@@ -88,12 +89,14 @@ public class UserNotificationEntityEditForm extends AbstractEntityEditForm<UserN
 						timeField,
 						userField,
 						contentField};
-						
+		
+		
 		for(AbstractField<?> field : fields) {
 			field.setEnabled(false);
-			field.removeValueChangeListener(this::onValueChange);
-			field.addValueChangeListener(this::onValueChange);
+			//field.removeValueChangeListener(this::onValueChange);
+			//field.addValueChangeListener(this::onValueChange);
 		}
+		
 	}
 
 

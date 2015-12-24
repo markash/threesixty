@@ -103,9 +103,9 @@ public class NotificationsButton extends Button {
     
     protected static final String BUTTON_BELL = "Notifications";
     
-    protected void onReadMore(final ClickEvent event) {
-    	
-    }
+//    protected void onReadMore(final ClickEvent event) {
+//    	
+//    }
     
     protected void onClearAllNotifications(final ClickEvent event) {
     	this.userService.clearNotifications(this.userService.getCurrentUser());

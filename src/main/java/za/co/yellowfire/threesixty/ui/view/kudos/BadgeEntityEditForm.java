@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.data.fieldgroup.PropertyId;
@@ -39,11 +40,11 @@ public class BadgeEntityEditForm extends AbstractEntityEditForm<Badge> {
 	@PropertyId("description")
 	private TextField descriptionField;
 	
-	@Autowired
+	@Autowired @Qualifier("kudos")
 	@PropertyId("ideal")
 	private ComboBox idealField;
 	
-	@Autowired
+	@Autowired @Qualifier("kudos")
 	@PropertyId("motivation")
 	private TextArea motivationField;
 	

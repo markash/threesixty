@@ -42,4 +42,24 @@ public class I8n {
 			}
 		}
 	}
+	
+	public interface Ideal {	
+		public interface Fields {
+			String IDEAL = "Ideal";
+		}
+	}
+	
+	public interface Kudos {
+		
+		public interface Fields {
+			String BADGE = "Badge";
+			String RECIPIENT = "Recipient";
+			String MESSAGE = "Message";
+			String IMAGE = "Image";
+		}
+		
+		public interface Received {
+			String NONE = "No kudos received as yet.";
+		}
+	}
 }
