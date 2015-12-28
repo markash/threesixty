@@ -78,7 +78,8 @@ public class ProfilePreferencesWindow extends Window {
         Responsive.makeResponsive(this);
 
         setModal(true);
-        addCloseShortcut(KeyCode.ESCAPE, null);
+        //TODO Add back in 7.6
+        //addCloseShortcut(KeyCode.ESCAPE, null);
         setResizable(false);
         setClosable(false);
         setHeight(90.0f, Unit.PERCENTAGE);

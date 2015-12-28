@@ -26,8 +26,8 @@ import za.co.yellowfire.threesixty.domain.kudos.BadgeRepository;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
 import za.co.yellowfire.threesixty.ui.component.ByteArrayStreamResource;
 import za.co.yellowfire.threesixty.ui.component.PanelBuilder;
-import za.co.yellowfire.threesixty.ui.component.PictureSelectionForm;
-import za.co.yellowfire.threesixty.ui.component.PictureSelectionForm.FileEvent;
+import za.co.yellowfire.threesixty.ui.component.field.PictureSelectionForm;
+import za.co.yellowfire.threesixty.ui.component.field.PictureSelectionForm.FileEvent;
 import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm;
 
 @Component

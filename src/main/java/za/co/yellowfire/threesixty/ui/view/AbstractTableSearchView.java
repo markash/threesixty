@@ -15,9 +15,9 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 
-import za.co.yellowfire.threesixty.ui.component.FilterTextField;
-import za.co.yellowfire.threesixty.ui.component.HeaderButtons;
 import za.co.yellowfire.threesixty.ui.component.SpringEntityProvider;
+import za.co.yellowfire.threesixty.ui.component.button.HeaderButtons;
+import za.co.yellowfire.threesixty.ui.component.field.FilterTextField;
 
 /**
  * Abstract table search view
@@ -55,7 +55,7 @@ public abstract class AbstractTableSearchView<T, ID extends Serializable> extend
 		build();
 	}
 	
-	protected Component buildHeaderButtons() {
+	protected Component getHeaderButtons() {
 		if (propertiesToFilterOn != null) {
 			return new HeaderButtons(new FilterTextField<T>(this.table, this.propertiesToFilterOn), getTableButtons());
 		} else {

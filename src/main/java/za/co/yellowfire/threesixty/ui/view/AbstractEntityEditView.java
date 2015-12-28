@@ -18,7 +18,7 @@ import za.co.yellowfire.threesixty.MainUI;
 import za.co.yellowfire.threesixty.domain.question.Service;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
-import za.co.yellowfire.threesixty.ui.component.HeaderButtons;
+import za.co.yellowfire.threesixty.ui.component.button.HeaderButtons;
 import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
 import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm.DirtyEvent;
 
@@ -54,7 +54,7 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
 		return root;
 	}
     
-    protected Component buildHeaderButtons() {
+    protected Component getHeaderButtons() {
         return new HeaderButtons(buttons);
  	}
     

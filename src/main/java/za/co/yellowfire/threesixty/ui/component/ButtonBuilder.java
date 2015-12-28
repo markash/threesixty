@@ -66,7 +66,7 @@ public class ButtonBuilder {
 	}
 	
 	public static Button DELETE(final ClickListener listener, final String...styles) {
-		return ButtonBuilder.build(I8n.Button.DELETE, FontAwesome.REMOVE, listener, styles);	
+		return ButtonBuilder.build(I8n.Button.DELETE, /*TODO FontAwesome.REMOVE*/ FontAwesome.CODE, listener, styles);	
 	}
 	
 	public static Button CHANGE(final ClickListener listener, final String...styles) {

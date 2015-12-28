@@ -136,7 +136,7 @@ public class NotificationsButton extends Button {
         	FontAwesome font = FontAwesome.BOOKMARK_O;
         	if (summary.getCategory() != null) {
 	        	switch (summary.getCategory()) {
-		        	case System: font = FontAwesome.SERVER; break;
+	        		case System: font = FontAwesome.SERVER; break;
 		        	case Rating: font = FontAwesome.QUESTION_CIRCLE; break;
 		        	case Kudos: font = FontAwesome.DIAMOND; break;
 		        	case Alarm: font = FontAwesome.CLOCK_O; break;
@@ -187,7 +187,8 @@ public class NotificationsButton extends Button {
             notificationsWindow.setClosable(false);
             notificationsWindow.setResizable(false);
             notificationsWindow.setDraggable(false);
-            notificationsWindow.addCloseShortcut(KeyCode.ESCAPE, null);
+            //TODO Add back in 7.6
+            //notificationsWindow.addCloseShortcut(KeyCode.ESCAPE, null);
             notificationsWindow.setContent(notificationsLayout);
         } else {
         	notificationsWindow.setContent(notificationsLayout);

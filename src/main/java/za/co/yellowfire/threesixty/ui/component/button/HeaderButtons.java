@@ -1,4 +1,4 @@
-package za.co.yellowfire.threesixty.ui.component;
+package za.co.yellowfire.threesixty.ui.component.button;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;

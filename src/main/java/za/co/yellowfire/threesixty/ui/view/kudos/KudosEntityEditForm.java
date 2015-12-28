@@ -1,71 +1,79 @@
 package za.co.yellowfire.threesixty.ui.view.kudos;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import com.vaadin.data.fieldgroup.PropertyId;
-import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.shared.ui.grid.HeightMode;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.RichTextArea;
-import com.vaadin.ui.UI;
+import com.vaadin.ui.renderers.HtmlRenderer;
+import com.vaadin.ui.renderers.ImageRenderer;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
 
 import za.co.yellowfire.threesixty.domain.GridFsClient;
-import za.co.yellowfire.threesixty.domain.kudos.Badge;
 import za.co.yellowfire.threesixty.domain.kudos.BadgeRepository;
 import za.co.yellowfire.threesixty.domain.kudos.Kudos;
 import za.co.yellowfire.threesixty.domain.kudos.KudosRepository;
-import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.Style;
-import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
-import za.co.yellowfire.threesixty.ui.component.ByteArrayStreamResource;
 import za.co.yellowfire.threesixty.ui.component.ImageBuilder;
 import za.co.yellowfire.threesixty.ui.component.LabelBuilder;
 import za.co.yellowfire.threesixty.ui.component.PanelBuilder;
-import za.co.yellowfire.threesixty.ui.component.PictureSelectionForm;
-import za.co.yellowfire.threesixty.ui.component.PictureSelectionForm.FileEvent;
+import za.co.yellowfire.threesixty.ui.component.button.CrudHeaderButtons;
+import za.co.yellowfire.threesixty.ui.component.container.kudos.BadgeContainer;
+import za.co.yellowfire.threesixty.ui.component.container.user.UserContainer;
+import za.co.yellowfire.threesixty.ui.component.field.MComboBox;
+import za.co.yellowfire.threesixty.ui.component.field.MRichTextArea;
+import za.co.yellowfire.threesixty.ui.component.field.PictureField;
+import za.co.yellowfire.threesixty.ui.component.field.PictureSelectionForm.FileEvent;
 import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm;
 
 @SuppressWarnings("serial")
 public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
-	
-	private static final String WINDOW_PICTURE = "Badge picture";
+	private static final Logger LOG = LoggerFactory.getLogger(KudosEntityEditForm.class);
 	
 	@PropertyId("badge")
-	private ComboBox badgeField;
-	
+	private MComboBox badgeField = 
+			new MComboBox(I8n.Kudos.Fields.BADGE)
+			.withWidth(100.0f, Unit.PERCENTAGE);
+		
 	@PropertyId("recipient")
-	private ComboBox recipientField;
-	
+	private MComboBox recipientField = 
+			new MComboBox(I8n.Kudos.Fields.RECIPIENT)
+			.withWidth(100.0f, Unit.PERCENTAGE)
+			.withReadOnly(true);
+		
 	@PropertyId("message")
-	private RichTextArea messageField;
+	private MRichTextArea messageField = 
+			new MRichTextArea(I8n.Kudos.Fields.MESSAGE)
+			.withWidth(100.0f, Unit.PERCENTAGE);
+
+	private PictureField pictureField = 
+			new PictureField(I8n.Kudos.Fields.PICTURE, this::onSelectedPicture);
 	
-	//TODO Make this into a component
-	private Image pictureField = ImageBuilder.BLANK();
-    private Window pictureWindow = new Window(WINDOW_PICTURE, new PictureSelectionForm(this::onSelectedPicture));
-    private Button pictureButton = ButtonBuilder.CHANGE(this::onChangePicture);
-    
-    //private VerticalLayout receivedPanel;
-    
+	private Grid receivedField;
+	
     private GridFsClient client;
     private KudosRepository repository;
     private UserService userService;
-    private BadgeRepository badgeRepository;
+    private CrudHeaderButtons headerButtons;
     
 	public KudosEntityEditForm(
 			final BadgeRepository badgeRepository, 
@@ -75,69 +83,70 @@ public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
 		this.client = client;
 		this.repository = repository;
 		this.userService = userService;
-		this.badgeRepository = badgeRepository;
 		
-		this.badgeField = buildBadgeField();
-		this.recipientField = buildRecipientField();
-		this.messageField = buildMessageField();
-		
-		this.pictureField.setHeight(150.0f, Unit.PIXELS);
-		this.pictureField.setImmediate(true);
-		this.pictureButton.setWidth(this.pictureField.getWidth(), this.pictureField.getWidthUnits());
+		this.recipientField.setContainerDataSource(new UserContainer(userService, true));
+		this.badgeField.setContainerDataSource(new BadgeContainer(badgeRepository));
+	}
+	
+	public void setHeaderButtons(final CrudHeaderButtons headerButtons) {
+		this.headerButtons = headerButtons;
 	}
 	
 	@Override
 	protected void internalLayout() {
 
+		Label headerCaption = LabelBuilder.build("Give kudos where due", Style.Text.BOLDED, ValoTheme.LABEL_H3, ValoTheme.LABEL_NO_MARGIN);
+		headerCaption.setSizeUndefined();
+		
+		HorizontalLayout header = 
+				PanelBuilder.HORIZONTAL(Style.Kudos.Received.HEADER, 
+				headerCaption,
+				this.headerButtons);
+		header.setSpacing(true);
+		
 		/* Layout the form */
 		addComponent(PanelBuilder.FORM(
-				LabelBuilder.build("Give kudos where kudos is due", Style.Kudos.Received.HEADER, Style.Text.BOLDED),
+				header,
         		PanelBuilder.HORIZONTAL(badgeField, recipientField),
         		messageField
         ));
         addComponent(buildReceivedPanel());
 	}
+		
+	private Grid buildReceivedTable() {
 	
-	private ComboBox buildBadgeField() {
-		ComboBox field = new ComboBox(I8n.Kudos.Fields.BADGE, new IndexedContainer());
-		field.setWidth(100.0f, Unit.PERCENTAGE);
-		return field;
-	}
-	
-	private ComboBox buildRecipientField() {
-		ComboBox field = new ComboBox(I8n.Kudos.Fields.RECIPIENT, new IndexedContainer());
-		field.setWidth(100.0f, Unit.PERCENTAGE);
-		field.setEnabled(false);
-		return field;
-	}
-	
-	private RichTextArea buildMessageField() {
-		RichTextArea field = new RichTextArea(I8n.Kudos.Fields.MESSAGE);
-		field.setWidth(100.0f, Unit.PERCENTAGE);
-		field.setNullRepresentation("");
-		return field;
+		if (receivedField == null) {
+			receivedField = new Grid(new KudosContainer());
+			receivedField.setColumnOrder("picture", "message");
+			receivedField.getColumn("picture").setRenderer(new ImageRenderer()).setWidth(80.0f);
+			receivedField.getColumn("message").setRenderer(new HtmlRenderer());
+			receivedField.removeHeaderRow(0);
+			receivedField.setWidth(100.0f, Unit.PERCENTAGE);
+			receivedField.setHeight(100.0f, Unit.PERCENTAGE);
+			receivedField.setStyleName("kudos-received");
+			receivedField.setResponsive(true);
+			receivedField.setCellStyleGenerator(cell -> (String) cell.getPropertyId());
+		}
+		return receivedField;
 	}
 	
 	protected VerticalLayout buildReceivedPanel() {
 		/* Build the received panel */
 		//if (this.receivedPanel == null) {
 			//this.receivedPanel = 
-			VerticalLayout panel = PanelBuilder.VERTICAL(
-							null,
-							LabelBuilder.build("Received", Style.Kudos.Received.HEADER, Style.Text.BOLDED), 
-							buildReceivedItems());
+			Label headerCaption = 
+					
+					LabelBuilder.build(
+							"Received", 
+							Style.Text.BOLDED, ValoTheme.LABEL_H3, ValoTheme.LABEL_NO_MARGIN);
+			headerCaption.setSizeUndefined();
 			
-		//} else {
-//			if (this.receivedPanel.isAttached()) {
-//				this.receivedPanel.detach();
-//			}
-//			this.receivedPanel.removeAllComponents();
-//			this.receivedPanel.addComponent(LabelBuilder.build("Received", Style.Kudos.Received.HEADER));
-//			
-//			for (HorizontalLayout c : buildReceivedItems()) {
-//				this.receivedPanel.addComponent(c);
-//			}
-		//}
+			HorizontalLayout header = 
+					PanelBuilder.HORIZONTAL(
+							Style.Kudos.Received.HEADER, headerCaption);
+			header.setSpacing(true);
+			
+			VerticalLayout panel = PanelBuilder.VERTICAL(header,buildReceivedTable());
 		
 		return panel;
 	}
@@ -197,16 +206,10 @@ public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
 		super.updateFieldContraints();
 		
 		/* Fill the recipient field with all the users except the current */
-		this.badgeField.getContainerDataSource().removeAllItems();
-		for (Badge badge : badgeRepository.findByActive(true)) {
-			this.badgeField.getContainerDataSource().addItem(badge);
-		}
-		
+		this.badgeField.refresh();
+	
 		/* Fill the recipient field with all the users except the current */
-		this.recipientField.getContainerDataSource().removeAllItems();
-		for (User user : userService.findUsersExcept(userService.getCurrentUser())) {
-			this.recipientField.getContainerDataSource().addItem(user);
-		}
+		this.recipientField.refresh();
 		
 		/* Rebuild the received items panel */
 		buildReceivedPanel();
@@ -221,10 +224,6 @@ public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
 		return Kudos.EMPTY();
 	}
 	
-	protected void onChangePicture(ClickEvent event) {
-		UI.getCurrent().addWindow(pictureWindow);
-	}
-	
 	protected void onSelectedPicture(FileEvent event) {
 		try {
 			if (getValue() != null) {
@@ -232,7 +231,7 @@ public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
 				displayPicture();
 			}
 		} catch (IOException e) {
-			Notification.show("Error changing badge picture", e.getMessage(), Type.ERROR_MESSAGE);
+			Notification.show("Error changing kudos picture", e.getMessage(), Type.ERROR_MESSAGE);
 		}
 	}
 	
@@ -259,8 +258,26 @@ public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
 	protected void displayPicture() {
 		
 		if (getValue().hasPicture()) {
-			this.pictureField.setSource(new ByteArrayStreamResource(getValue().getPictureContent(), getValue().getPictureName() + "." + new Date().getTime() + " .png"));
+			this.pictureField.setSource(getValue().getPictureContent(), getValue().getPictureName() + "." + new Date().getTime() + " .png");
 			this.pictureField.markAsDirty();
 		}
+	}
+
+	private class KudosContainer extends BeanItemContainer<KudosItemModel> {
+
+		public KudosContainer() throws IllegalArgumentException {
+			super(KudosItemModel.class);
+			
+			addAllKudos(repository.findByRecipient(
+					userService.getCurrentUser(),
+					new Sort(Direction.DESC, "createdDate")));
+		}
+	
+		public void addAllKudos(final Collection<Kudos> collection) {
+			for(Kudos item : collection) {
+				addBean(new KudosItemModel(item));
+			}
+		}
+		
 	}
 }

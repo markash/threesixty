@@ -8,7 +8,7 @@ import com.vaadin.ui.Notification;
 
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
-import za.co.yellowfire.threesixty.ui.component.HeaderButtons;
+import za.co.yellowfire.threesixty.ui.component.button.HeaderButtons;
 
 public class NotificationsHeaderButtons extends HeaderButtons {
 	private static final long serialVersionUID = 1L;

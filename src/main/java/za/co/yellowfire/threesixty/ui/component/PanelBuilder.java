@@ -16,16 +16,20 @@ public class PanelBuilder {
 		layout.addStyleName(Style.Rating.FIELDS);
 		
 		for (Component component : components) {
-			layout.addComponent(component);
+			if (component != null) {
+				layout.addComponent(component);
+			}
 		}
 		return layout;
 	}
 	
-	public static Layout VERTICAL(final Component...components) {
+	public static VerticalLayout VERTICAL(final Component...components) {
 		VerticalLayout layout = new VerticalLayout();
 		layout.addStyleName(Style.Rating.FIELDS);
 		for (Component component : components) {
-			layout.addComponent(component);
+			if (component != null) {
+				layout.addComponent(component);
+			}
 		}
 		return layout;
 	}
@@ -36,7 +40,9 @@ public class PanelBuilder {
 			layout.addStyleName(style);
 		}
 		for (Component component : components) {
-			layout.addComponent(component);
+			if (component != null) {
+				layout.addComponent(component);
+			}
 		}
 		return layout;
 	}
@@ -47,10 +53,14 @@ public class PanelBuilder {
 			layout.addStyleName(style);
 		}
 		
-		layout.addComponent(component);
+		if (component != null) {
+			layout.addComponent(component);
+		}
 		
 		for (Component c : components) {
-			layout.addComponent(c);
+			if (component != null) {
+				layout.addComponent(c);
+			}
 		}
 		return layout;
 	}
@@ -59,8 +69,10 @@ public class PanelBuilder {
 		VerticalLayout layout = new VerticalLayout();
 		layout.addStyleName(Style.Rating.FIELDS);
 		for (Component component : components) {
-			layout.addComponent(component);
-			layout.setComponentAlignment(component, Alignment.MIDDLE_CENTER);
+			if (component != null) {
+				layout.addComponent(component);
+				layout.setComponentAlignment(component, Alignment.MIDDLE_CENTER);
+			}
 		}
 		return layout;
 	}
@@ -70,7 +82,9 @@ public class PanelBuilder {
 		layout.setWidth(100.0f, Unit.PERCENTAGE);
 		
 		for (Component component : components) {
-			layout.addComponent(component);
+			if (component != null) {
+				layout.addComponent(component);
+			}
 		}
 		return layout;
 	}
@@ -82,7 +96,9 @@ public class PanelBuilder {
 			layout.setStyleName(style);
 		}
 		for (Component component : components) {
-			layout.addComponent(component);
+			if (component != null) {
+				layout.addComponent(component);
+			}
 		}
 		return layout;
 	}

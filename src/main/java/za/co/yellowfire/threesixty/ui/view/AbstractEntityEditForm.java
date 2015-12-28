@@ -9,6 +9,7 @@ import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.server.Responsive;
 import com.vaadin.data.fieldgroup.PropertyId;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Field;
@@ -34,6 +35,7 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
 		setSpacing(true);
 		setMargin(false);
 		setSizeFull();
+		Responsive.makeResponsive(this);
 		
         idField.setWidth(100.0f, Unit.PERCENTAGE);
         idField.setNullRepresentation("");

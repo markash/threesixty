@@ -21,8 +21,8 @@ import za.co.yellowfire.threesixty.domain.question.QuestionaireService;
 import za.co.yellowfire.threesixty.domain.question.RatingQuestion;
 import za.co.yellowfire.threesixty.domain.question.RatingQuestionConfiguration;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
-import za.co.yellowfire.threesixty.ui.component.FormButtons;
 import za.co.yellowfire.threesixty.ui.component.RatingQuestionForm;
+import za.co.yellowfire.threesixty.ui.component.button.FormButtons;
 import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
 
 public class RatingQuestionWindow extends Window {

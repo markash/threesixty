@@ -1,4 +1,4 @@
-package za.co.yellowfire.threesixty.ui.component;
+package za.co.yellowfire.threesixty.ui.component.field;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,6 +19,8 @@ import com.vaadin.ui.Upload;
 import com.vaadin.ui.Upload.Receiver;
 import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
+
+import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
 
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;

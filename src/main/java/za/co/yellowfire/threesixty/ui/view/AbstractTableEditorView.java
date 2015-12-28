@@ -20,8 +20,8 @@ import com.vaadin.ui.themes.ValoTheme;
 import za.co.yellowfire.threesixty.ui.Style;
 import za.co.yellowfire.threesixty.ui.component.BeanBinder;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
-import za.co.yellowfire.threesixty.ui.component.FormButtons;
 import za.co.yellowfire.threesixty.ui.component.SpringEntityProvider;
+import za.co.yellowfire.threesixty.ui.component.button.FormButtons;
 
 /**
  * Abstract table editor view

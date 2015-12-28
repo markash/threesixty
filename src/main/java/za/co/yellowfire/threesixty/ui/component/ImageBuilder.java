@@ -49,8 +49,12 @@ public class ImageBuilder {
 		return new Image(caption, resource);
 	}
 	
+	public static Resource BLANK_RESOURCE() {
+		return new ThemeResource(IMAGE_NO_PHOTO);
+	}
+	
 	public static Image BLANK() {
-		return build(null, new ThemeResource(IMAGE_NO_PHOTO));
+		return build(null, BLANK_RESOURCE());
 	}
 	
 	public static Image PROFILE() {

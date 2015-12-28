@@ -18,7 +18,7 @@ public class LabelBuilder {
 		
 		if (styles != null) {
 			for(String style : styles) {
-				label.setStyleName(style);
+				label.addStyleName(style);
 			}
 		}
 		
@@ -34,7 +34,7 @@ public class LabelBuilder {
 		
 		if (styles != null) {
 			for(String style : styles) {
-				label.setStyleName(style);
+				label.addStyleName(style);
 			}
 		}
 		return label;

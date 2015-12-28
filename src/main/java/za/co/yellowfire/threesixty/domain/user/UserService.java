@@ -132,6 +132,10 @@ public class UserService {
 		return user;
 	}
 	
+	public List<User> findUsers() {
+		return userRepository.findByActive(true);
+	}
+	
 	public List<User> findUsersExcept(final User user) {
 		return userRepository.findByIdNot(user.getId());
 	}

@@ -35,9 +35,9 @@ import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.component.BeanBinder;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
 import za.co.yellowfire.threesixty.ui.component.ByteArrayStreamResource;
-import za.co.yellowfire.threesixty.ui.component.HeaderButtons;
-import za.co.yellowfire.threesixty.ui.component.PictureSelectionForm;
-import za.co.yellowfire.threesixty.ui.component.PictureSelectionForm.FileEvent;
+import za.co.yellowfire.threesixty.ui.component.button.HeaderButtons;
+import za.co.yellowfire.threesixty.ui.component.field.PictureSelectionForm;
+import za.co.yellowfire.threesixty.ui.component.field.PictureSelectionForm.FileEvent;
 import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
 import za.co.yellowfire.threesixty.ui.view.RatingQuestionWindow.SaveEvent;
 import za.co.yellowfire.threesixty.ui.view.RatingQuestionWindow.SaveListener;
@@ -134,7 +134,7 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
 		return root;
 	}
     
-    protected Component buildHeaderButtons() {
+    protected Component getHeaderButtons() {
         return new HeaderButtons(buttons);
  	}
     

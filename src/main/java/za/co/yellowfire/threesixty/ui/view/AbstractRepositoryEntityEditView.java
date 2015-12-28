@@ -9,7 +9,6 @@ import org.vaadin.dialogs.ConfirmDialog;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Notification;
@@ -19,8 +18,8 @@ import com.vaadin.ui.VerticalLayout;
 
 import za.co.yellowfire.threesixty.MainUI;
 import za.co.yellowfire.threesixty.domain.user.User;
-import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
-import za.co.yellowfire.threesixty.ui.component.HeaderButtons;
+import za.co.yellowfire.threesixty.ui.component.button.CrudHeaderButtonConfig;
+import za.co.yellowfire.threesixty.ui.component.button.CrudHeaderButtons;
 import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
 import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm.DirtyEvent;
 
@@ -28,19 +27,28 @@ import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm.DirtyEvent;
 public abstract class AbstractRepositoryEntityEditView<T extends Persistable<String>, ID extends Serializable> extends AbstractDashboardPanel /*, DashboardEditListener*/ {
 	private static final long serialVersionUID = 1L;
 	          
-    private Button saveButton = ButtonBuilder.SAVE(this::onSave);
-	private Button resetButton = ButtonBuilder.RESET(this::onReset);
-	private Button createButton = ButtonBuilder.NEW(this::onCreate);	
-    private Button[] buttons = new Button[] {saveButton, resetButton, createButton};
-   
+	private final CrudHeaderButtons headerButtons;
     private final PagingAndSortingRepository<T, ID> repository;
     private final AbstractEntityEditForm<T> form;
     
-    public AbstractRepositoryEntityEditView(PagingAndSortingRepository<T, ID> repository, AbstractEntityEditForm<T> form) {
+    public AbstractRepositoryEntityEditView(
+    		final PagingAndSortingRepository<T, ID> repository, 
+    		final AbstractEntityEditForm<T> form) {
+    	
+    	this(repository, form, new CrudHeaderButtonConfig());
+    }
+    
+    public AbstractRepositoryEntityEditView(
+    		final PagingAndSortingRepository<T, ID> repository, 
+    		final AbstractEntityEditForm<T> form,
+    		final CrudHeaderButtonConfig buttonConfig) {
+    	
 		super();
+		
 		this.repository = repository;
 		this.form = form;
 		this.form.addDirtyListener(this::onDirty);
+		this.headerButtons = new CrudHeaderButtons(this::onSave, this::onReset, this::onCreate, this::onDelete, buttonConfig);
 	}
 
 	@Override
@@ -56,10 +64,10 @@ public abstract class AbstractRepositoryEntityEditView<T extends Persistable<Str
 		return root;
 	}
     
-    protected Component buildHeaderButtons() {
-        return new HeaderButtons(buttons);
+    public CrudHeaderButtons getHeaderButtons() {
+        return headerButtons;
  	}
-    
+       
 	@SuppressWarnings("unchecked")
 	@Override
     public void enter(final ViewChangeEvent event) {
@@ -170,17 +178,20 @@ public abstract class AbstractRepositoryEntityEditView<T extends Persistable<Str
 		}
 	}
 	
-	protected void onCreate(ClickEvent event) {
+	protected void onCreate(final ClickEvent event) {
+	}
+	
+	protected void onDelete(final ClickEvent event) {
 	}
 	
 	protected void onDirty(final DirtyEvent event) {
-		this.saveButton.setEnabled(true);
-		this.resetButton.setEnabled(true);
+		this.headerButtons.enableSave();
+		this.headerButtons.enableReset();
 	}
 	
 	protected void onClean() {
-		this.saveButton.setEnabled(false);
-		this.resetButton.setEnabled(false);
+		this.headerButtons.disableSave();
+		this.headerButtons.disableReset();
 	}
 	
 	protected User getCurrentUser() {

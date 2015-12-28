@@ -328,15 +328,45 @@
   }
   
   .kudos-received-header {
-  	background-color: $v-background-color;
+    width: 100%;
+    text-align: right;
+    white-space: normal;
+    
+  	background-color: darken($v-background-color, 10%);
   	color: $v-shade;
+  	
+  	.v-expand {
+  	  margin-top: 5px;
+      margin-bottom: 5px;
+  	}
+  	
+  	.v-slot-h3 {
+  	  text-align: left;
+      padding-top: 8px;
+    }
+
+    .h3 {
+      white-space: normal;
+    }
+    
+    .toolbar {
+      margin-right: 5px;
+    }
   }
   
-  .kudos-received-item {
-  	margin: 5px;
+  .kudos-received .v-grid-cell {
+    padding-right: 2px;
+    padding-left: 2px;
+    line-height: 100px;
+    vertical-align: top;
   }
   
-  .kudos-received-image {
+  .kudos-received .message {
+	padding-top: 10px;
+  }
+  
+
+  .kudos-received .v-grid-cell .gwt-Image {
   	width: 60px;
   }
   

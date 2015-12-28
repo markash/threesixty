@@ -37,8 +37,8 @@ import za.co.yellowfire.threesixty.domain.question.RatingQuestionConfiguration;
 import za.co.yellowfire.threesixty.ui.Style;
 import za.co.yellowfire.threesixty.ui.component.BeanBinder;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
-import za.co.yellowfire.threesixty.ui.component.FilterTextField;
-import za.co.yellowfire.threesixty.ui.component.HeaderButtons;
+import za.co.yellowfire.threesixty.ui.component.button.HeaderButtons;
+import za.co.yellowfire.threesixty.ui.component.field.FilterTextField;
 import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
 import za.co.yellowfire.threesixty.ui.view.RatingQuestionWindow.SaveEvent;
 import za.co.yellowfire.threesixty.ui.view.RatingQuestionWindow.SaveListener;
@@ -120,7 +120,7 @@ public final class QuestionaireEditView extends AbstractDashboardPanel /*, Dashb
 		return root;
 	}
     
-    protected Component buildHeaderButtons() {
+    protected Component getHeaderButtons() {
     	return new HeaderButtons(new FilterTextField<Question<?>>(getTable(), FILTER_PROPERTIES), buttons);
  	}
     

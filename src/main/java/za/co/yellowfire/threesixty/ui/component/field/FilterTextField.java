@@ -1,4 +1,4 @@
-package za.co.yellowfire.threesixty.ui.component;
+package za.co.yellowfire.threesixty.ui.component.field;
 
 import org.vaadin.viritin.fields.MTable;
 

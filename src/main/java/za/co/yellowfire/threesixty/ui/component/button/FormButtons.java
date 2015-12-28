@@ -1,4 +1,4 @@
-package za.co.yellowfire.threesixty.ui.component;
+package za.co.yellowfire.threesixty.ui.component.button;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +10,7 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
 
 import za.co.yellowfire.threesixty.ui.Style;
+import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
 
 public class FormButtons extends HorizontalLayout {
 	private static final long serialVersionUID = 1L;

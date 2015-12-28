@@ -56,6 +56,7 @@ public class I8n {
 			String RECIPIENT = "Recipient";
 			String MESSAGE = "Message";
 			String IMAGE = "Image";
+			String PICTURE = "Picture";
 		}
 		
 		public interface Received {

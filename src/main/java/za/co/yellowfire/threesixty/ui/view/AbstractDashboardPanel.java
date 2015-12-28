@@ -27,7 +27,7 @@ public abstract class AbstractDashboardPanel extends Panel implements View {
 	protected abstract String getTitleId();
 	protected abstract String getEditId();
 	protected abstract Component buildContent();
-	protected Component buildHeaderButtons() { return null; } 
+	protected Component getHeaderButtons() { return null; } 
 	
 	public AbstractDashboardPanel() {
     	this.root = new VerticalLayout();
@@ -78,7 +78,7 @@ public abstract class AbstractDashboardPanel extends Panel implements View {
         titleLabel.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         header.addComponent(titleLabel);
 
-        Component headerButtons = buildHeaderButtons();
+        Component headerButtons = getHeaderButtons();
         if (headerButtons != null) {
         	header.addComponent(headerButtons);
         }
