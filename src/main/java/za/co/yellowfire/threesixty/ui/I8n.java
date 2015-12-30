@@ -63,4 +63,12 @@ public class I8n {
 			String NONE = "No kudos received as yet.";
 		}
 	}
+	
+	public interface Assessment {
+		public interface Fields {
+			String MANAGER = "Manager";
+			String EMPLOYEE = "Employee";
+			String PERIOD = "Period";
+		}
+	}
 }

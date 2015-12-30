@@ -9,9 +9,8 @@ import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.server.Responsive;
 import com.vaadin.data.fieldgroup.PropertyId;
-import com.vaadin.ui.AbstractField;
+import com.vaadin.server.Responsive;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -127,13 +126,21 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
     
     public interface DirtyEvent extends Serializable {
         public Property<?> getProperty();
+        public boolean isRecalculationRequired();
     }
     
     public static class FormDirtyEvent implements DirtyEvent {
     	private final Property<?> property;
+    	private final boolean recalculationRequired;
+    	
     	public FormDirtyEvent(Property<?> property) {
+    		this(property, false);
+    	}
+    	public FormDirtyEvent(final Property<?> property, final boolean recalculationRequired) {
     		this.property = property;
+    		this.recalculationRequired = recalculationRequired;
     	}
     	public Property<?> getProperty() { return this.property; }
+    	public boolean isRecalculationRequired() { return this.recalculationRequired; }
     }
 }

@@ -1,5 +1,6 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -12,25 +13,32 @@ import org.springframework.data.annotation.AccessType.Type;
 import org.springframework.data.domain.Auditable;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
-import za.co.yellowfire.threesixty.domain.Period;
 import za.co.yellowfire.threesixty.domain.user.User;
 
 @AccessType(Type.FIELD)
 public class Assessment implements Auditable<User, String> {
 	private static final long serialVersionUID = 1L;
-
+	public static final String FIELD_ID = "id";
+	public static final String FIELD_EMPLOYEE = "employee";
+	public static final String FIELD_MANAGER = "manager";
+	public static final String FIELD_PERIOD = "period";
+	public static final String FIELD_RATINGS = "assessmentRatings";
+	public static final String FIELD_SCORE = "score";
+	public static final String FIELD_ACTIVE = "active";
+	public static final String FIELD_STATUS = "status";
+	
 	@Id
 	private String id;
 	@DBRef @NotNull(message = "{assessment.employee.NotNull.message}")
 	private User employee;
 	@DBRef @NotNull(message = "{assessment.manager.NotNull.message}")
 	private User manager;
-	@NotNull(message = "{assessment.period.NotNull.message}")
+	@DBRef @NotNull(message = "{assessment.period.NotNull.message}")
 	private Period period;
-	private Set<AssessmentRating> ratings;
+	private Set<AssessmentRating> ratings = new HashSet<>();
 	private double score = 0.0;
 	private boolean active = true;
-	private AssessmentStatus status = AssessmentStatus.Created;
+	private AssessmentStatus status = AssessmentStatus.Creating;
 	
 	@DBRef
 	private User createdBy;

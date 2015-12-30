@@ -121,7 +121,7 @@ public final class QuestionaireEditView extends AbstractDashboardPanel /*, Dashb
 	}
     
     protected Component getHeaderButtons() {
-    	return new HeaderButtons(new FilterTextField<Question<?>>(getTable(), FILTER_PROPERTIES), buttons);
+    	return new HeaderButtons(HeaderButtons.combine(new FilterTextField<Question<?>>(getTable(), FILTER_PROPERTIES), buttons));
  	}
     
 	protected Layout buildForm() {

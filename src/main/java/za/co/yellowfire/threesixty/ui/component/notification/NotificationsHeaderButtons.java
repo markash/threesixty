@@ -17,8 +17,8 @@ public class NotificationsHeaderButtons extends HeaderButtons {
 	 * 
 	 * @param editButtonId The id of the edit button. If null then the button is not added to the header
 	 */
-	public NotificationsHeaderButtons(final UserService userService, final String editButtonId, final Component component, final Component...components) {
-		super(component, components);
+	public NotificationsHeaderButtons(final UserService userService, final String editButtonId, final Component...components) {
+		super(components);
 		
 		addComponent(NotificationsButton.BELL(userService, this::onViewNotifications));
 		if (StringUtils.isNotBlank(editButtonId)) {

@@ -35,4 +35,10 @@ public interface Style {
 		String FIELDS = "fields";
 		String BUTTONS = "buttons";
 	}
+	
+	public interface AssessmentRating {
+		String HEADER = "assessment-rating-header";
+		String ROW = "assessment-rating-row";
+		String ROW_ODD = "assessment-rating-row-odd";
+	}
 }

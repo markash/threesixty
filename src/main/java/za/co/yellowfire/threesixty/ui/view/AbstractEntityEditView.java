@@ -84,7 +84,7 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
 	        //DashboardEventBus.post(new ProfileUpdatedEvent());
 	        onClean();
 		} catch (CommitException exception) {
-            Notification.show("Error while updating user", Type.ERROR_MESSAGE);
+            Notification.show("Error while updating : " + exception.getMessage(), Type.ERROR_MESSAGE);
         }
 	}
 	
@@ -180,7 +180,11 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
 	protected User getCurrentUser() {
 		return ((MainUI) UI.getCurrent()).getCurrentUser();
 	}
-		
+
+	protected AbstractEntityEditForm<T> getForm() {
+		return this.form;
+	}
+	
 	protected Service<T> getService() { return this.service; }
 }
 

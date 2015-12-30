@@ -57,7 +57,7 @@ public abstract class AbstractTableSearchView<T, ID extends Serializable> extend
 	
 	protected Component getHeaderButtons() {
 		if (propertiesToFilterOn != null) {
-			return new HeaderButtons(new FilterTextField<T>(this.table, this.propertiesToFilterOn), getTableButtons());
+			return new HeaderButtons(HeaderButtons.combine(new FilterTextField<T>(this.table, this.propertiesToFilterOn), getTableButtons()));
 		} else {
 			return new HeaderButtons(getTableButtons());
 		}

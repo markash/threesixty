@@ -56,4 +56,9 @@ public class MComboBox extends ComboBox {
         setReadOnly(readOnly);
         return this;
     }
+    
+    public MComboBox valueChangeListener(final ValueChangeListener valueChangeListener) {
+    	addValueChangeListener(valueChangeListener);
+    	return this;
+    }
 }

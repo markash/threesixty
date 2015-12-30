@@ -16,9 +16,10 @@ public final class AssessmentEditView extends AbstractEntityEditView<Assessment>
 	private static final long serialVersionUID = 1L;
 	
 	public static final String TITLE = "Assessment";
-	public static final String EDIT_ID = "assessment-edit";
-    public static final String TITLE_ID = "assessment-title";
-    public static final String VIEW_NAME = "assessment";
+	public static final String VIEW_NAME = "assessment";
+	public static final String EDIT_ID = VIEW_NAME + "-edit";
+    public static final String TITLE_ID = VIEW_NAME + "-title";
+    
     public static final String VIEW(final String id) { return VIEW_NAME + (StringUtils.isBlank(id) ? "" : "/" + id); } 
 
     @Autowired

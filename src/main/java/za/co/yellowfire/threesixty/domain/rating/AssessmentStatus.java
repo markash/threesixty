@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 
 public enum AssessmentStatus {
+	Creating("Creating"),
 	Created("Created"),
 	EmployeeCompleted("Employee Completed"),
 	ManagerCompleted("Manager Completed"),

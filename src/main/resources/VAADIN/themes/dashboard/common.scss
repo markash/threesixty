@@ -251,7 +251,7 @@
         white-space: normal;
 
         > .v-spacing {
-          height: round($v-unit-size / 4);
+          height: round($v-unit-size / 8);
         }
       }
     }
@@ -354,6 +354,33 @@
     }
   }
   
+  .kudos-received-header {
+    width: 100%;
+    text-align: right;
+    white-space: normal;
+    
+  	background-color: darken($v-background-color, 10%);
+  	color: $v-shade;
+  	
+  	.v-expand {
+  	  margin-top: 5px;
+      margin-bottom: 5px;
+  	}
+  	
+  	.v-slot-h3 {
+  	  text-align: left;
+      padding-top: 8px;
+    }
+
+    .h3 {
+      white-space: normal;
+    }
+    
+    .toolbar {
+      margin-right: 5px;
+    }
+  }
+  
   .kudos-received .v-grid-cell {
     padding-right: 2px;
     padding-left: 2px;
@@ -370,6 +397,49 @@
   	width: 60px;
   }
   
+  .assessment-rating-header {
+  	width: 100%;
+    text-align: right;
+    white-space: normal;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    
+  	background-color: darken($v-background-color, 10%);
+  	color: $v-shade;
+  	
+  	.v-expand {
+  	  margin-top: 5px;
+      margin-bottom: 5px;
+  	}
+  	
+  	.v-slot-h3 {
+  	  text-align: left;
+      padding-top: 8px;
+    }
+
+    .h3 {
+      white-space: normal;
+    }
+    
+    .toolbar {
+      margin-right: 5px;
+    }
+  }
+  
+  .assessment-rating-panel {
+  	background-color: #eee;
+  	border-radius: 0px;
+  	height: 410px;
+  }
+  
+  .assessment-rating-row {
+  	background-color: lighten(#eee, 10%);
+  }
+  
+  .assessment-rating-row-odd {
+  	background-color: darken(#eee, 10%);
+  }
+    
   .bolded {
   	font-weight: bold;
   }
