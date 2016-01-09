@@ -3,29 +3,25 @@ package za.co.yellowfire.threesixty.ui.view.rating;
 import org.vaadin.viritin.button.MButton;
 
 import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.fieldgroup.PropertyId;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 
 import za.co.yellowfire.threesixty.domain.rating.Assessment;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
+import za.co.yellowfire.threesixty.domain.rating.AssessmentStatus;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.I8n;
-import za.co.yellowfire.threesixty.ui.Style;
-import za.co.yellowfire.threesixty.ui.component.LabelBuilder;
 import za.co.yellowfire.threesixty.ui.component.PanelBuilder;
-import za.co.yellowfire.threesixty.ui.component.button.HeaderButtons;
 import za.co.yellowfire.threesixty.ui.component.field.MComboBox;
-import za.co.yellowfire.threesixty.ui.component.rating.AssessmentRatingsField;
-import za.co.yellowfire.threesixty.ui.component.rating.AssessmentRatingsField.ChangeEvent;
-import za.co.yellowfire.threesixty.ui.component.rating.AssessmentRatingsField.RecalculationEvent;
 import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm;
+import za.co.yellowfire.threesixty.ui.view.rating.AssessmentRatingsField.ChangeEvent;
+import za.co.yellowfire.threesixty.ui.view.rating.AssessmentRatingsField.RecalculationEvent;
 
 @SuppressWarnings("serial")
 public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment> {
@@ -40,17 +36,16 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	private AssessmentRatingsField ratingsField;
 	
 	private AssessmentService service;
-	private HeaderButtons headerButtons;
-	private MButton addButton = new MButton("Add").withIcon(FontAwesome.PLUS_CIRCLE).withListener(this::onAddAssessment);
+	private User currentUser;
 	
-	private AssessmentRatingSummary summary;
-	private BeanItem<AssessmentRatingSummary> summaryFieldGroup;
-	private Label weightingTotalField;
-	private Label noOfRatingsField;
-	private Label ratingTotalField;
+	private MButton publishButton = new MButton("Publish").withIcon(FontAwesome.STEP_FORWARD).withListener(this::onPublish);
+	private MButton employeeCompleteButton = new MButton("Employee Complete").withIcon(FontAwesome.STEP_FORWARD).withListener(this::onEmployeeComplete);
+	private MButton managerCompleteButton = new MButton("Manager Complete").withIcon(FontAwesome.STEP_FORWARD).withListener(this::onManagerComplete);
+	private MButton concludeButton = new MButton("Conclude").withIcon(FontAwesome.STEP_FORWARD).withListener(this::onConclude);
 	
-	public AssessmentEntityEditForm(AssessmentService service) {
+	public AssessmentEntityEditForm(AssessmentService service, final User currentUser) {
 		this.service = service;
+		this.currentUser = currentUser;
 		
 		this.managerField = 
 				new MComboBox(I8n.Assessment.Fields.MANAGER, new IndexedContainer(service.findActiveUsers()))
@@ -66,52 +61,30 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 				new MComboBox(I8n.Assessment.Fields.PERIOD, new IndexedContainer(service.findActivePeriods()))
 					.withWidth(100.0f, Unit.PERCENTAGE);
 		
-		this.ratingsField = new AssessmentRatingsField(service.findPossibleRatings(), service.findPossibleWeightings());
+		this.ratingsField = 
+				new AssessmentRatingsField(
+						service.findPossibleRatings(), 
+						service.findPossibleWeightings(),
+						new MButton[] {publishButton, employeeCompleteButton, managerCompleteButton, concludeButton});
+		
+		this.ratingsField.setCurrentUser(currentUser);
 		this.ratingsField.setAssessmentRatingListener(this::onAssessmentRatingChange);
-		this.ratingsField.setRecalculationListener(this::onAssessmentRecalculation);
-		
-		this.summary = new AssessmentRatingSummary();
-		this.summaryFieldGroup = new BeanItem<>(this.summary);
-		this.weightingTotalField = new Label(this.summaryFieldGroup.getItemProperty("weightingTotal"));
-		this.ratingTotalField = new Label(this.summaryFieldGroup.getItemProperty("ratingTotal"));
-		this.noOfRatingsField = new Label(this.summaryFieldGroup.getItemProperty("noOfRatings"));
-		 		
-		HorizontalLayout noOfRatingsPanel = 
-				PanelBuilder.HORIZONTAL("some-style", LabelBuilder.build("Ratings: ", Style.Text.BOLDED), this.noOfRatingsField);
-		HorizontalLayout weightingTotalPanel = 
-				PanelBuilder.HORIZONTAL("some-style", LabelBuilder.build("Weighting: ", Style.Text.BOLDED), this.weightingTotalField);
-		HorizontalLayout ratingTotalPanel = 
-				PanelBuilder.HORIZONTAL("some-style", LabelBuilder.build("Overall Score: ", Style.Text.BOLDED), this.ratingTotalField);
-						
-		noOfRatingsPanel.setSpacing(true);
-		weightingTotalPanel.setSpacing(true);
-		ratingTotalPanel.setSpacing(true);
-		
-		this.headerButtons = new HeaderButtons(noOfRatingsPanel, weightingTotalPanel, ratingTotalPanel, addButton);
+		this.ratingsField.setRecalculationListener(this::onRecalculation);
 	}
 	
 	@Override
 	protected void internalLayout() {
+		this.ratingsField.setAssessment(getValue());
 		this.ratingsField.setAssessmentStatus(getValue().getStatus());
 		this.ratingsField.setPossibleRatings(service.findPossibleRatings());
 		this.ratingsField.setPossibleWeightings(service.findPossibleWeightings());
-		this.summary.updateUsing(getValue().getAssessmentRatings());
-		
-		Label headerCaption = 
-				LabelBuilder.build(FontAwesome.BARCODE.getHtml() +  " Assessent ratings", 
-						ContentMode.HTML, 
-						ValoTheme.LABEL_H3, 
-						ValoTheme.LABEL_NO_MARGIN);
-		
-		HorizontalLayout header = PanelBuilder.HORIZONTAL(Style.AssessmentRating.HEADER, 
-				headerCaption,
-				this.headerButtons);
 		
 		addComponent(PanelBuilder.FORM(
         		PanelBuilder.HORIZONTAL(idField, employeeField, managerField, periodField),
-        		header,
         		ratingsField
         		));
+		
+		maintainAssessment();
 	}
 	
 	@Override
@@ -119,20 +92,191 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 		return Assessment.EMPTY();
 	}
 	
-	public void onAddAssessment(final ClickEvent event) {
-		ratingsField.addAssessmentRating();
+	protected void onValueChange(final ValueChangeEvent event) {
+		super.onValueChange(event);
+		
+		if (isModified()) {
+			showButtons();
+			enableButtons();
+		}
 	}
 	
 	public void onAssessmentRatingChange(final ChangeEvent event) {
+		
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void onAssessmentRecalculation(final RecalculationEvent event) {
-		this.summary.updateUsing(event);
+	public void onRecalculation(final RecalculationEvent event) {
 		
-		this.noOfRatingsField.getPropertyDataSource().setValue(event.getNoOfRatings());
-		this.weightingTotalField.getPropertyDataSource().setValue(event.getWeightingTotal());
-		this.ratingTotalField.getPropertyDataSource().setValue(event.getRatingTotal());
+		showButtons();
+		enableButtons();
+	}
+	
+	public void onPublish(final ClickEvent event) {
+		try {
+			//Commit the assessment and set the status to Created
+	        commit();
+	        getValue().calculate();
+	        getValue().setStatus(AssessmentStatus.Created);
+	        //Persist the assessment
+	        service.save(getValue(), currentUser);
+	        //Notify the user of the outcome
+	        Notification.show("Assessment published for employee self assessment", Type.HUMANIZED_MESSAGE);
+	        //Update the user interface
+	        maintainAssessment();
+		} catch (CommitException exception) {
+            Notification.show("Error while updating : " + exception.getMessage(), Type.ERROR_MESSAGE);
+        }
+	}
+	
+	public void onEmployeeComplete(final ClickEvent event) {
+		try {
+			//Commit the assessment and set the status to Created
+	        commit();
+	        getValue().calculate();
+	        getValue().setStatus(AssessmentStatus.EmployeeCompleted);
+	        //Persist the assessment
+	        service.save(getValue(), currentUser);
+	        //Notify the user of the outcome
+	        Notification.show("Employee self assessment completed", Type.HUMANIZED_MESSAGE);
+	        //Update the user interface
+	        maintainAssessment();
+		} catch (CommitException exception) {
+            Notification.show("Error while updating : " + exception.getMessage(), Type.ERROR_MESSAGE);
+        }
+	}
+	
+	public void onManagerComplete(final ClickEvent event) {
+		try {
+			//Commit the assessment and set the status to Created
+	        commit();
+	        getValue().calculate();
+	        getValue().setStatus(AssessmentStatus.ManagerCompleted);
+	        //Persist the assessment
+	        service.save(getValue(), currentUser);
+	        //Notify the user of the outcome
+	        Notification.show("Management assessment of employee completed", Type.HUMANIZED_MESSAGE);
+	        //Update the user interface
+	        maintainAssessment();
+		} catch (CommitException exception) {
+            Notification.show("Error while updating : " + exception.getMessage(), Type.ERROR_MESSAGE);
+        }
+	}
+
+	public void onConclude(final ClickEvent event) {
+		try {
+			//Commit the assessment and set the status to Created
+	        commit();
+	        getValue().calculate();
+	        getValue().setStatus(AssessmentStatus.Reviewed);
+	        //Persist the assessment
+	        service.save(getValue(), currentUser);
+	        //Notify the user of the outcome
+	        Notification.show("Assessment review concluded", Type.HUMANIZED_MESSAGE);
+	        //Update the user interface
+	        maintainAssessment();
+		} catch (CommitException exception) {
+            Notification.show("Error while updating : " + exception.getMessage(), Type.ERROR_MESSAGE);
+        }
+	}
+
+	public void maintainAssessment() {
+		this.employeeField.setReadOnly(isEmployeeReadOnly());
+		this.managerField.setReadOnly(isManagerReadOnly());
+		this.periodField.setReadOnly(isPeriodReadOnly());
+		
+		this.ratingsField.setAssessmentStatus(getValue().getStatus());
+		this.ratingsField.setCurrentUser(currentUser);
+		
+		showButtons();
+		enableButtons();
+	}
+	
+	/**
+	 * Show buttons according to the status
+	 */
+	public void showButtons() {
+		this.publishButton.setVisible(getValue().getStatus() == AssessmentStatus.Creating);
+		this.employeeCompleteButton.setVisible(getValue().getStatus() == AssessmentStatus.Created);
+		this.managerCompleteButton.setVisible(getValue().getStatus() == AssessmentStatus.EmployeeCompleted);
+		this.concludeButton.setVisible(getValue().getStatus() == AssessmentStatus.ManagerCompleted);
+	}
+	
+	/**
+	 * Enable the buttons according to the status and the completeness
+	 */
+	public void enableButtons() {
+		this.publishButton.setEnabled(canEnablePublish());
+		this.employeeCompleteButton.setEnabled(canEnableEmployeeComplete());
+		this.managerCompleteButton.setEnabled(canEnableManagerComplete());
+		this.concludeButton.setEnabled(canEnableConclude());
+	}
+	
+	public boolean canEnablePublish() {
+		return isValid() && 
+				getValue().getStatus() == AssessmentStatus.Creating && 
+				getValue().getWeightingTotal() == 100.0;
+	}
+	
+	public boolean canEnableEmployeeComplete() {
+		return isValid() && 
+				getValue().getStatus() == AssessmentStatus.Created && 
+				getValue().getEmployee().equals(currentUser) &&
+				getValue().isComplete();
+	}
+	
+	public boolean canEnableManagerComplete() {
+		return isValid() && 
+				getValue().getStatus() == AssessmentStatus.EmployeeCompleted && 
+				getValue().getManager().equals(currentUser) &&
+				getValue().isComplete();
+	}
+	
+	public boolean canEnableConclude() {
+		return isValid() && 
+				getValue().getStatus() == AssessmentStatus.ManagerCompleted && 
+				getValue().getManager().equals(currentUser) &&
+				getValue().isComplete();
+	}
+	
+	public boolean isReadonlyRatings() {
+		return !canEnableRatings();
+	}
+	
+	public boolean canEnableRatings() {
+		switch (getValue().getStatus()) {
+		case Creating:
+			return true;
+		case Created:
+			return getValue().getEmployee().equals(currentUser);
+		case EmployeeCompleted:
+			return getValue().getManager().equals(currentUser);
+		case ManagerCompleted:
+			return getValue().getManager().equals(currentUser);
+		case Reviewed:
+			return false;
+		default:
+			return false;
+		}
+	}
+	
+	public boolean canEnabledEmployee() {
+		return getValue().getStatus() == AssessmentStatus.Creating && this.currentUser.isAdmin();
+	}
+	
+	public boolean isEmployeeReadOnly() {
+		return !canEnabledEmployee();
+	}
+	
+	public boolean isManagerReadOnly() {
+		return true;
+	}
+	
+	public boolean canEnablePeriod() {
+		return getValue().getStatus() == AssessmentStatus.Creating && this.currentUser.isAdmin();
+	}
+	
+	public boolean isPeriodReadOnly() {
+		return !canEnablePeriod();
 	}
 	
 	public void onEmployeeSelected(Property.ValueChangeEvent event) {

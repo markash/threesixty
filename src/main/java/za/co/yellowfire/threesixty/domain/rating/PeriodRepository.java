@@ -1,6 +1,6 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Sort;
@@ -12,6 +12,6 @@ public interface PeriodRepository extends MongoRepository<Period, String> {
 	List<Period> findByActive(final boolean active);
 	@Query("{active: {$eq: ?0}}")
 	List<Period> findByActive(final boolean active, final Sort sort);
-	@Query("{startDate: {$eq: ?0}, endDate: {$eq: ?1}, active: {$eq: ?2}}")
-	List<Period> findByDate(final LocalDate startDate, final LocalDate endDate, final boolean active);
+	@Query("{start: {$eq: ?0}, end: {$eq: ?1}, active: {$eq: ?2}}")
+	List<Period> findByStartEndActive(final Date start, final Date end, final boolean active);
 }

@@ -3,6 +3,7 @@ package za.co.yellowfire.threesixty.domain.question;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -74,7 +75,7 @@ public class Questionaire implements Auditable<User, String> {
 	
 	public int getNoOfQuestions() { return getQuestions().size(); }
 	
-	public LocalDate getStartDate() { return period != null ? period.getStart() : null; }
+	public Date getStartDate() { return period != null ? period.getStart() : null; }
 	public void setStartDate(final LocalDate start) { 
 		if (period == null) {
 			period = Period.starts(start);
@@ -83,11 +84,11 @@ public class Questionaire implements Auditable<User, String> {
 		}	
 	}
 	
-	public LocalDate getEndDate() { return period != null ? period.getEnd() : null; }
+	public Date getEndDate() { return period != null ? period.getEnd() : null; }
 	
 	public void setEndDate(final LocalDate end) { 
 		if (period == null) {
-			period = Period.starts(null);
+			period = Period.starts((Date) null);
 		}
 		
 		period.setEnd(end);
@@ -139,6 +140,10 @@ public class Questionaire implements Auditable<User, String> {
 	}
 	
 	public Questionaire startingOn(final LocalDate date) {
+		return startingOn(new Date(date.toEpochDay()));
+	}
+	
+	public Questionaire startingOn(final Date date) {
 		if (this.getPeriod() == null) {
 			this.setPeriod(Period.starts(date));
 		} else {
@@ -148,8 +153,12 @@ public class Questionaire implements Auditable<User, String> {
 	}
 	
 	public Questionaire closingOn(final LocalDate date) {
+		return closingOn(new Date(date.toEpochDay()));
+	}
+	
+	public Questionaire closingOn(final Date date) {
 		if (this.getPeriod() == null) {
-			this.setPeriod(Period.starts(null).ends(date));
+			this.setPeriod(Period.starts((Date) null).ends(date));
 		} else {
 			this.getPeriod().setEnd(date);
 		}

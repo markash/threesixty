@@ -1,7 +1,9 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.ZoneOffset;
+import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -27,8 +29,8 @@ public class Period implements Auditable<User, String> {
 	@Id
 	private String id;
 	
-	private LocalDate start;
-	private LocalDate end;
+	private Date start;
+	private Date end;
 	private boolean active = true;
 	
 	@DBRef
@@ -43,18 +45,26 @@ public class Period implements Auditable<User, String> {
 		period.setStart(date);
 		return period;
 	}
-		
+	
+	public static Period starts(Date date) {
+		Period period = new Period();
+		period.setStart(LocalDate.ofEpochDay(date.getTime()));
+		return period;
+	}
+	
 	public Period() {}
 	
 	@Override
 	public String getId() { return this.id; }
     public void setId(String id) { this.id = id; }
     
-	public LocalDate getStart() { return start; }
-	public void setStart(LocalDate start) { this.start = start; }
+	public Date getStart() { return start; }
+	public void setStart(LocalDate start) { this.start = Date.from(start.atStartOfDay().atOffset(ZoneOffset.UTC).toInstant()); }
+	public void setStart(Date start) { this.start = start; }
 	
-	public LocalDate getEnd() { return end; }
-	public void setEnd(LocalDate end) { this.end = end; }
+	public Date getEnd() { return end; }
+	public void setEnd(LocalDate end) { this.end = Date.from(end.atStartOfDay().atOffset(ZoneOffset.UTC).toInstant()); }
+	public void setEnd(Date end) { this.end = end; }
 	
 	public boolean isActive() { return active; }
 	public void setActive(boolean active) { this.active = active; }
@@ -101,6 +111,11 @@ public class Period implements Auditable<User, String> {
 		return this;
 	}
 
+	public Period ends(Date date) {
+		this.setEnd(LocalDate.ofEpochDay(date.getTime()));
+		return this;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -128,8 +143,8 @@ public class Period implements Auditable<User, String> {
 
 	@Override
 	public String toString() {
-		final String startDate = start != null ? DateTimeFormatter.ISO_DATE.format(start) : "";
-		final String endDate = end != null ? DateTimeFormatter.ISO_DATE.format(end) : "";
+		final String startDate = start != null ? new SimpleDateFormat("yyyy-MM-dd").format(start) : "";
+		final String endDate = end != null ? new SimpleDateFormat("yyyy-MM-dd").format(end) : "";
 		return startDate + " - " + endDate;
 	}
 }

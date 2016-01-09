@@ -8,8 +8,8 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.AccessType;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.AccessType.Type;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.domain.Auditable;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
@@ -35,7 +35,7 @@ public class Assessment implements Auditable<User, String> {
 	private User manager;
 	@DBRef @NotNull(message = "{assessment.period.NotNull.message}")
 	private Period period;
-	private Set<AssessmentRating> ratings = new HashSet<>();
+	private Set<AssessmentRating> ratings = new HashSet<AssessmentRating>();
 	private double score = 0.0;
 	private boolean active = true;
 	private AssessmentStatus status = AssessmentStatus.Creating;
@@ -68,7 +68,7 @@ public class Assessment implements Auditable<User, String> {
 	public Period getPeriod() { return period; }
 	public void setPeriod(Period period) { this.period = period; }
 
-	public double getTotal() {
+	public double getWeightingTotal() {
 		double total = 0.0;
 		for(AssessmentRating rating : ratings) {
 			total += rating.getWeight();
@@ -77,31 +77,54 @@ public class Assessment implements Auditable<User, String> {
 	}
 	
 	public Set<AssessmentRating> getAssessmentRatings() { 
-		double total = getTotal();
+		double total = getWeightingTotal();
 		for(AssessmentRating rating : ratings) {
-			rating.setTotal(total);
+			rating.setWeightingTotal(total);
+			rating.setAssessment(this);
 		}
 		return ratings;
 	}
-
-	public void addAssessmentRating(final AssessmentRating rating) {
+	
+	public AssessmentRating addAssessmentRating() {
+		return addAssessmentRating(new AssessmentRating());
+	}
+	
+	public AssessmentRating addAssessmentRating(final AssessmentRating rating) {
+		rating.setAssessment(this);
 		this.ratings.add(rating);
 		calculate();
+		return rating;
 	}
 	
 	public void removeAssessmentRating(final AssessmentRating rating) {
+		rating.setAssessment(null);
 		this.ratings.remove(rating);
 		calculate();
 	}
 	
 	public double getScore() { return score; }
 	
+	public int getNoOfRatings() { return getAssessmentRatings().size(); }
+	
 	public void calculate() {
+		double total = getWeightingTotal();
+		
 		this.score = 0.0;
 		Set<AssessmentRating> list = getAssessmentRatings();
 		for(AssessmentRating rating : list) {
+			rating.setWeightingTotal(total);
 			this.score += rating.getScore();
 		}
+	}
+	
+	public boolean isComplete() {
+		Set<AssessmentRating> list = getAssessmentRatings();
+		for(AssessmentRating rating : list) {
+			if (rating.getRating() <= 0.0) {
+				return false;
+			};
+		}
+		return true;
 	}
 	
 	public AssessmentStatus getStatus() { return status; }

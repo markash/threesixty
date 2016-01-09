@@ -66,6 +66,10 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
 		return this.fieldGroup.isModified();
 	}
 	
+	public boolean isValid() {
+		return this.fieldGroup.isValid();
+	}
+	
 	public void addDirtyListener(final DirtyListener listener) {
 		if (listener != null) {
 			this.dirtyListeners.add(listener);

@@ -1,8 +1,11 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -38,17 +41,28 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 		this.periodRepository = periodRepository;
 		
 		this.possibleRatings = new ArrayList<>(Arrays.asList(new Double[] {1.0, 2.0, 3.0, 4.0, 5.0}));
-		this.possibleWeightings = new ArrayList<>(Arrays.asList(new Double[] {10.0, 20.0, 25.0, 30.0, 40.0, 50.0, 60.0, 70.0, 75.0, 80.0, 90.0, 100.0}));
+		this.possibleWeightings = new ArrayList<>(Arrays.asList(new Double[] {0.0, 10.0, 20.0, 25.0, 30.0, 40.0, 50.0, 60.0, 70.0, 75.0, 80.0, 90.0, 100.0}));
 	}
 	
 	@PostConstruct
 	public void init() {
 		
 		LOG.info("Initializing the assessment data");
-		List<Period> periods = periodRepository.findByDate(LocalDate.of(2015, 01, 01), LocalDate.of(2015, 03, 31), true);
+		Date start = Date.from(LocalDate.of(2015, 01, 01).atStartOfDay().toInstant(ZoneOffset.UTC));
+		Date end = Date.from(LocalDate.of(2015, 03, 31).atStartOfDay().toInstant(ZoneOffset.UTC));
+		
+		LOG.info("Start {}", start);
+		LOG.info("End {}", start);
+		
+		List<Period> periods = periodRepository.findByStartEndActive(start, end, true);
 		if (periods == null || periods.size() == 0) {
 			LOG.info("Inserting default period 01 Jan 2015 -> 31 Mar 2015");
 			periodRepository.save(Period.starts(LocalDate.of(2015, 01, 01)).ends(LocalDate.of(2015, 03, 31)));
+		} 
+		
+		for (Assessment assessment : assessmentRepository.findAll()) {
+			assessment.setStatus(AssessmentStatus.Creating);
+			assessmentRepository.save(assessment);
 		}
 	}
 	

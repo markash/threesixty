@@ -432,12 +432,9 @@
   	height: 410px;
   }
   
-  .assessment-rating-row {
-  	background-color: lighten(#eee, 10%);
-  }
-  
-  .assessment-rating-row-odd {
-  	background-color: darken(#eee, 10%);
+  .rating-summary-item {
+  	padding-top: 6px;
+  	padding-right: 5px;
   }
     
   .bolded {

@@ -9,6 +9,7 @@ import com.vaadin.ui.UI;
 
 import za.co.yellowfire.threesixty.domain.rating.Assessment;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
+import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditView;
 
 @SpringView(name = AssessmentEditView.VIEW_NAME)
@@ -23,8 +24,12 @@ public final class AssessmentEditView extends AbstractEntityEditView<Assessment>
     public static final String VIEW(final String id) { return VIEW_NAME + (StringUtils.isBlank(id) ? "" : "/" + id); } 
 
     @Autowired
-    public AssessmentEditView(final AssessmentService service) {
-    	super(service, new AssessmentEntityEditForm(service));
+    public AssessmentEditView(final AssessmentService service, final UserService userService) {
+    	super(
+    			service, 
+    			new AssessmentEntityEditForm(service, userService.getCurrentUser()),
+    			userService.getCurrentUser().isAdmin()
+    			);
     }
 
     @Override

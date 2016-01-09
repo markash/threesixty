@@ -34,11 +34,21 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
     private final Service<T> service;
     private final AbstractEntityEditForm<T> form;
     
-    public AbstractEntityEditView(Service<T> service, AbstractEntityEditForm<T> form) {
+    public AbstractEntityEditView(
+    		Service<T> service, 
+    		AbstractEntityEditForm<T> form) {
+    	this(service, form, true);
+    }
+    
+    public AbstractEntityEditView(
+    		Service<T> service, 
+    		AbstractEntityEditForm<T> form,
+    		boolean enableCreation) {
 		super();
 		this.service = service;
 		this.form = form;
 		this.form.addDirtyListener(this::onDirty);
+		this.createButton.setEnabled(enableCreation);
 	}
 
 	@Override
@@ -184,6 +194,10 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
 	protected AbstractEntityEditForm<T> getForm() {
 		return this.form;
 	}
+	
+	protected Button getSaveButton() { return this.saveButton; }
+	protected Button getResetButton() { return this.resetButton; }
+	protected Button getCreateButton() { return this.createButton; }
 	
 	protected Service<T> getService() { return this.service; }
 }

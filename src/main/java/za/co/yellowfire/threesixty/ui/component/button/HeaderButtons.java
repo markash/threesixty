@@ -1,5 +1,8 @@
 package za.co.yellowfire.threesixty.ui.component.button;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 
@@ -7,6 +10,10 @@ public class HeaderButtons extends HorizontalLayout {
 	private static final long serialVersionUID = 1L;
 			
 	public HeaderButtons(final Component...components) {
+		this(Arrays.asList(components));
+	}
+	
+	public HeaderButtons(final Collection<Component> components) {
 		for (Component button : components) {
 			addComponent(button);
 		}

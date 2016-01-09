@@ -28,8 +28,9 @@ public class AssessmentRating implements Auditable<User, String> {
 	private double weight = 1.0;
 	private double rating = 0.0;
 	@Transient
-	private double total = 0.0;
-	
+	private double weightingTotal = 0.0;
+	@Transient
+	private Assessment assessment;
 	@DBRef
 	private User createdBy;
 	@DBRef
@@ -59,10 +60,13 @@ public class AssessmentRating implements Auditable<User, String> {
 	public double getRating() { return rating; }
 	public void setRating(double rating) { this.rating = rating; }
 
-	public double getScore() { return getTotal() != 0.0 ?  getWeight() * getRating() / getTotal() : 0.0; }
+	public double getScore() { return getWeightingTotal() != 0.0 ?  getWeight() * getRating() / getWeightingTotal() : 0.0; }
+
+	protected void setWeightingTotal(final double weightingTotal) { this.weightingTotal = weightingTotal; }
+	protected double getWeightingTotal() { return weightingTotal; }
 	
-	protected void setTotal(final double total) { this.total = total; }
-	protected double getTotal() { return total; }
+	public Assessment getAssessment() { return this.assessment; }
+	public void setAssessment(final Assessment assessment) { this.assessment = assessment; }
 	
 	@Override
 	public boolean isNew() { return StringUtils.isBlank(this.id); }

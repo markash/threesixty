@@ -5,19 +5,22 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 
 public enum AssessmentStatus {
-	Creating("Creating"),
-	Created("Created"),
-	EmployeeCompleted("Employee Completed"),
-	ManagerCompleted("Manager Completed"),
-	Reviewed("Reviewed");
+	Creating("Creating", true),
+	Created("Created", false),
+	EmployeeCompleted("Employee Completed", false),
+	ManagerCompleted("Manager Completed", false),
+	Reviewed("Reviewed", false);
 	
 	private final String description;
+	private final boolean allowEditing;
 	
-	private AssessmentStatus(final String description) {
+	private AssessmentStatus(final String description, final boolean allowEditing) {
 		this.description = description;
+		this.allowEditing = allowEditing;
 	}
 
 	public String getDescription() { return description; }
+	public boolean isEditingAllowed() { return this.allowEditing; }
 	
 	public static AssessmentStatus fromString(@NotNull final String description) {
 		if (StringUtils.isBlank(description)) {
