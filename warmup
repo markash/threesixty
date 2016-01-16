@@ -1,0 +1,3 @@
+until $(curl -o /dev/null -s -I -f http://localhost:$PORT); do
+  sleep 5
+done

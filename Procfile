@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT -jar target/threesixty-*.jar
+web: java -jar target/threesixty-*.jar --spring.profiles.active=prod --server.port=$PORT --spring.data.mongodb.uri=$MONGOLAB_URI
