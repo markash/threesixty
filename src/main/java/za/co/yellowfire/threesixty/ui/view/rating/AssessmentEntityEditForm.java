@@ -65,6 +65,7 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 				new AssessmentRatingsField(
 						service.findPossibleRatings(), 
 						service.findPossibleWeightings(),
+						service.findPerformanceAreas(),
 						new MButton[] {publishButton, employeeCompleteButton, managerCompleteButton, concludeButton});
 		
 		this.ratingsField.setCurrentUser(currentUser);

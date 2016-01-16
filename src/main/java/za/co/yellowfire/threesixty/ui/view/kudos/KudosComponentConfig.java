@@ -54,6 +54,7 @@ public class KudosComponentConfig {
 		TextArea field = new TextArea("Motivation");
 		field.setWidth(100.0f, Unit.PERCENTAGE);
 		field.setNullRepresentation("");
+		field.setRows(7);
 		return field;
 	}
 }

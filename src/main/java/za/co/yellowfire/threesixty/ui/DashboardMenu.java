@@ -1,5 +1,7 @@
 package za.co.yellowfire.threesixty.ui;
 
+import org.springframework.util.StringUtils;
+
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
@@ -241,8 +243,7 @@ public class DashboardMenu extends CustomComponent {
             this.view = view;
             setPrimaryStyleName("valo-menu-item");
             setIcon(view.getIcon());
-            setCaption(view.getViewName().substring(0, 1).toUpperCase()
-                    + view.getViewName().substring(1));
+            setCaption(StringUtils.capitalize(StringUtils.replace(view.getViewName(), "-", " ")));
             DashboardEventBus.register(this);
             addClickListener(new ClickListener() {
                 @Override
@@ -253,7 +254,7 @@ public class DashboardMenu extends CustomComponent {
             });
 
         }
-
+        
         @Subscribe
         public void postViewChange(final PostViewChangeEvent event) {
             removeStyleName(STYLE_SELECTED);

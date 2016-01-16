@@ -1,7 +1,6 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +25,7 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 	private static final Logger LOG = LoggerFactory.getLogger(AssessmentService.class);
 	
 	private final AssessmentRepository assessmentRepository;
+	private final PerformanceAreaRepository performanceAreaRepository;
 	private final UserRepository userRepository;
 	private final PeriodRepository periodRepository;
 	private final ArrayList<Double> possibleRatings;
@@ -34,11 +34,13 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 	@Autowired
 	public AssessmentService(
 			final AssessmentRepository assessmentRepository,
+			final PerformanceAreaRepository performanceAreaRepository,
 			final PeriodRepository periodRepository,
 			final UserRepository userRepository) {
 		this.assessmentRepository = assessmentRepository;
 		this.userRepository = userRepository;
 		this.periodRepository = periodRepository;
+		this.performanceAreaRepository = performanceAreaRepository;
 		
 		this.possibleRatings = new ArrayList<>(Arrays.asList(new Double[] {1.0, 2.0, 3.0, 4.0, 5.0}));
 		this.possibleWeightings = new ArrayList<>(Arrays.asList(new Double[] {0.0, 10.0, 20.0, 25.0, 30.0, 40.0, 50.0, 60.0, 70.0, 75.0, 80.0, 90.0, 100.0}));
@@ -82,6 +84,10 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 		return this.possibleWeightings;
 	}
 
+	public List<PerformanceArea> findPerformanceAreas() {
+		return this.performanceAreaRepository.findAll();
+	}
+	
 	public Assessment findById(final String id) {
 		return assessmentRepository.findOne(id);
 	}

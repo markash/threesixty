@@ -3,7 +3,6 @@ package za.co.yellowfire.threesixty.ui.component.notification;
 import java.util.List;
 
 import com.google.common.eventbus.Subscribe;
-import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
@@ -11,6 +10,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
@@ -32,6 +32,19 @@ public class NotificationsButton extends Button {
     private final UserService userService;
     private ClickListener viewNotificationsClickListner;
     private Window notificationsWindow;
+    
+    @SuppressWarnings("serial")
+	protected NotificationsButton(final UserService userService, final String notificationsView) {
+    	this(
+    			userService, 
+    			new ClickListener() { 
+    				@Override
+			    	public void buttonClick(ClickEvent event) {
+    					UI.getCurrent().getNavigator().navigateTo(notificationsView);
+			    		
+			    	}}
+    			);
+    }
     
     protected NotificationsButton(final UserService userService, final ClickListener viewNotificationsClickListner) {
     	this.userService = userService;
@@ -71,6 +84,18 @@ public class NotificationsButton extends Button {
         return button;
 	}
     
+    public static NotificationsButton build(
+    		final String id, 
+    		final UserService userService, 
+    		final String caption, 
+    		final FontAwesome fontIcon, 
+    		final String notificationsView) {
+    	NotificationsButton button = new NotificationsButton(userService, notificationsView);
+    	button.setId(id);
+		button.setIcon(fontIcon);
+        return button;
+	}
+    
     public static NotificationsButton build(final String id, 
     		final UserService userService, 
     		final String caption, 
@@ -86,9 +111,35 @@ public class NotificationsButton extends Button {
 		
 		return button;
     }
+	
+    public static NotificationsButton build(final String id, 
+    		final UserService userService, 
+    		final String caption, 
+    		final FontAwesome fontIcon, 
+    		final String notificationsView, 
+    		final String...styles) {
+    	NotificationsButton button = build(id, userService, caption, fontIcon, notificationsView);
+		if (styles != null && styles.length > 0) {
+			for(String style : styles) {
+				button.addStyleName(style);
+			}
+		}
 		
+		return button;
+    }
+    
     public static NotificationsButton BELL(final UserService userService, final ClickListener listener) {
 		return BELL(ID, userService, listener);
+	}
+    
+    public static NotificationsButton BELL(final String id, final UserService userService, final String notificationsView) {
+		return build(
+				id, 
+				userService, 
+				BUTTON_BELL, 
+				FontAwesome.BELL, 
+				notificationsView, 
+				"notifications", ValoTheme.BUTTON_ICON_ONLY);	
 	}
     
     public static NotificationsButton BELL(final String id, final UserService userService, final ClickListener listener) {

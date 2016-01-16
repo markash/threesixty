@@ -20,7 +20,9 @@ import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
 import za.co.yellowfire.threesixty.ui.component.button.HeaderButtons;
 import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
+import za.co.yellowfire.threesixty.ui.component.notification.NotificationsButton;
 import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm.DirtyEvent;
+import za.co.yellowfire.threesixty.ui.view.user.notification.UserNotificationSearchView;
 
 @SuppressWarnings("serial")
 public abstract class AbstractEntityEditView<T extends Persistable<String>> extends AbstractDashboardPanel /*, DashboardEditListener*/ {
@@ -29,6 +31,7 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
     private Button saveButton = ButtonBuilder.SAVE(this::onSave);
 	private Button resetButton = ButtonBuilder.RESET(this::onReset);
 	private Button createButton = ButtonBuilder.NEW(this::onCreate);	
+	
     private Button[] buttons = new Button[] {saveButton, resetButton, createButton};
    
     private final Service<T> service;

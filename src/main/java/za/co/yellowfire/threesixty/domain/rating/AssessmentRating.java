@@ -19,10 +19,13 @@ public class AssessmentRating implements Auditable<User, String> {
 
 	@Id
 	private String id;
-	@NotNull(message = "{assessment.performanceArea.NotNull.message}")
-	private String performanceArea;
+	
+	@DBRef @NotNull(message = "{assessment.performanceArea.NotNull.message}")
+	private PerformanceArea performanceArea;
+	
 	@NotNull(message = "{assessment.measurement.NotNull.message}")
 	private String measurement;
+	
 	private String managerComment;
 	private String employeeComment;
 	private double weight = 1.0;
@@ -42,8 +45,8 @@ public class AssessmentRating implements Auditable<User, String> {
 	public String getId() { return this.id; }
     public void setId(String id) { this.id = id; }
     
-	public String getPerformanceArea() { return performanceArea; }
-	public void setPerformanceArea(String performanceArea) { this.performanceArea = performanceArea; }
+	public PerformanceArea getPerformanceArea() { return performanceArea; }
+	public void setPerformanceArea(final PerformanceArea performanceArea) { this.performanceArea = performanceArea; }
 
 	public String getMeasurement() { return measurement; }
 	public void setMeasurement(String measurement) { this.measurement = measurement; }

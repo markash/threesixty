@@ -15,6 +15,7 @@ import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.fieldgroup.PropertyId;
+import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Responsive;
 import com.vaadin.shared.ui.label.ContentMode;
@@ -33,6 +34,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import za.co.yellowfire.threesixty.domain.rating.Assessment;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentRating;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentStatus;
+import za.co.yellowfire.threesixty.domain.rating.PerformanceArea;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.Style;
 import za.co.yellowfire.threesixty.ui.component.BeanBinder;
@@ -56,6 +58,7 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 	/* Fields */
 	private LinkedList<Double> possibleRatings = new LinkedList<>();
 	private LinkedList<Double> possibleWeightings = new LinkedList<>();
+	private LinkedList<PerformanceArea> performanceAreas = new LinkedList<>();
 	
 	/* Listeners */
 	private AssessmentRatingListener listener;
@@ -68,18 +71,23 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 	public AssessmentRatingsField(
 			final Collection<Double> possibleRatings, 
 			final Collection<Double> possibleWeightings,
+			final Collection<PerformanceArea> performanceAreas,
 			final Button[] headerButtons) {
-		this(possibleRatings, possibleWeightings, null, null, headerButtons);
+		this(possibleRatings, possibleWeightings, performanceAreas, null, null, headerButtons);
 	}
 	
 	public AssessmentRatingsField(
 			final Collection<Double> possibleRatings, 
 			final Collection<Double> possibleWeightings,
+			final Collection<PerformanceArea> performanceAreas,
 			final AssessmentRatingListener listener,
 			final RecalculationListener recalculationListener,
 			final Button[] buttons) {
+		
 		this.possibleRatings.addAll(possibleRatings);
 		this.possibleWeightings.addAll(possibleWeightings);
+		this.performanceAreas.addAll(performanceAreas);
+		
 		this.listener = listener;
 		this.recalculationListener = recalculationListener;
 		this.summary = new AssessmentSummaryHeader(ArrayUtils.addAll(new Button[] {addButton}, buttons));
@@ -227,7 +235,7 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 	protected AssessmentRatingPanel addAssessmentRatingPanel(final AssessmentRating rating, final User currentUser) {
 		
 		/* Add the the new assessment panel */
-		AssessmentRatingPanel panel = new AssessmentRatingPanel(rating, currentUser, this.possibleRatings, this.possibleWeightings);
+		AssessmentRatingPanel panel = new AssessmentRatingPanel(rating, currentUser, this.possibleRatings, this.possibleWeightings, this.performanceAreas);
 		
 		Tab tab = this.tabSheet.addTab(panel);
 		tab.setCaption("Rating #" + (tabSheet.getTabPosition(tab) + 1));
@@ -276,13 +284,20 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 		@PropertyId("id")
 		private MTextField idField = new MTextField("Id").withReadOnly(true);
 		@PropertyId("performanceArea")
-		private MTextField areaField = new MTextField("Performance Area").withWidth(100.0f, Unit.PERCENTAGE);
+		private MComboBox areaField;
+		
 		@PropertyId("measurement")
-		private MTextArea measurementField = new MTextArea("Measurement").withRows(7);
+		private MTextArea measurementField = 
+			new MTextArea("Measurement")
+				.withRows(15);
 		@PropertyId("managerComment")
-		private MTextField managerCommentField = new MTextField("Manager Comment").withWidth(100.0f, Unit.PERCENTAGE);
+		private MTextArea managerCommentField = 
+			new MTextArea("Manager Comment")
+				.withRows(5);
 		@PropertyId("employeeComment")
-		private MTextField employeeCommentField = new MTextField("Employee Comment").withWidth(100.0f, Unit.PERCENTAGE);
+		private MTextArea employeeCommentField = 
+			new MTextArea("Employee Comment")
+				.withRows(5);
 		@PropertyId("weight")
 		private MComboBox weightField = 
 			new MComboBox("Weight")
@@ -305,12 +320,17 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 				final AssessmentRating rating, 
 				final User currentUser,
 				final Collection<?> possibleRatings, 
-				final Collection<?> possibleWeightings) {
+				final Collection<?> possibleWeightings,
+				final Collection<PerformanceArea> performanceAreas) {
 			super(3, 3);
 						
 			setWidth(100.0f, Unit.PERCENTAGE);
 			setSpacing(true);
 			
+			 this.areaField = 
+						new MComboBox("Performance Area", new IndexedContainer(performanceAreas))
+							.withWidth(100.0f, Unit.PERCENTAGE);
+			 
 			/* Set buffered to false so that the assessment score can be calculated on property change*/
 			this.fieldGroup = BeanBinder.bind(rating, this, false);
 			this.ratingField.addItems(possibleRatings);
@@ -326,9 +346,9 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 			addComponent(measurementField, 1, 0, 1, 2);
 			
 			/* Column 2 */
-			addComponent(weightField, 2, 0);
-			addComponent(ratingField, 2, 1);
-			addComponent(scoreField, 2, 2);
+			addComponent(PanelBuilder.VERTICAL(weightField, ratingField, scoreField), 2, 0, 2, 2);
+			//addComponent(ratingField, 2, 1);
+			//addComponent(scoreField, 2, 2);
 			
 			setColumnExpandRatio(0, 3f);
 			setColumnExpandRatio(1, 3f);

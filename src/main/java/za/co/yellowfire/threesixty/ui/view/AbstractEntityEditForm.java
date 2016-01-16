@@ -10,6 +10,7 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.fieldgroup.PropertyId;
+import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.server.Responsive;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.HorizontalLayout;
@@ -83,6 +84,17 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
 	}
 	
 	protected void registerDirtyListener() {
+		/* Link the changing of the id text with a form dirty since this
+		 * is the only field on the form sometimes which makes it difficult
+		 * for the user to know that a tab is required to enable the Save button
+		 */
+		if (!idField.isReadOnly()) {
+			idField.addTextChangeListener(this::onTextChange);
+		}
+		
+		/*
+		 * Link a value change to all other fields on the form
+		 */
 		for(Field<?> field : this.fieldGroup.getFields()) {
 			field.removeValueChangeListener(this::onValueChange);
 			field.addValueChangeListener(this::onValueChange);
@@ -121,6 +133,12 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
 		}
 	}
 	
+	protected void onTextChange(final TextChangeEvent event) {
+		for (DirtyListener listener : dirtyListeners) {
+			listener.onDirty(new FormDirtyEvent());
+		}
+	}
+	
 	/**
 	 * 
      */
@@ -137,6 +155,9 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
     	private final Property<?> property;
     	private final boolean recalculationRequired;
     	
+    	public FormDirtyEvent() {
+    		this(null, false);
+    	}
     	public FormDirtyEvent(Property<?> property) {
     		this(property, false);
     	}

@@ -102,7 +102,7 @@ public abstract class AbstractRepositoryEntityEditView<T extends Persistable<Str
 	
 	protected void onPostSave(final ClickEvent event) {}
 	
-	protected void add(ClickEvent event) {
+	protected void onCreate(ClickEvent event) {
 		if (form.isModified()) {
 			ConfirmDialog.show(
 					UI.getCurrent(), 
@@ -129,7 +129,7 @@ public abstract class AbstractRepositoryEntityEditView<T extends Persistable<Str
 		}
 	}
 	
-	protected void delete(ClickEvent event) {
+	protected void onDelete(ClickEvent event) {
 		try {
 			ConfirmDialog.show(
 					UI.getCurrent(), 
@@ -177,12 +177,7 @@ public abstract class AbstractRepositoryEntityEditView<T extends Persistable<Str
 			onClean();
 		}
 	}
-	
-	protected void onCreate(final ClickEvent event) {
-	}
-	
-	protected void onDelete(final ClickEvent event) {
-	}
+
 	
 	protected void onDirty(final DirtyEvent event) {
 		this.headerButtons.enableSave();
