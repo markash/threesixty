@@ -149,11 +149,11 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 		return PanelBuilder.VERTICAL(header, tabSheet);
 	}
 
-
 	@Override
-	//@SuppressWarnings("unchecked")
-	public Class<? extends Set<AssessmentRating>> getType() {
-		return (Class<? extends Set<AssessmentRating>>) Set.class;
+	@SuppressWarnings("unchecked")
+	public Class<Set<AssessmentRating>> getType() {
+		Set<AssessmentRating> test = new HashSet<AssessmentRating>();
+		return (Class<Set<AssessmentRating>>) test.getClass();
 	}
 
 	@Override
