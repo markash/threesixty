@@ -88,6 +88,9 @@ public class UserService {
 		User administrator = userRepository.findOne(User.USER_ADMIN);
 		if (administrator == null) {
 			administrator = new User(User.USER_ADMIN, User.USER_ADMIN_PASSWORD, admin);
+			administrator.setFirstName("System");
+			administrator.setLastName("Administrator");
+			administrator.setEmail("admin@localhost");
 			administrator.setCreatedDate(DateTime.now());
 			administrator = userRepository.save(administrator);
 		}

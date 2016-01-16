@@ -46,10 +46,9 @@ public class LoginView extends VerticalLayout implements View {
         Component loginForm = buildLoginForm();
         addComponent(loginForm);
         setComponentAlignment(loginForm, Alignment.MIDDLE_CENTER);
-        NotificationBuilder.showNotification("Welcome to Dashboard Demo",
-        		"<span>This application is not real, it only demonstrates an application built with the "
-        		+ "<a href=\"https://vaadin.com\">Vaadin framework</a>.</span> <span>No username or password is required, "
-        		+ "just click the <b>Sign In</b> button to continue.</span>", 
+        NotificationBuilder.showNotification("Welcome to Three<strong>Sixty</strong>",
+        		"<span>The seamless employee recognition and evaluation system built with <a href=\"http://www.spring.io\">Spring.io</a> and "
+        		+ "<a href=\"https://vaadin.com\">Vaadin framework</a>.</span> <span>The default administration user is admin and password to continue.</span>", 
         		20000, 
         		true);
     }

@@ -101,11 +101,11 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
     private User currentUser;
     
     @Autowired
-    public UserEditView(final UserService service, final User currentUser) {
+    public UserEditView(final UserService service) {
     	super();
     	
     	this.service = service;
-    	this.currentUser = currentUser;
+    	this.currentUser = service.getCurrentUser();
     	
     	this.salutationField = new ComboBox("Salutation", new IndexedContainer(service.findSalutations()));
     	this.genderField = new ComboBox("Gender", new IndexedContainer(service.findGenders()));
