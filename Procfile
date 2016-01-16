@@ -1,1 +1,1 @@
-web: java -jar target/threesixty-*.jar --spring.profiles.active=prod --server.port=$PORT --spring.data.mongodb.uri=$MONGOLAB_URI
+web: java -Xmx512m -Xms512m -jar target/threesixty-*.jar --spring.profiles.active=prod --server.port=$PORT --spring.data.mongodb.uri=$MONGOLAB_URI
