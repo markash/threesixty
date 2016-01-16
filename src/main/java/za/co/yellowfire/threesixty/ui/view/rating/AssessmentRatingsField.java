@@ -2,6 +2,7 @@ package za.co.yellowfire.threesixty.ui.view.rating;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -150,7 +151,7 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 
 
 	@Override
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
 	public Class<? extends Set<AssessmentRating>> getType() {
 		return (Class<? extends Set<AssessmentRating>>) Set.class;
 	}
