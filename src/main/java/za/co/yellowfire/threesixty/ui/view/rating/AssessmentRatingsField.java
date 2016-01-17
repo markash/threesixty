@@ -16,6 +16,7 @@ import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.fieldgroup.PropertyId;
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Responsive;
@@ -30,6 +31,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.Tab;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import za.co.yellowfire.threesixty.domain.rating.Assessment;
@@ -187,8 +189,13 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 		}
 	}
 
+	protected boolean isAddButtonEnabled() {
+		return this.assessmentStatus.isEditingAllowed() && this.assessment != null && this.assessment.hasParticipants();
+	}
+	
 	public void setCurrentUser(final User currentUser) {
 		this.currentUser = currentUser;
+		this.addButton.setEnabled(isAddButtonEnabled());
 		
 		for(AssessmentRatingPanel panel : this.panels) {
 			panel.setCurrentUser(currentUser);
@@ -202,11 +209,15 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 
 	public void setAssessmentStatus(final AssessmentStatus status) {
 		this.assessmentStatus = status;
-		this.addButton.setEnabled(this.assessmentStatus.isEditingAllowed());
+		this.addButton.setEnabled(isAddButtonEnabled());
 		
 		for(AssessmentRatingPanel panel : this.panels) {
 			panel.updateFieldAccess();
 		}
+	}
+	
+	public void fireAssessmentParticipantsChanged() {
+		this.addButton.setEnabled(isAddButtonEnabled());
 	}
 	
 	public void setPossibleWeightings(final Collection<Double> weightings) {
@@ -307,21 +318,32 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 		private MComboBox ratingField = 
 			new MComboBox("Rating")
 				.withWidth(100.0f, Unit.PERCENTAGE);
+		
 		@PropertyId("score")
 		private MTextField scoreField = 
 			new MTextField("Score")
 				.withWidth(100.0f, Unit.PERCENTAGE)
 				.withReadOnly(true);
 		
+		/* Read only rating panel */
+		private VerticalLayout ratingPanel;
+		private Label employeeRatingField;
+		private Label managerRatingField;
+		private Label reviewRatingField;
+		private HorizontalLayout employeeRatingPanel;
+		private HorizontalLayout managerRatingPanel;
+		private HorizontalLayout reviewRatingPanel;
+		
 		private User currentUser;
+		private BeanItem<AssessmentRating> readOnlyFieldGroup;
 		private BeanFieldGroup<AssessmentRating> fieldGroup;
 		private LinkedHashSet<DirtyListener> dirtyListeners = new LinkedHashSet<>();
 		
 		public AssessmentRatingPanel(
 				final AssessmentRating rating, 
 				final User currentUser,
-				final Collection<?> possibleRatings, 
-				final Collection<?> possibleWeightings,
+				final Collection<Double> possibleRatings, 
+				final Collection<Double> possibleWeightings,
 				final Collection<PerformanceArea> performanceAreas) {
 			super(3, 3);
 						
@@ -337,6 +359,11 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 			this.ratingField.addItems(possibleRatings);
 			this.weightField.addItems(possibleWeightings);
 			this.currentUser = currentUser;
+			/* Setup read only ratings panel */
+			this.readOnlyFieldGroup = new BeanItem<>(rating);
+			this.employeeRatingField = new Label(this.readOnlyFieldGroup.getItemProperty("employeeRating"));
+			this.managerRatingField = new Label(this.readOnlyFieldGroup.getItemProperty("managerRating"));
+			this.reviewRatingField = new Label(this.readOnlyFieldGroup.getItemProperty("reviewRating"));
 			
 			/* Column 0 */
 			addComponent(areaField, 0, 0);
@@ -347,10 +374,45 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 			addComponent(measurementField, 1, 0, 1, 2);
 			
 			/* Column 2 */
-			addComponent(PanelBuilder.VERTICAL(weightField, ratingField, scoreField), 2, 0, 2, 2);
-			//addComponent(ratingField, 2, 1);
-			//addComponent(scoreField, 2, 2);
+			Label ratingLabel = LabelBuilder.build("Self-rating: ", Style.Text.BOLDED);
+			this.employeeRatingPanel = 
+					PanelBuilder.HORIZONTAL(
+							"rating-summary-item", 
+							ratingLabel, 
+							this.employeeRatingField);
+			this.employeeRatingPanel.setExpandRatio(ratingLabel, 3);
+			this.employeeRatingPanel.setExpandRatio(this.employeeRatingField, 1);
+			this.employeeRatingPanel.setSpacing(true);
 			
+			ratingLabel = LabelBuilder.build("Manager rating: ", Style.Text.BOLDED);
+			this.managerRatingPanel = 
+					PanelBuilder.HORIZONTAL(
+							"rating-summary-item", 
+							ratingLabel, 
+							this.managerRatingField);
+			this.managerRatingPanel.setExpandRatio(ratingLabel, 3);
+			this.managerRatingPanel.setExpandRatio(this.managerRatingField, 1);
+			this.managerRatingPanel.setSpacing(true);
+			
+			ratingLabel = LabelBuilder.build("Review rating: ", Style.Text.BOLDED);
+			this.reviewRatingPanel = 
+					PanelBuilder.HORIZONTAL(
+							"rating-summary-item", 
+							ratingLabel, 
+							this.reviewRatingField);
+			this.reviewRatingPanel.setExpandRatio(ratingLabel, 3);
+			this.reviewRatingPanel.setExpandRatio(this.reviewRatingField, 1);
+			this.reviewRatingPanel.setSpacing(true);
+			
+			switch (rating.getAssessment().getStatus()) {
+				case Created: this.ratingPanel = PanelBuilder.VERTICAL(weightField, ratingField, scoreField, employeeRatingPanel); break;
+				case EmployeeCompleted: this.ratingPanel = PanelBuilder.VERTICAL(weightField, ratingField, scoreField, employeeRatingPanel, managerRatingPanel); break;
+				case ManagerCompleted: 
+				case Reviewed: this.ratingPanel = PanelBuilder.VERTICAL(weightField, ratingField, scoreField, employeeRatingPanel, managerRatingPanel, reviewRatingPanel); break;
+				default: this.ratingPanel = PanelBuilder.VERTICAL(weightField, ratingField, scoreField);
+			}
+			addComponent(ratingPanel, 2, 0, 2, 2);
+
 			setColumnExpandRatio(0, 3f);
 			setColumnExpandRatio(1, 3f);
 			setColumnExpandRatio(2, 1f);
@@ -389,6 +451,7 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 			return getValue().getAssessment().getEmployee().equals(currentUser);
 		}
 		
+		@SuppressWarnings("unused")
 		public boolean isCreatingStatus() {
 			return getValue().getAssessment().getStatus() == AssessmentStatus.Creating;
 		}
@@ -485,18 +548,46 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 		}
 		
 		protected void onValueChange(final com.vaadin.data.Property.ValueChangeEvent event) {
-			//if (this.fieldGroup.isModified()) {
-				
-				boolean recalculationRequired = weightField.equals(event.getProperty()) || ratingField.equals(event.getProperty());
-				
-				if (recalculationRequired) {
-					this.scoreField.markAsDirty();
-				}
-				
-				for (DirtyListener listener : dirtyListeners) {
-					listener.onDirty(new FormDirtyEvent(event.getProperty(), recalculationRequired));
-				}
-			//}
+			
+			boolean ratingChanged = ratingField.equals(event.getProperty());
+			boolean recalculationRequired = weightField.equals(event.getProperty()) || ratingChanged;
+			
+			if (recalculationRequired) {
+				this.scoreField.markAsDirty();
+			}
+			
+			if (ratingChanged) {
+				onRatingChange((Double) ratingField.getValue());
+			}
+			
+			for (DirtyListener listener : dirtyListeners) {
+				listener.onDirty(new FormDirtyEvent(event.getProperty(), recalculationRequired));
+			}
+		}
+		
+		protected void onRatingChange(Double rating) {
+			switch(getValue().getAssessment().getStatus()) {
+			case Created:
+				/* Set the employee self rating */
+				getValue().setEmployeeRating(rating);
+				this.readOnlyFieldGroup.getBean().setEmployeeRating(rating);
+				this.employeeRatingField.markAsDirty();
+				break;
+			case EmployeeCompleted:
+				/* Set the manager rating */
+				getValue().setManagerRating(rating);
+				this.readOnlyFieldGroup.getBean().setManagerRating(rating);
+				this.managerRatingField.markAsDirty();
+				break;
+			case ManagerCompleted:
+				/* Set the review rating */
+				getValue().setReviewRating(rating);
+				this.readOnlyFieldGroup.getBean().setReviewRating(rating);
+				this.reviewRatingField.markAsDirty();
+				break;
+			default:
+				/* Not set */
+			}
 		}
 	}
 

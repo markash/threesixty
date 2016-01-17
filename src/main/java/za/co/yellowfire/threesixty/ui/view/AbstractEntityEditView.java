@@ -92,8 +92,10 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
 	        form.commit();
 	        //Persist the outcome
 	        T result = getService().save(form.getValue(), getCurrentUser());
+	        //Bind the form to the result
+	        form.bind(result);
 	        //Notify the user of the outcome
-	        NotificationBuilder.showNotification("Update", "Outcome " + result.getId() + " updated successfully.", 2000);
+	        NotificationBuilder.showNotification("Update", result.getId() + " updated successfully.", 2000);
 	        //DashboardEventBus.post(new ProfileUpdatedEvent());
 	        onClean();
 		} catch (CommitException exception) {

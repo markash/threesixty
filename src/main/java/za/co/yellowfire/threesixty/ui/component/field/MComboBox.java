@@ -57,6 +57,15 @@ public class MComboBox extends ComboBox {
         return this;
     }
     
+    public MComboBox withEnabled(boolean enabled) {
+    	setEnabled(enabled);
+    	return this;
+    }
+    
+    public MComboBox withDisabled() {
+    	return withEnabled(false);
+    }
+    
     public MComboBox valueChangeListener(final ValueChangeListener valueChangeListener) {
     	addValueChangeListener(valueChangeListener);
     	return this;

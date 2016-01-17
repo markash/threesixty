@@ -30,6 +30,9 @@ public class AssessmentRating implements Auditable<User, String> {
 	private String employeeComment;
 	private double weight = 1.0;
 	private double rating = 0.0;
+	private double employeeRating = 0.0;
+	private double managerRating = 0.0;
+	private double reviewRating = 0.0;
 	@Transient
 	private double weightingTotal = 0.0;
 	@Transient
@@ -63,6 +66,27 @@ public class AssessmentRating implements Auditable<User, String> {
 	public double getRating() { return rating; }
 	public void setRating(double rating) { this.rating = rating; }
 
+	/**
+	 * The self assessment rating the employee
+	 * @return Employee rating
+	 */
+	public double getEmployeeRating() { return employeeRating; }
+	public void setEmployeeRating(double employeeRating) { this.employeeRating = employeeRating; }
+	
+	/**
+	 * The manager assessment rating of the employee 
+	 * @return Manager rating
+	 */
+	public double getManagerRating() { return managerRating; }
+	public void setManagerRating(double managerRating) { this.managerRating = managerRating; }
+	
+	/**
+	 * The rating the employee and the manager agreed upon during the final assessment review
+	 * @return Review rating
+	 */
+	public double getReviewRating() { return reviewRating; }
+	public void setReviewRating(double reviewRating) { this.reviewRating = reviewRating; }
+	
 	public double getScore() { return getWeightingTotal() != 0.0 ?  getWeight() * getRating() / getWeightingTotal() : 0.0; }
 
 	protected void setWeightingTotal(final double weightingTotal) { this.weightingTotal = weightingTotal; }

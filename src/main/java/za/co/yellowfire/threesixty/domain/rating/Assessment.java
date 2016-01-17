@@ -133,6 +133,14 @@ public class Assessment implements Auditable<User, String> {
 	public boolean isActive() { return active; }
 	public void setActive(boolean active) { this.active = active; }
 
+	/**
+	 * Returns whether the employee and manager (i.e. participants) for the assessment has been set
+	 * @return true if both the employee and manager are not null
+	 */
+	public boolean hasParticipants() {
+		return this.employee != null && this.manager != null;
+	}
+	
 	@Override
 	public boolean isNew() { return StringUtils.isBlank(this.id); }
 	

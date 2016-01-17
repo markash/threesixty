@@ -50,7 +50,7 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 		this.managerField = 
 				new MComboBox(I8n.Assessment.Fields.MANAGER, new IndexedContainer(service.findActiveUsers()))
 					.withWidth(100.0f, Unit.PERCENTAGE)
-					.withReadOnly(true);
+					.withDisabled();
 		
 		this.employeeField = 
 				new MComboBox(I8n.Assessment.Fields.EMPLOYEE, new IndexedContainer(service.findActiveUsers()))
@@ -185,6 +185,11 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 		this.managerField.setReadOnly(isManagerReadOnly());
 		this.periodField.setReadOnly(isPeriodReadOnly());
 		
+		//The manager field must either be read-only or disabled
+		if (!managerField.isReadOnly()) {
+			managerField.setEnabled(false);
+		}
+		
 		this.ratingsField.setAssessmentStatus(getValue().getStatus());
 		this.ratingsField.setCurrentUser(currentUser);
 		
@@ -269,7 +274,7 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	}
 	
 	public boolean isManagerReadOnly() {
-		return true;
+		return !canEnabledEmployee();
 	}
 	
 	public boolean canEnablePeriod() {
@@ -289,5 +294,11 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 			this.managerField.select(null);
 			this.managerField.markAsDirty();
 		}
+		/* Commit the employee and manager fields so that the ratings security can be determined */
+		this.employeeField.commit();
+		this.managerField.commit();
+		
+		/*Fire the change */
+		this.ratingsField.fireAssessmentParticipantsChanged();
 	}
 }
