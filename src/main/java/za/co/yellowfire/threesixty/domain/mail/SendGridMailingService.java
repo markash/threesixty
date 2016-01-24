@@ -18,7 +18,6 @@ public class SendGridMailingService {
 		if (properties == null) { throw new MailingException("The mailing properties is not set"); }
 		if (!properties.isKeyConfigured()) { throw new MailingException("The mailing key is not configured"); }
 		
-		//SendGrid sendGrid = new SendGrid("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");
 		SendGrid sendGrid = new SendGrid(properties.getKey());
 		SendGrid.Email email = new SendGrid.Email();
 	    email.addTo("mp.ashworth@gmail.com");
