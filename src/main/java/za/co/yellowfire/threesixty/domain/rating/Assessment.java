@@ -129,7 +129,8 @@ public class Assessment implements Auditable<User, String> {
 	
 	public AssessmentStatus getStatus() { return status; }
 	public void setStatus(AssessmentStatus status) { this.status = status; }
-
+	public Assessment progressStatus() { this.status = this.status.getNextStatus(); return this;}
+	
 	public boolean isActive() { return active; }
 	public void setActive(boolean active) { this.active = active; }
 

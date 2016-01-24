@@ -23,6 +23,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.BrowserResizeEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.CloseOpenWindowsEvent;
+import za.co.yellowfire.threesixty.ui.DashboardEvent.ProfileUpdatedEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLoginEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLogoutEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEventBus;
@@ -98,6 +99,11 @@ public class MainUI extends UI {
         Page.getCurrent().reload();
     }
 
+    @Subscribe
+    public void userProfileUpdate(final ProfileUpdatedEvent event) {
+    	VaadinSession.getCurrent().setAttribute(User.class, event.getUser());
+    }
+    
     @Subscribe
     public void closeOpenWindows(final CloseOpenWindowsEvent event) {
         for (Window window : getWindows()) {

@@ -14,6 +14,7 @@ import za.co.yellowfire.threesixty.domain.kudos.Kudos;
 import za.co.yellowfire.threesixty.domain.kudos.KudosRepository;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
+import za.co.yellowfire.threesixty.resource.BadgeClientService;
 import za.co.yellowfire.threesixty.ui.component.button.CrudHeaderButtonConfig;
 import za.co.yellowfire.threesixty.ui.view.AbstractRepositoryEntityEditView;
 
@@ -30,10 +31,15 @@ public final class KudosEditView extends AbstractRepositoryEntityEditView<Kudos,
     public static final String VIEW_NEW() { return VIEW("new_" + VIEW_NAME); }
     
     @Autowired
-    public KudosEditView(final BadgeRepository badgeRepository, final KudosRepository repository, final UserService userService, final GridFsClient client) {
+    public KudosEditView(
+    		final BadgeRepository badgeRepository, 
+    		final KudosRepository repository, 
+    		final UserService userService, 
+    		final BadgeClientService badgeClientService,
+    		final GridFsClient client) {
     	super(
     			repository, 
-    			new KudosEntityEditForm(badgeRepository, repository, userService, client),
+    			new KudosEntityEditForm(badgeRepository, repository, userService, badgeClientService, client),
     			new CrudHeaderButtonConfig().saveShowIconOnly().resetShowIconOnly().hideDelete().hideNew());
     	
     	((KudosEntityEditForm) getForm()).setHeaderButtons(getHeaderButtons());

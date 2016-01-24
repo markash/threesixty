@@ -12,7 +12,6 @@ import org.springframework.data.domain.Sort.Direction;
 
 import com.vaadin.data.fieldgroup.PropertyId;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.shared.ui.grid.HeightMode;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Grid;
@@ -21,9 +20,9 @@ import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.renderers.ImageRenderer;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import za.co.yellowfire.threesixty.domain.GridFsClient;
@@ -31,6 +30,7 @@ import za.co.yellowfire.threesixty.domain.kudos.BadgeRepository;
 import za.co.yellowfire.threesixty.domain.kudos.Kudos;
 import za.co.yellowfire.threesixty.domain.kudos.KudosRepository;
 import za.co.yellowfire.threesixty.domain.user.UserService;
+import za.co.yellowfire.threesixty.resource.BadgeClientService;
 import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.Style;
 import za.co.yellowfire.threesixty.ui.component.ImageBuilder;
@@ -73,16 +73,19 @@ public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
     private GridFsClient client;
     private KudosRepository repository;
     private UserService userService;
+    final BadgeClientService badgeClientService;
     private CrudHeaderButtons headerButtons;
     
 	public KudosEntityEditForm(
 			final BadgeRepository badgeRepository, 
 			final KudosRepository repository, 
 			final UserService userService, 
+			final BadgeClientService badgeClientService,
 			final GridFsClient client) {
 		this.client = client;
 		this.repository = repository;
 		this.userService = userService;
+		this.badgeClientService = badgeClientService;
 		
 		this.recipientField.setContainerDataSource(new UserContainer(userService, true));
 		this.badgeField.setContainerDataSource(new BadgeContainer(badgeRepository));
@@ -116,7 +119,7 @@ public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
 	private Grid buildReceivedTable() {
 	
 		if (receivedField == null) {
-			receivedField = new Grid(new KudosContainer());
+			receivedField = new Grid(new KudosContainer(badgeClientService));
 			receivedField.setColumnOrder("picture", "message");
 			receivedField.getColumn("picture").setRenderer(new ImageRenderer()).setWidth(80.0f);
 			receivedField.getColumn("message").setRenderer(new HtmlRenderer());
@@ -264,9 +267,12 @@ public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
 	}
 
 	private class KudosContainer extends BeanItemContainer<KudosItemModel> {
-
-		public KudosContainer() throws IllegalArgumentException {
+		private final BadgeClientService service;
+		
+		public KudosContainer(final BadgeClientService service) throws IllegalArgumentException {
 			super(KudosItemModel.class);
+			
+			this.service = service;
 			
 			addAllKudos(repository.findByRecipient(
 					userService.getCurrentUser(),
@@ -275,7 +281,7 @@ public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
 	
 		public void addAllKudos(final Collection<Kudos> collection) {
 			for(Kudos item : collection) {
-				addBean(new KudosItemModel(item));
+				addBean(new KudosItemModel(service, item));
 			}
 		}
 		

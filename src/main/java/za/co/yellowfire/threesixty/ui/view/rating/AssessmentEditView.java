@@ -7,6 +7,7 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.UI;
 
+import za.co.yellowfire.threesixty.domain.mail.SendGridMailingService;
 import za.co.yellowfire.threesixty.domain.rating.Assessment;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
 import za.co.yellowfire.threesixty.domain.user.UserService;
@@ -24,10 +25,13 @@ public final class AssessmentEditView extends AbstractEntityEditView<Assessment>
     public static final String VIEW(final String id) { return VIEW_NAME + (StringUtils.isBlank(id) ? "" : "/" + id); } 
 
     @Autowired
-    public AssessmentEditView(final AssessmentService service, final UserService userService) {
-    	super(
-    			service, 
-    			new AssessmentEntityEditForm(service, userService.getCurrentUser()),
+    public AssessmentEditView(
+    		final AssessmentService service, 
+    		final SendGridMailingService mailingService, 
+    		final UserService userService) {
+    	
+    	super(service, 
+    			new AssessmentEntityEditForm(service, mailingService, userService.getCurrentUser()),
     			userService.getCurrentUser().isAdmin()
     			);
     }

@@ -1,5 +1,6 @@
 package za.co.yellowfire.threesixty.ui.view.rating;
 
+import org.vaadin.dialogs.ConfirmDialog;
 import org.vaadin.viritin.button.MButton;
 
 import com.vaadin.data.Property;
@@ -10,8 +11,11 @@ import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.Notification.Type;
 
+import za.co.yellowfire.threesixty.domain.mail.MailingException;
+import za.co.yellowfire.threesixty.domain.mail.SendGridMailingService;
 import za.co.yellowfire.threesixty.domain.rating.Assessment;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentStatus;
@@ -19,6 +23,7 @@ import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.component.PanelBuilder;
 import za.co.yellowfire.threesixty.ui.component.field.MComboBox;
+import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
 import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm;
 import za.co.yellowfire.threesixty.ui.view.rating.AssessmentRatingsField.ChangeEvent;
 import za.co.yellowfire.threesixty.ui.view.rating.AssessmentRatingsField.RecalculationEvent;
@@ -35,6 +40,7 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	@PropertyId(Assessment.FIELD_RATINGS)
 	private AssessmentRatingsField ratingsField;
 	
+	private final SendGridMailingService mailingService;
 	private AssessmentService service;
 	private User currentUser;
 	
@@ -43,8 +49,9 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	private MButton managerCompleteButton = new MButton("Manager Complete").withIcon(FontAwesome.STEP_FORWARD).withListener(this::onManagerComplete);
 	private MButton concludeButton = new MButton("Conclude").withIcon(FontAwesome.STEP_FORWARD).withListener(this::onConclude);
 	
-	public AssessmentEntityEditForm(AssessmentService service, final User currentUser) {
+	public AssessmentEntityEditForm(AssessmentService service, final SendGridMailingService mailingService, final User currentUser) {
 		this.service = service;
+		this.mailingService = mailingService;
 		this.currentUser = currentUser;
 		
 		this.managerField = 
@@ -113,73 +120,105 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	}
 	
 	public void onPublish(final ClickEvent event) {
-		try {
-			//Commit the assessment and set the status to Created
-	        commit();
-	        getValue().calculate();
-	        getValue().setStatus(AssessmentStatus.Created);
-	        //Persist the assessment
-	        service.save(getValue(), currentUser);
-	        //Notify the user of the outcome
-	        Notification.show("Assessment published for employee self assessment", Type.HUMANIZED_MESSAGE);
-	        //Update the user interface
-	        maintainAssessment();
-		} catch (CommitException exception) {
-            Notification.show("Error while updating : " + exception.getMessage(), Type.ERROR_MESSAGE);
-        }
+		ConfirmDialog.show(
+				UI.getCurrent(), 
+				"Confirmation", 
+				"Publishing the assessment will inform the employee that the assessment is ready for review " +
+				"and further changes are not possible.\nWould you like to publish the assessment?",
+				"Yes",
+				"No",
+		        new ConfirmDialog.Listener() {
+		            public void onClose(ConfirmDialog dialog) {
+		                if (dialog.isConfirmed()) {
+		                	progressAssessment();
+		                	try {
+		                	mailingService.send();
+		                	} catch (MailingException e) {
+		                		e.printStackTrace();
+		                	}
+		                }
+		            }
+				});
 	}
 	
 	public void onEmployeeComplete(final ClickEvent event) {
+		ConfirmDialog.show(
+				UI.getCurrent(), 
+				"Confirmation", 
+				"Completing the self-review will inform the manager that the assessment is ready for review " +
+				"and further changes are not possible.\nWould you like to proceed?",
+				"Yes",
+				"No",
+		        new ConfirmDialog.Listener() {
+		            public void onClose(ConfirmDialog dialog) {
+		                if (dialog.isConfirmed()) {
+		                	progressAssessment();
+		                }
+		            }
+				});
+	}
+	
+	public void onManagerComplete(final ClickEvent event) {
+		ConfirmDialog.show(
+				UI.getCurrent(), 
+				"Confirmation", 
+				"Completing the manager review will inform the employee that the assessment is ready for final review " +
+				"and further changes are not possible.\nWould you like to proceed?",
+				"Yes",
+				"No",
+		        new ConfirmDialog.Listener() {
+		            public void onClose(ConfirmDialog dialog) {
+		                if (dialog.isConfirmed()) {
+		                	progressAssessment();
+		                }
+		            }
+				});
+	}
+
+	public void onConclude(final ClickEvent event) {
+		ConfirmDialog.show(
+				UI.getCurrent(), 
+				"Confirmation", 
+				"Completing the final review will close off the assessment " +
+				"and further changes are not possible.\nWould you like to proceed?",
+				"Yes",
+				"No",
+		        new ConfirmDialog.Listener() {
+		            public void onClose(ConfirmDialog dialog) {
+		                if (dialog.isConfirmed()) {
+		                	progressAssessment();
+		                }
+		            }
+				});
+	}
+
+	public void progressAssessment() {
 		try {
-			//Commit the assessment and set the status to Created
+			//Commit the assessment and progress the status
 	        commit();
 	        getValue().calculate();
-	        getValue().setStatus(AssessmentStatus.EmployeeCompleted);
+	        getValue().progressStatus();
 	        //Persist the assessment
 	        service.save(getValue(), currentUser);
 	        //Notify the user of the outcome
-	        Notification.show("Employee self assessment completed", Type.HUMANIZED_MESSAGE);
+	        String successNotification;
+			switch (getValue().getStatus()) {
+				case Created: successNotification = "Assessment published for employee self assessment"; break;
+				case EmployeeCompleted: successNotification = "Employee self assessment completed"; break;
+				case ManagerCompleted: successNotification = "Management assessment of employee completed"; break;
+				case Reviewed: successNotification = "Assessment review concluded"; break;
+				default: successNotification = "The assessment has been successsfully saved";
+			}
+			NotificationBuilder.showNotification("Assessment progression", successNotification);
 	        //Update the user interface
 	        maintainAssessment();
+	        //Inform the view that the form is clean
+	        fireFormClean();
 		} catch (CommitException exception) {
             Notification.show("Error while updating : " + exception.getMessage(), Type.ERROR_MESSAGE);
         }
 	}
 	
-	public void onManagerComplete(final ClickEvent event) {
-		try {
-			//Commit the assessment and set the status to Created
-	        commit();
-	        getValue().calculate();
-	        getValue().setStatus(AssessmentStatus.ManagerCompleted);
-	        //Persist the assessment
-	        service.save(getValue(), currentUser);
-	        //Notify the user of the outcome
-	        Notification.show("Management assessment of employee completed", Type.HUMANIZED_MESSAGE);
-	        //Update the user interface
-	        maintainAssessment();
-		} catch (CommitException exception) {
-            Notification.show("Error while updating : " + exception.getMessage(), Type.ERROR_MESSAGE);
-        }
-	}
-
-	public void onConclude(final ClickEvent event) {
-		try {
-			//Commit the assessment and set the status to Created
-	        commit();
-	        getValue().calculate();
-	        getValue().setStatus(AssessmentStatus.Reviewed);
-	        //Persist the assessment
-	        service.save(getValue(), currentUser);
-	        //Notify the user of the outcome
-	        Notification.show("Assessment review concluded", Type.HUMANIZED_MESSAGE);
-	        //Update the user interface
-	        maintainAssessment();
-		} catch (CommitException exception) {
-            Notification.show("Error while updating : " + exception.getMessage(), Type.ERROR_MESSAGE);
-        }
-	}
-
 	public void maintainAssessment() {
 		this.employeeField.setReadOnly(isEmployeeReadOnly());
 		this.managerField.setReadOnly(isManagerReadOnly());

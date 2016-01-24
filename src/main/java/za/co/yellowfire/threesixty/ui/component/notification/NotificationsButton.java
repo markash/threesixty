@@ -3,6 +3,7 @@ package za.co.yellowfire.threesixty.ui.component.notification;
 import java.util.List;
 
 import com.google.common.eventbus.Subscribe;
+import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
@@ -238,8 +239,7 @@ public class NotificationsButton extends Button {
             notificationsWindow.setClosable(false);
             notificationsWindow.setResizable(false);
             notificationsWindow.setDraggable(false);
-            //TODO Add back in 7.6
-            //notificationsWindow.addCloseShortcut(KeyCode.ESCAPE, null);
+            notificationsWindow.addCloseShortcut(KeyCode.ESCAPE, null);
             notificationsWindow.setContent(notificationsLayout);
         } else {
         	notificationsWindow.setContent(notificationsLayout);

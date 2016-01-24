@@ -22,6 +22,20 @@ public enum AssessmentStatus {
 	public String getDescription() { return description; }
 	public boolean isEditingAllowed() { return this.allowEditing; }
 	
+	/**
+	 * Returns the status that follows the current status in the assessment progression
+	 */
+	public AssessmentStatus getNextStatus() {
+		switch (this) {
+		case Creating: return Created;
+		case Created: return EmployeeCompleted;
+		case EmployeeCompleted: return ManagerCompleted;
+		case ManagerCompleted: return Reviewed;
+		case Reviewed: return Reviewed;
+		default: return this;
+		}
+	}
+	
 	public static AssessmentStatus fromString(@NotNull final String description) {
 		if (StringUtils.isBlank(description)) {
 			throw new IllegalArgumentException("The assessment status description cannot be null");

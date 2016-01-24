@@ -69,7 +69,18 @@ public abstract class DashboardEvent {
     public static class CloseOpenWindowsEvent {
     }
 
+    /**
+     * Profile update event which publishes the updated user details
+     */
     public static class ProfileUpdatedEvent {
+    	private final User user;
+
+		public ProfileUpdatedEvent(User user) {
+			super();
+			this.user = user;
+		}
+
+		public User getUser() { return user; }
     }
 
 }

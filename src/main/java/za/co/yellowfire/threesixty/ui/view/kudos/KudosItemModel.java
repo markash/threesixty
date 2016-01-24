@@ -2,19 +2,26 @@ package za.co.yellowfire.threesixty.ui.view.kudos;
 
 import java.io.Serializable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Resource;
 
 import za.co.yellowfire.threesixty.domain.kudos.Kudos;
+import za.co.yellowfire.threesixty.resource.BadgeClientService;
 import za.co.yellowfire.threesixty.ui.component.ImageBuilder;
 
 @SuppressWarnings("serial")
 public class KudosItemModel implements Serializable {
-	private Kudos proxied;
-	//private boolean pictureRetrieved = false;
+	private static final Logger LOG = LoggerFactory.getLogger(KudosItemModel.class);
 	
-	public KudosItemModel(final Kudos proxied) {
+	private Kudos proxied;
+	private BadgeClientService service;
+	
+	public KudosItemModel(final BadgeClientService service, final Kudos proxied) {
 		this.proxied = proxied;
+		this.service = service;
 	}
 	
 	public void setPicture(Resource resource) {}
@@ -23,7 +30,11 @@ public class KudosItemModel implements Serializable {
 		if (proxied == null || proxied.getBadge() == null) {
 			return ImageBuilder.BLANK_RESOURCE();
 		}
-		return new ExternalResource("http://localhost:8080/api/badge/image/" + proxied.getBadge().getId());
+		String uri = service.getUri(proxied.getBadge().getId());
+		LOG.debug("Badge uri {}", uri);
+		
+		return new ExternalResource(uri);
+		
 //		if (!pictureRetrieved) {
 //			try {
 //				proxied.getBadge().retrievePicture(client);

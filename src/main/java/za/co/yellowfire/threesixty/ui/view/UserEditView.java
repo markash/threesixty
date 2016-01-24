@@ -32,6 +32,8 @@ import com.vaadin.ui.Window;
 
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
+import za.co.yellowfire.threesixty.ui.DashboardEvent.ProfileUpdatedEvent;
+import za.co.yellowfire.threesixty.ui.DashboardEventBus;
 import za.co.yellowfire.threesixty.ui.component.BeanBinder;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
 import za.co.yellowfire.threesixty.ui.component.ByteArrayStreamResource;
@@ -225,13 +227,16 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
 	
 	protected void save(ClickEvent event) {
 		try {
-			//Validate the field group
+			/* Validate the field group */
 	        getFieldGroup().commit();
-	        //Persist the user
+	        /* Persist the user */
 	        User user = getService().save(getFieldGroup().getItemDataSource().getBean(), currentUser);
-	        //Notify the user of the outcome
+	        /* Notify the user of the outcome */
 	        NotificationBuilder.showNotification("Update", "User " + user.getId() + " updated successfully.", 2000);
-	        //DashboardEventBus.post(new ProfileUpdatedEvent());
+	        /* Notify the dashboard that the current user has updated their profile */
+	        if (currentUser.equals(user)) {
+	        	DashboardEventBus.post(new ProfileUpdatedEvent(user));
+	        }
 		} catch (IOException exception) {
             Notification.show("Error while updating user profile picture", exception.getMessage(), Type.ERROR_MESSAGE);
 		} catch (CommitException exception) {

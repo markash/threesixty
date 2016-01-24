@@ -4,7 +4,6 @@ import org.springframework.util.StringUtils;
 
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
@@ -16,9 +15,6 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.MenuBar.Command;
-import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -28,9 +24,7 @@ import za.co.yellowfire.threesixty.ui.DashboardEvent.NotificationsCountUpdatedEv
 import za.co.yellowfire.threesixty.ui.DashboardEvent.PostViewChangeEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.ProfileUpdatedEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.ReportsCountUpdatedEvent;
-import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLogoutEvent;
-import za.co.yellowfire.threesixty.ui.component.ByteArrayStreamResource;
-import za.co.yellowfire.threesixty.ui.view.UserEditView;
+import za.co.yellowfire.threesixty.ui.view.UserMenu;
 
 @SuppressWarnings("serial")
 public class DashboardMenu extends CustomComponent {
@@ -42,7 +36,8 @@ public class DashboardMenu extends CustomComponent {
     private static final String STYLE_VISIBLE = "valo-menu-visible";
     private Label notificationsBadge;
     private Label reportsBadge;
-    private MenuItem settingsItem;
+    //private MenuItem settingsItem;
+    private UserMenu userMenu;
     
     private final UserService userService;
     
@@ -86,20 +81,25 @@ public class DashboardMenu extends CustomComponent {
     }
 
     private Component buildUserMenu() {
-        final MenuBar settings = new MenuBar();
-        settings.addStyleName("user-menu");
-        final User user = getCurrentUser();
-        if (user.hasPicture()) {
-        	settingsItem = settings.addItem("", new ByteArrayStreamResource(user.getPictureContent(), user.getPictureName()), null);
-        } else {
-        	settingsItem = settings.addItem("", new ThemeResource("img/profile-pic-300px.jpg"), null);
-        }
-        updateUserName(null);
-        settingsItem.addItem("Edit Profile", new NavigateToProfileCommand());
-        settingsItem.addItem("Preferences", new NavigateToProfileCommand());
-        settingsItem.addSeparator();
-        settingsItem.addItem("Sign Out", new SignoutCommand());
-        return settings;
+//        final MenuBar settings = new MenuBar();
+//        settings.addStyleName("user-menu");
+//        final User user = getCurrentUser();
+//        if (user.hasPicture()) {
+//        	settingsItem = settings.addItem("", new ByteArrayStreamResource(user.getPictureContent(), user.getPictureName()), null);
+//        } else {
+//        	settingsItem = settings.addItem("", new ThemeResource("img/profile-pic-300px.jpg"), null);
+//        }
+//        updateUserName(null);
+//        settingsItem.addItem("Edit Profile", new NavigateToProfileCommand());
+//        settingsItem.addItem("Preferences", new NavigateToProfileCommand());
+//        settingsItem.addSeparator();
+//        settingsItem.addItem("Sign Out", new SignoutCommand());
+//        return settings;
+    	
+    	if (userMenu == null) {
+    		this.userMenu = new UserMenu(getCurrentUser());
+    	}
+    	return this.userMenu;
     }
 
     private Component buildToggleButton() {
@@ -221,15 +221,23 @@ public class DashboardMenu extends CustomComponent {
 
     @Subscribe
     public void updateUserName(final ProfileUpdatedEvent event) {
-        User user = getCurrentUser();
-        
-        String profile;
-        if ((user.getFirstName() == null || user.getLastName() == null) && user.isAdmin()) {
-        	profile = "Administrator";
-        } else {
-        	profile = user.getFirstName() + " " + user.getLastName();
-        }
-        settingsItem.setText(profile);
+//        User user = getCurrentUser();
+//        
+//        String profile;
+//        if ((user.getFirstName() == null || user.getLastName() == null) && user.isAdmin()) {
+//        	profile = "Administrator";
+//        } else {
+//        	profile = user.getFirstName() + " " + user.getLastName();
+//        }
+//        settingsItem.setText(profile);
+//        
+//        if (event != null && user.hasPicture()) {
+//        	settingsItem.setIcon(new ByteArrayStreamResource(user.getPictureContent(), user.getPictureName()));
+//        } else if (event != null && !user.hasPicture()) {
+//        	settingsItem.setIcon(new ThemeResource("img/profile-pic-300px.jpg"));
+//        }
+    	
+    	this.userMenu.updateUser(getCurrentUser());
     }
 
     public final class ValoMenuItemButton extends Button {
@@ -264,20 +272,20 @@ public class DashboardMenu extends CustomComponent {
         }
     }
 
-    public class NavigateToProfileCommand implements Command {
-		@Override
-		public void menuSelected(MenuItem selectedItem) {
-			UI.getCurrent().getNavigator().navigateTo(UserEditView.VIEW(getCurrentUser().getId()));
-		}
-    }
-    
-    public class SignoutCommand implements Command {
-		@Override
-		public void menuSelected(MenuItem selectedItem) {
-			DashboardEventBus.post(new UserLogoutEvent());
-		}
-    }
-    
+//    public class NavigateToProfileCommand implements Command {
+//		@Override
+//		public void menuSelected(MenuItem selectedItem) {
+//			UI.getCurrent().getNavigator().navigateTo(UserEditView.VIEW(getCurrentUser().getId()));
+//		}
+//    }
+//    
+//    public class SignoutCommand implements Command {
+//		@Override
+//		public void menuSelected(MenuItem selectedItem) {
+//			DashboardEventBus.post(new UserLogoutEvent());
+//		}
+//    }
+//    
     public User getCurrentUser() {
     	return (User) VaadinSession.getCurrent().getAttribute(User.class.getName());
     }

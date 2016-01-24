@@ -22,6 +22,7 @@ import za.co.yellowfire.threesixty.ui.component.button.HeaderButtons;
 import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
 import za.co.yellowfire.threesixty.ui.component.notification.NotificationsButton;
 import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm.DirtyEvent;
+import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm.DirtyStatus;
 import za.co.yellowfire.threesixty.ui.view.user.notification.UserNotificationSearchView;
 
 @SuppressWarnings("serial")
@@ -183,8 +184,8 @@ public abstract class AbstractEntityEditView<T extends Persistable<String>> exte
 	}
 	
 	protected void onDirty(final DirtyEvent event) {
-		this.saveButton.setEnabled(true);
-		this.resetButton.setEnabled(true);
+		this.saveButton.setEnabled(event.getStatus() == DirtyStatus.DIRTY);
+		this.resetButton.setEnabled(event.getStatus() == DirtyStatus.DIRTY);
 	}
 	
 	protected void onClean() {

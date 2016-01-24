@@ -2,11 +2,9 @@ package za.co.yellowfire.threesixty.domain.kudos;
 
 import java.util.List;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
-
 
 import za.co.yellowfire.threesixty.domain.user.User;
 

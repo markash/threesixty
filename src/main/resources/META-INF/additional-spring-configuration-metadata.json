@@ -1,5 +1,17 @@
-{"properties": [{
-  "name": "user.notification.limit",
-  "type": "int",
-  "description": "The number of user notification messages to show the user"
-}]}
+{"properties": [
+  {
+    "name": "user.notification.limit",
+    "type": "int",
+    "description": "The number of user notification messages to show the user"
+  },
+  {
+    "name": "mailing.key",
+    "type": "java.lang.String",
+    "description": "A description for 'mailing.key'"
+  },
+  {
+    "name": "mailing.provider",
+    "type": "java.lang.String",
+    "description": "A description for 'mailing.provider'"
+  }
+]}

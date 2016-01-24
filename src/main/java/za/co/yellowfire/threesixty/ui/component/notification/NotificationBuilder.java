@@ -10,7 +10,11 @@ import com.vaadin.ui.Notification;
  * @version 0.0.1
  */
 public class NotificationBuilder {    
-    public static void showNotification(final String caption, final String description, final int delayMsec) {
+	public static void showNotification(final String caption, final String description) {
+    	showNotification(caption, description, 10000, false);
+    }
+	
+	public static void showNotification(final String caption, final String description, final int delayMsec) {
     	showNotification(caption, description, delayMsec, false);
     }
     

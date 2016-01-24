@@ -25,7 +25,7 @@ public enum DashboardViewType {
     PERFORMANCE_AREA_SEARCH(PerformanceAreaSearchView.VIEW_NAME, PerformanceAreaSearchView.class, FontAwesome.BUILDING_O, true, Role.ADMIN),
     ASSESSMENT_SEARCH(AssessmentSearchView.VIEW_NAME, AssessmentSearchView.class, FontAwesome.BRIEFCASE, true, null),
     BADGE_SEARCH(BadgeSearchView.VIEW_NAME, BadgeSearchView.class, FontAwesome.STAR_O, true, Role.ADMIN),
-    IDEAL_SEARCH(IdealSearchView.VIEW_NAME, IdealSearchView.class, /*TODO Add back in 7.6 FontAwesome.DIAMOND */ FontAwesome.STAR_O, true, Role.ADMIN),
+    IDEAL_SEARCH(IdealSearchView.VIEW_NAME, IdealSearchView.class, FontAwesome.DIAMOND, true, Role.ADMIN),
     NOTIFICATION_SEARCH(UserNotificationSearchView.VIEW_NAME, UserNotificationSearchView.class, FontAwesome.ENVELOPE_O, true, null),
     KUDOS(KudosEditView.VIEW_NAME, KudosEditView.class, FontAwesome.HEART_O, true, null)
     //SALES("sales", SalesView.class, FontAwesome.BAR_CHART_O, false), 

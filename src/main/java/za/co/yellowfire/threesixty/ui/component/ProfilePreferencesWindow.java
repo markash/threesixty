@@ -78,8 +78,7 @@ public class ProfilePreferencesWindow extends Window {
         Responsive.makeResponsive(this);
 
         setModal(true);
-        //TODO Add back in 7.6
-        //addCloseShortcut(KeyCode.ESCAPE, null);
+        addCloseShortcut(KeyCode.ESCAPE, null);
         setResizable(false);
         setClosable(false);
         setHeight(90.0f, Unit.PERCENTAGE);
@@ -252,7 +251,7 @@ public class ProfilePreferencesWindow extends Window {
                     success.setPosition(Position.BOTTOM_CENTER);
                     success.show(Page.getCurrent());
 
-                    DashboardEventBus.post(new ProfileUpdatedEvent());
+                    DashboardEventBus.post(new ProfileUpdatedEvent(fieldGroup.getItemDataSource().getBean()));
                     close();
                 } catch (CommitException e) {
                     Notification.show("Error while updating profile",

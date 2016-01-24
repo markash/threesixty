@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import za.co.yellowfire.threesixty.domain.mail.SendGridMailingService;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserRepository;
 
@@ -37,6 +38,7 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 			final PerformanceAreaRepository performanceAreaRepository,
 			final PeriodRepository periodRepository,
 			final UserRepository userRepository) {
+		
 		this.assessmentRepository = assessmentRepository;
 		this.userRepository = userRepository;
 		this.periodRepository = periodRepository;

@@ -127,45 +127,71 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
 	
 	protected void onValueChange(final ValueChangeEvent event) {
 		if (isModified()) {
-			for (DirtyListener listener : dirtyListeners) {
-				listener.onDirty(new FormDirtyEvent(event.getProperty()));
-			}
+			fireFormDirty(new FormDirtyEvent(event.getProperty()));
 		}
 	}
 	
 	protected void onTextChange(final TextChangeEvent event) {
-		for (DirtyListener listener : dirtyListeners) {
-			listener.onDirty(new FormDirtyEvent());
-		}
+		fireFormDirty(new FormDirtyEvent());
+	}
+		
+	protected void fireFormClean() {
+		fireFormDirty(new FormDirtyEvent(DirtyStatus.CLEAN));
 	}
 	
+	protected void fireFormDirty(final FormDirtyEvent event) {
+		if (dirtyListeners != null) {
+			for (DirtyListener listener : dirtyListeners) {
+				listener.onDirty(event);
+			}
+		}
+	}
+
 	/**
-	 * 
+	 * A listener to determine if the form is dirty (i.e. a field has changed) or 
+	 * clean (i.e. the fields are persisted). The dirty / clean state of the form usual determines
+	 * whether functionality like Save, Reset, Delete are enabled.
      */
     public interface DirtyListener extends Serializable {
         public void onDirty(DirtyEvent event);
     }
     
+    public static enum DirtyStatus {
+    	DIRTY,
+    	CLEAN
+    }
+    
     public interface DirtyEvent extends Serializable {
         public Property<?> getProperty();
+        public DirtyStatus getStatus(); 
         public boolean isRecalculationRequired();
     }
     
     public static class FormDirtyEvent implements DirtyEvent {
     	private final Property<?> property;
+    	private final DirtyStatus status;
     	private final boolean recalculationRequired;
     	
     	public FormDirtyEvent() {
     		this(null, false);
     	}
+    	public FormDirtyEvent(final DirtyStatus status) {
+    		this(null, false, status);
+    	}
     	public FormDirtyEvent(Property<?> property) {
     		this(property, false);
     	}
     	public FormDirtyEvent(final Property<?> property, final boolean recalculationRequired) {
+    		this(property, recalculationRequired, DirtyStatus.DIRTY);
+    	}
+    	public FormDirtyEvent(final Property<?> property, final boolean recalculationRequired, final DirtyStatus status) {
     		this.property = property;
+    		this.status = status;
     		this.recalculationRequired = recalculationRequired;
     	}
+    	
     	public Property<?> getProperty() { return this.property; }
+    	public DirtyStatus getStatus() { return this.status; }
     	public boolean isRecalculationRequired() { return this.recalculationRequired; }
     }
 }
