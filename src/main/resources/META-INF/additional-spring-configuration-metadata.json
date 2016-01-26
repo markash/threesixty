@@ -10,8 +10,13 @@
     "description": "A description for 'mailing.key'"
   },
   {
-    "name": "mailing.provider",
+    "name": "threesixty.mailing.provider",
     "type": "java.lang.String",
-    "description": "A description for 'mailing.provider'"
+    "description": "The mailing service provider"
+  },
+  {
+    "name": "threesixty.badge.uri",
+    "type": "java.lang.String",
+    "description": "The URL of the badge web service"
   }
 ]}

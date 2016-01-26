@@ -1,1 +1,1 @@
-web: java -jar target/threesixty-*.jar --spring.profiles.active=prod --server.port=$PORT --spring.data.mongodb.uri=$MONGOLAB_URI --sendgrid_api=$SENDGRID_API
+web: java -jar target/threesixty-*.jar --spring.profiles.active=prod --server.port=$PORT --spring.data.mongodb.uri=$MONGOLAB_URI --threesixty.mailing.key=$SENDGRID_API

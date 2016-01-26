@@ -146,6 +146,23 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <classpathScope>compile</classpathScope>
+                            <mainClass>com.vaadin.sass.SassCompiler</mainClass>
+                            <arguments>
+                                <argument>src/main/resources/VAADIN/themes/dashboard/styles.scss</argument>
+                                <argument>src/main/resources/VAADIN/themes/dashboard/styles.css</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 			<plugin> 
 				<groupId>com.heroku.sdk</groupId> 
 				<artifactId>heroku-maven-plugin</artifactId> 
