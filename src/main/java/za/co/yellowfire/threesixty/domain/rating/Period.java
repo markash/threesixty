@@ -23,8 +23,11 @@ import za.co.yellowfire.threesixty.domain.user.User;
 @AccessType(Type.FIELD)
 public class Period implements Auditable<User, String> {
 	private static final long serialVersionUID = 1L;
+	
+	public static final String FIELD_ID = "id";
 	public static final String FIELD_START = "start";
 	public static final String FIELD_END = "end";
+	public static final String FIELD_ACTIVE = "active";
 	
 	@Id
 	private String id;
@@ -39,6 +42,10 @@ public class Period implements Auditable<User, String> {
 	private User modifiedBy;
 	private DateTime createdDate;
 	private DateTime modifiedDate;
+	
+	public static Period EMPTY() {
+		return new Period();
+	}
 	
 	public static Period starts(LocalDate date) {
 		Period period = new Period();

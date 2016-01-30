@@ -11973,8 +11973,6 @@ div.v-layout.v-horizontal.v-widget {
 	width: 100%;
 	text-align: right;
 	white-space: normal;
-	border-top: 1px;
-	border-top-color: orange;
 	background-color: #d5d5d5;
 	color: $v-shade;
 }
@@ -11982,6 +11980,9 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .kudos-received-header .v-expand {
 	margin-top: 5px;
 	margin-bottom: 5px;
+	border-top: 1px;
+	border-top-width: 1px;
+	border-top-color: orange;
 }
 
 .dashboard .kudos-received-header .v-slot-h3 {
@@ -12260,4 +12261,66 @@ div.v-layout.v-horizontal.v-widget {
 	color: #fff;
 	text-decoration: none;
 	border-bottom: 1px solid #888;
+}
+
+.dashboard .stats-panel {
+	position: relative;
+	overflow: hidden;
+	float: right;
+	width: 300px;
+	padding: 15px 10px;
+	margin-bottom: 20px;
+	background-color: #eee;
+	color: #fff;
+	cursor: pointer;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+}
+
+.dashboard .v-slot-stats-text {
+	line-height: 40px;
+}
+
+.dashboard .stats-text {
+	margin-top: 0px;
+	margin-bottom: 0px;
+	font-size: 60px;
+	font-weight: 400;
+	color: #fff;
+}
+
+.dashboard .stats-label {
+	margin-top: 0px;
+	margin-bottom: 0px;
+	color: #fff;
+	font-size: 15px;
+}
+
+.dashboard .stats-info {
+	color: #fff;
+}
+
+.dashboard .stats-icon {
+	position: absolute;
+	text-align: right;
+	top: 20px;
+	right: 10px;
+	font-size: 90px;
+	opacity: 0.3;
+}
+
+.dashboard .stat-warning {
+	background-color: #f3ce85;
+}
+
+.dashboard .stat-info {
+	background-color: #6bafbd;
+}
+
+.dashboard .stat-error {
+	background-color: #fc8675;
+}
+
+.dashboard .stat-success {
+	background-color: #65cea7;
 }

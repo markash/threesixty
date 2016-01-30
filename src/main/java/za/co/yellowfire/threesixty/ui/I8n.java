@@ -1,6 +1,14 @@
 package za.co.yellowfire.threesixty.ui;
 
+import com.vaadin.server.FontAwesome;
+
 public class I8n {
+	
+	public interface Format {
+		String DATE = "yyyy-MM-dd";
+		String TIME = "HH:MM:ss";
+		String DATE_TIME = DATE + " " + TIME;
+	}
 	public interface Button {
 		String SAVE = "Save";
 		String RESET = "Reset";
@@ -50,7 +58,6 @@ public class I8n {
 	}
 	
 	public interface Kudos {
-		
 		public interface Fields {
 			String BADGE = "Badge";
 			String RECIPIENT = "Recipient";
@@ -64,11 +71,45 @@ public class I8n {
 		}
 	}
 	
+	public interface Period {
+		String SINGULAR = "Period";
+		String PLURAL = "Periods";
+		
+		public interface Columns {
+			String ID = "#";
+			String START = "Start Date";
+			String END = "End Date";
+			String ACTIVE = "Active";
+		}
+		public interface Fields {
+			String START = I8n.Period.Columns.START;
+			String END = I8n.Period.Columns.END;
+			String ACTIVE = I8n.Period.Columns.ACTIVE;
+		}
+	}
+	
 	public interface Assessment {
+		FontAwesome ICON = FontAwesome.BRIEFCASE;
+		String SINGULAR = "Assessment";
+		String PLURAL = "Assessments";
+		
+		public interface Columns {
+			String ID = "#";
+			String EMPLOYEE = "Employee";
+			String PERIOD = "Period";
+			String SCORE = "Overall Score";
+			String STATUS = "Status";
+		}
 		public interface Fields {
 			String MANAGER = "Manager";
 			String EMPLOYEE = "Employee";
 			String PERIOD = "Period";
 		}
+	}
+	
+	public interface User {
+		FontAwesome ICON = FontAwesome.USERS;
+		String SINGULAR = "User";
+		String PLURAL = "Users";
 	}
 }

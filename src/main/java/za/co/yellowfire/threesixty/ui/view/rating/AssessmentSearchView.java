@@ -2,35 +2,64 @@ package za.co.yellowfire.threesixty.ui.view.rating;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.data.Container;
+import com.vaadin.data.Container.Filterable;
+import com.vaadin.data.Item;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.UI;
 
 import za.co.yellowfire.threesixty.MainUI;
 import za.co.yellowfire.threesixty.domain.rating.Assessment;
-import za.co.yellowfire.threesixty.domain.rating.AssessmentRepository;
+import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
+import za.co.yellowfire.threesixty.domain.rating.Period;
+import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
+import za.co.yellowfire.threesixty.ui.component.field.MComboBox;
 import za.co.yellowfire.threesixty.ui.view.AbstractTableSearchView;
 
 @SpringView(name = AssessmentSearchView.VIEW_NAME)
 public final class AssessmentSearchView extends AbstractTableSearchView<Assessment, String> {
 	private static final long serialVersionUID = 1L;
 	
-	public static final String TITLE = "Assessments";
-	public static final String EDIT_ID = "assessment-edit";
-    public static final String TITLE_ID = "assessment-title";
-    public static final String VIEW_NAME = "assessments";
-    public static final String[] TABLE_PROPERTIES = {"id", "employee", "score", "status"};
-    public static final String[] TABLE_FILTERS = {"id", "employee", "score", "status"};
-    public static final String[] TABLE_HEADERS = {"#", "Employee", "Overall Score", "Status"};
+	public static final String TITLE = I8n.Assessment.PLURAL;
+	public static final String VIEW_NAME = "assessments";
+	public static final String EDIT_ID = VIEW_NAME + "-edit";
+    public static final String TITLE_ID = VIEW_NAME + "-title";
     
-    protected Button newButton = ButtonBuilder.NEW(this::onCreate);
-    protected Button[] tableButtons = {newButton};
+    public static final String[] TABLE_PROPERTIES = {
+    		Assessment.FIELD_ID, 
+    		Assessment.FIELD_EMPLOYEE, 
+    		Assessment.FIELD_PERIOD, 
+    		Assessment.FIELD_SCORE, 
+    		Assessment.FIELD_STATUS};
+    public static final String[] TABLE_FILTERS = {
+    		Assessment.FIELD_ID, 
+    		Assessment.FIELD_EMPLOYEE, 
+    		Assessment.FIELD_PERIOD, 
+    		Assessment.FIELD_SCORE, 
+    		Assessment.FIELD_STATUS};
+    public static final String[] TABLE_HEADERS = {
+    		I8n.Assessment.Columns.ID, 
+    		I8n.Assessment.Columns.EMPLOYEE,
+    		I8n.Assessment.Columns.PERIOD,
+    		I8n.Assessment.Columns.SCORE, 
+    		I8n.Assessment.Columns.STATUS};
+
+    private PeriodFilter periodFilter;
     
     @Autowired
-    public AssessmentSearchView(AssessmentRepository repository) {
-    	super(Assessment.class, new AssessmentEntityProvider(repository, ((MainUI) UI.getCurrent()).getCurrentUser()), TABLE_FILTERS);
+    public AssessmentSearchView(final AssessmentService service) {
+    	super(Assessment.class, 
+    			new AssessmentEntityProvider(
+    					service.getAssessmentRepository(), 
+    					((MainUI) UI.getCurrent()).getCurrentUser()), 
+    			TABLE_FILTERS); 
+    	
+    	addHeaderComponent(new MComboBox(null, new IndexedContainer(service.findActivePeriods())).valueChangeListener(this::onPeriodFilter));
     }
 
     @Override
@@ -43,16 +72,14 @@ public final class AssessmentSearchView extends AbstractTableSearchView<Assessme
 	protected String[] getTablePropertyNames() { return TABLE_PROPERTIES; }
 	protected String[] getTablePropertyHeaders() { return TABLE_HEADERS; }
 	
-	protected Button[] getTableButtons() { 
-		if (this.tableButtons == null) {
-			tableButtons = new Button[] { ButtonBuilder.NEW(this::onCreate) };
-		}
-		return this.tableButtons; 
+	@Override
+	protected Component[] getTableButtons() {
+		return new Component[] {ButtonBuilder.NEW(this::onCreate)};
 	}
-	
+
 	@Override
 	protected void onCreate(ClickEvent event) {
-		UI.getCurrent().getNavigator().navigateTo(AssessmentEditView.VIEW("/new-outcome"));
+		UI.getCurrent().getNavigator().navigateTo(AssessmentEditView.VIEW("/new-assessment"));
 	}
 
 	@Override
@@ -60,9 +87,47 @@ public final class AssessmentSearchView extends AbstractTableSearchView<Assessme
 		UI.getCurrent().getNavigator().navigateTo(AssessmentEditView.VIEW(value));
 	}
 	
+	protected void onPeriodFilter(final ValueChangeEvent event) {
+		getPeriodFilter().setPeriod((Period) event.getProperty().getValue());
+		
+		Filterable data = (Filterable) getTable().getContainerDataSource();
+		data.removeContainerFilter(getPeriodFilter());
+		data.addContainerFilter(getPeriodFilter());
+	}
+
+	protected PeriodFilter getPeriodFilter() {
+	
+		if (this.periodFilter == null) {
+			this.periodFilter = new PeriodFilter();
+		}
+		
+		return this.periodFilter;
+	}
+	
 	@Override
 	protected Assessment buildEmpty() {
 		return null;
+	}
+	
+	@SuppressWarnings("serial")
+	public static class PeriodFilter implements Container.Filter {
+		
+		private Period selected = null;
+		
+		public PeriodFilter() {}
+		
+		public void setPeriod(final Period selected) { this.selected = selected; }
+		
+		@Override
+		public boolean passesFilter(Object itemId, Item item) throws UnsupportedOperationException {
+			if (selected == null) { return true; }
+			return (itemId instanceof Assessment) && (((Assessment) itemId).getPeriod().equals(selected));
+		}
+
+		@Override
+		public boolean appliesToProperty(Object propertyId) {
+			return propertyId.equals(Assessment.FIELD_PERIOD);
+		}
 	}
 }
 

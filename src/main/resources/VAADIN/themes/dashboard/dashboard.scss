@@ -30,13 +30,15 @@ $v-layout-spacing-horizontal: 5px;
 @import "common";
 @import "views/login";
 @import "views/rating";
+@import "component/statsField";
+
 //@import "views/dashboardview";
 //@import "views/schedule";
 //@import "views/sales";
 //@import "views/transactions";
 //@import "views/reports";
 
-// Optimize the CSS output
+// Optimise the CSS output
 $v-included-components: remove($v-included-components, accordion);
 $v-included-components: remove($v-included-components, colorpicker);
 //$v-included-components: remove($v-included-components, grid);
@@ -59,10 +61,5 @@ $valo-menu-background-color: #414B56;
   @include dashboard-common;
   @include dashboard-login-view;
   @include dashboard-rating-view;
-  
-  //@include dashboard-dashboard-view;
-  //@include dashboard-schedule-view;
-  //@include dashboard-sales-view;
-  //@include dashboard-transactions-view;
-  //@include dashboard-reports-view;
+  @include stats-field;
 }

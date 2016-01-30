@@ -25,6 +25,11 @@ public class MComboBox extends ComboBox {
 		configureDefaults();
 	}
 
+	public MComboBox(Container dataSource) {
+		super("", dataSource);
+		configureDefaults();
+	}
+	
 	public MComboBox(String caption) {
 		super(caption);
 		configureDefaults();

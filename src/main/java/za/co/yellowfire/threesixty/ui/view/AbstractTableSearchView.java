@@ -6,6 +6,7 @@ import org.vaadin.viritin.SortableLazyList;
 import org.vaadin.viritin.fields.FilterableTable;
 import org.vaadin.viritin.fields.MTable;
 
+import com.vaadin.data.Container.Filter;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.server.Responsive;
@@ -37,6 +38,8 @@ public abstract class AbstractTableSearchView<T, ID extends Serializable> extend
     private SpringEntityProvider<T> entityProvider;
     private MTable<T> table;
     private final String[] propertiesToFilterOn;
+    private Component[] headerComponents;
+    private HeaderButtons headerButtons;
     
 	protected abstract void onCreate(ClickEvent event);
 	protected abstract void onTableIdClick(ClickEvent event, String value);
@@ -44,11 +47,28 @@ public abstract class AbstractTableSearchView<T, ID extends Serializable> extend
 	protected abstract T buildEmpty();
 	protected abstract String[] getTablePropertyNames();
 	protected abstract String[] getTablePropertyHeaders();
-	protected abstract Button[] getTableButtons();
 	
-	protected AbstractTableSearchView(final Class<T> beanType, final SpringEntityProvider<T> entityProvider, final String[] propertiesToFilterOn) {
+	protected Component[] getTableButtons() {
+		return this.headerComponents;
+	}
+	
+	/**
+	 * Constructs a search view for a class that is provided by an EntityProvider and that
+	 * can be filtered on by an array of properties.
+	 * 
+	 * @param beanType The class of the entity class bean
+	 * @param entityProvider The entity provider for the class
+	 * @param propertiesToFilterOn The array of properties to fiter on
+	 */
+	protected AbstractTableSearchView(
+			final Class<T> beanType, 
+			final SpringEntityProvider<T> entityProvider, 
+			final String[] propertiesToFilterOn,
+			final Component...headerComponents) {
+		
 		this.beanType = beanType;
 		this.entityProvider = entityProvider;
+		this.headerComponents = headerComponents;
 		
 		this.propertiesToFilterOn = propertiesToFilterOn;
 		this.table = buildTable(); 
@@ -57,10 +77,15 @@ public abstract class AbstractTableSearchView<T, ID extends Serializable> extend
 	
 	protected Component getHeaderButtons() {
 		if (propertiesToFilterOn != null) {
-			return new HeaderButtons(HeaderButtons.combine(new FilterTextField<T>(this.table, this.propertiesToFilterOn), getTableButtons()));
+			this.headerButtons = new HeaderButtons(HeaderButtons.combine(new FilterTextField<T>(this.table, this.propertiesToFilterOn), getTableButtons()));
 		} else {
-			return new HeaderButtons(getTableButtons());
+			this.headerButtons = new HeaderButtons(getTableButtons());
 		}
+		return this.headerButtons;
+	}
+	
+	protected void addHeaderComponent(final Component component) {
+		this.headerButtons.addComponent(component, 1);
 	}
 	
 	protected Component buildContent() {
@@ -123,4 +148,8 @@ public abstract class AbstractTableSearchView<T, ID extends Serializable> extend
 	//protected void setRepository(final PagingAndSortingRepository<T, String> repository) { this.repository = repository; }
 	//protected PagingAndSortingRepository<T, String> getRepository() { return this.repository; }
 	protected MTable<T> getTable() { return this.table; }
+	
+	protected void addFilter(final Filter filter) {
+		((FilterableTable<T>)this.table).addFilter(filter);
+	}
 }

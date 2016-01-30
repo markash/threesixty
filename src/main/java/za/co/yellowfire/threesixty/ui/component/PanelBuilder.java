@@ -77,7 +77,7 @@ public class PanelBuilder {
 		return layout;
 	}
 	
-	public static Layout HORIZONTAL(final Component...components) {
+	public static HorizontalLayout HORIZONTAL(final Component...components) {
 		HorizontalLayout layout = new HorizontalLayout();
 		layout.setWidth(100.0f, Unit.PERCENTAGE);
 		

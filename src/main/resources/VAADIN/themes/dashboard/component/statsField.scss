@@ -1,0 +1,61 @@
+@mixin stats-field {
+
+.stats-panel {
+  	position: relative;
+    overflow: hidden;
+    float: right;
+    width: 300px;
+    padding: 15px 10px;
+    margin-bottom: 20px;
+	background-color: #eee;
+	color: #fff;
+	cursor: pointer;
+	-webkit-border-radius: 10px;
+    border-radius: 10px;
+  }
+  
+  .v-slot-stats-text {
+  	line-height: 40px;
+  }
+  
+  .stats-text {
+  	margin-top: 0px;
+    margin-bottom: 0px;
+    font-size: 60px;
+    font-weight: 400;
+    color: #fff;
+  }
+  
+  .stats-label {
+  	margin-top: 0px;
+    margin-bottom: 0px;
+    color: #fff;
+    font-size: 15px;
+  }
+  
+  .stats-info {
+      color: #fff;
+  }
+  
+  .stats-icon {
+  	position: absolute;
+  	text-align: right;
+    top: 20px;
+    right: 10px;
+    font-size: 90px;
+    opacity: .3;
+  }
+  
+  .stat-warning {
+  	background-color: #f3ce85;
+  }
+  .stat-info {
+  	background-color: #6bafbd;
+  }
+  .stat-error {
+  	background-color: #fc8675;
+  }
+  .stat-success {
+  	background-color: #65cea7;
+  }
+}
