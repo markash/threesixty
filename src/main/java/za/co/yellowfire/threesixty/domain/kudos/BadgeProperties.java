@@ -1,9 +1,7 @@
 package za.co.yellowfire.threesixty.domain.kudos;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
-@Component
 @ConfigurationProperties(prefix = "threesixty.badge")
 public class BadgeProperties {
 

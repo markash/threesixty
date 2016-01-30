@@ -1,8 +1,5 @@
 package za.co.yellowfire.threesixty.domain.mail;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.sendgrid.SendGrid;
 import com.sendgrid.SendGridException;
 

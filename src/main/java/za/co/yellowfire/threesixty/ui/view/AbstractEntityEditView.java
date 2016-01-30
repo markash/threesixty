@@ -20,10 +20,8 @@ import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
 import za.co.yellowfire.threesixty.ui.component.button.HeaderButtons;
 import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
-import za.co.yellowfire.threesixty.ui.component.notification.NotificationsButton;
 import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm.DirtyEvent;
 import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm.DirtyStatus;
-import za.co.yellowfire.threesixty.ui.view.user.notification.UserNotificationSearchView;
 
 @SuppressWarnings("serial")
 public abstract class AbstractEntityEditView<T extends Persistable<String>> extends AbstractDashboardPanel /*, DashboardEditListener*/ {

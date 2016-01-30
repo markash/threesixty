@@ -152,6 +152,7 @@
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
+                        <goals><goal>java</goal></goals>
                         <configuration>
                             <classpathScope>compile</classpathScope>
                             <mainClass>com.vaadin.sass.SassCompiler</mainClass>

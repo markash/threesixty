@@ -2,9 +2,7 @@ package za.co.yellowfire.threesixty.domain.mail;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
-@Component
 @ConfigurationProperties(prefix = "threesixty.mailing")
 public class MailingProperties {
 

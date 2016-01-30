@@ -12,7 +12,6 @@ import za.co.yellowfire.threesixty.ui.view.kudos.BadgeSearchView;
 import za.co.yellowfire.threesixty.ui.view.kudos.IdealSearchView;
 import za.co.yellowfire.threesixty.ui.view.kudos.KudosEditView;
 import za.co.yellowfire.threesixty.ui.view.rating.AssessmentSearchView;
-import za.co.yellowfire.threesixty.ui.view.rating.OutcomesSearchView;
 import za.co.yellowfire.threesixty.ui.view.rating.PerformanceAreaSearchView;
 import za.co.yellowfire.threesixty.ui.view.user.notification.UserNotificationSearchView;
 

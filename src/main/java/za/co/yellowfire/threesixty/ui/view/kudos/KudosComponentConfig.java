@@ -12,8 +12,6 @@ import com.vaadin.ui.TextArea;
 
 import za.co.yellowfire.threesixty.domain.kudos.BadgeRepository;
 import za.co.yellowfire.threesixty.domain.kudos.IdealRepository;
-import za.co.yellowfire.threesixty.domain.user.UserRepository;
-import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.I8n;
 
 @Configuration

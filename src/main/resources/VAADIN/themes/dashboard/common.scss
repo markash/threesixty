@@ -331,40 +331,16 @@
     width: 100%;
     text-align: right;
     white-space: normal;
-    
-  	background-color: darken($v-background-color, 10%);
-  	color: $v-shade;
-  	
-  	.v-expand {
-  	  margin-top: 5px;
-      margin-bottom: 5px;
-  	}
-  	
-  	.v-slot-h3 {
-  	  text-align: left;
-      padding-top: 8px;
-    }
 
-    .h3 {
-      white-space: normal;
-    }
-    
-    .toolbar {
-      margin-right: 5px;
-    }
-  }
-  
-  .kudos-received-header {
-    width: 100%;
-    text-align: right;
-    white-space: normal;
-    
   	background-color: darken($v-background-color, 10%);
   	color: $v-shade;
   	
   	.v-expand {
   	  margin-top: 5px;
       margin-bottom: 5px;
+      border-top: 1px;
+      border-top-width: 1px;
+  	  border-top-color: orange;
   	}
   	
   	.v-slot-h3 {
@@ -443,6 +419,10 @@
   
   .italicized {
   	font-style: italic;
+  }
+  
+  .orange-frosting {
+  	
   }
 }
 
