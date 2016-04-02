@@ -16,9 +16,8 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import za.co.yellowfire.threesixty.domain.user.User;
 
 /**
- * A date range
+ * An assessment period
  * @author Mark P Ashworth
- * @version 0.0.1
  */
 @AccessType(Type.FIELD)
 public class Period implements Auditable<User, String> {
@@ -27,6 +26,8 @@ public class Period implements Auditable<User, String> {
 	public static final String FIELD_ID = "id";
 	public static final String FIELD_START = "start";
 	public static final String FIELD_END = "end";
+	public static final String FIELD_DEADLINE_PUBLISH = "deadline.publishAssessment";
+	public static final String FIELD_DEADLINE_COMPLETE = "deadline.completeAssessment";
 	public static final String FIELD_ACTIVE = "active";
 	
 	@Id
@@ -34,8 +35,8 @@ public class Period implements Auditable<User, String> {
 	
 	private Date start;
 	private Date end;
+	private PeriodDeadline deadline;
 	private boolean active = true;
-	
 	@DBRef
 	private User createdBy;
 	@DBRef
@@ -73,6 +74,9 @@ public class Period implements Auditable<User, String> {
 	public void setEnd(LocalDate end) { this.end = Date.from(end.atStartOfDay().atOffset(ZoneOffset.UTC).toInstant()); }
 	public void setEnd(Date end) { this.end = end; }
 	
+	public PeriodDeadline getDeadline() { return deadline; }
+	public void setDeadline(PeriodDeadline deadline) { this.deadline = deadline; }
+
 	public boolean isActive() { return active; }
 	public void setActive(boolean active) { this.active = active; }
 

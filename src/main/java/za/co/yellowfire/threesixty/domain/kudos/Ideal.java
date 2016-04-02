@@ -14,7 +14,7 @@ import za.co.yellowfire.threesixty.domain.user.User;
 public class Ideal implements Auditable<User, String> {
 	private static final long serialVersionUID = 1L;
 
-	public static final Ideal EMPTY() { return new Ideal(); }
+	public static Ideal EMPTY() { return new Ideal(); }
 	
 	@Id
 	private String id;

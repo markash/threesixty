@@ -1,1 +1,1 @@
-web: java -Dserver.port=%PORT% -jar target/threesixty-0.0.1.jar --spring.data.mongodb.uri=$MONGOLAB_URI
+web: java -jar target/threesixty-*.jar --spring.profiles.active=prod --server.port=%THREESIXTY_PORT% --spring.data.mongodb.uri=%THREESIXTY_MONGOLAB_URI% --threesixty.mailing.key=%THREESIXTY_SENDGRID_API%

@@ -1,0 +1,1 @@
+java -jar target/threesixty-0.1.0.jar --spring.profiles.active=dev --server.port=%THREESIXTY_PORT% --spring.data.mongodb.uri=%THREESIXTY_MONGOLAB_URI% --threesixty.mailing.key=%THREESIXTY_SENDGRID_API%

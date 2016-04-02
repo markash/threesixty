@@ -66,3 +66,6 @@ bin/*
 target/*
 mvnw
 mvnw.cmd
+/.apt_generated/
+/bin/
+/target/

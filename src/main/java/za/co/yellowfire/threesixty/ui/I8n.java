@@ -79,8 +79,11 @@ public class I8n {
 			String ID = "#";
 			String START = "Start Date";
 			String END = "End Date";
+			String DEADLINE_PUBLISH = "Publish Deadline";
+			String DEADLINE_COMPLETE = "Complete Deadline";
 			String ACTIVE = "Active";
 		}
+		
 		public interface Fields {
 			String START = I8n.Period.Columns.START;
 			String END = I8n.Period.Columns.END;

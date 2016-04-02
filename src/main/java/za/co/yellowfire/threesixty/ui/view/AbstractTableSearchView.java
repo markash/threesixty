@@ -1,6 +1,7 @@
 package za.co.yellowfire.threesixty.ui.view;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 import org.vaadin.viritin.SortableLazyList;
 import org.vaadin.viritin.fields.FilterableTable;
@@ -9,6 +10,7 @@ import org.vaadin.viritin.fields.MTable;
 import com.vaadin.data.Container.Filter;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
+import com.vaadin.data.util.converter.Converter;
 import com.vaadin.server.Responsive;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -33,6 +35,8 @@ public abstract class AbstractTableSearchView<T, ID extends Serializable> extend
 	protected static final String BUTTON_DELETE = "Delete";
 	protected static final String BUTTON_ADD = "New";
 	protected static final String BUTTON_VIEW = "View";
+	protected static final String DEFAULT_LINK_PROPERTY_ID = "id";
+	protected static final String DEFAULT_LINK_PROPERTY_TEXT = "id";
 	
 	private final Class<T> beanType;
     private SpringEntityProvider<T> entityProvider;
@@ -47,10 +51,19 @@ public abstract class AbstractTableSearchView<T, ID extends Serializable> extend
 	protected abstract T buildEmpty();
 	protected abstract String[] getTablePropertyNames();
 	protected abstract String[] getTablePropertyHeaders();
+	protected Component[] getTableButtons() { return this.headerComponents; }
 	
-	protected Component[] getTableButtons() {
-		return this.headerComponents;
-	}
+	/**
+	 * Returns the property (i.e. column) that should be made into a link to navigate to the detail and the actual id
+	 * value is determined by the getLinkPropertyValue() property
+	 * @return The table property name which is by default "id"
+	 */
+	protected String getLinkPropertyId() { return DEFAULT_LINK_PROPERTY_ID; }
+	/**
+	 * Returns the property that should be the href value of the link
+	 * @return The table property name which is by default "id"
+	 */
+	protected String getLinkPropertyText() { return DEFAULT_LINK_PROPERTY_TEXT; }
 	
 	/**
 	 * Constructs a search view for a class that is provided by an EntityProvider and that
@@ -126,17 +139,34 @@ public abstract class AbstractTableSearchView<T, ID extends Serializable> extend
 		MTable<T> table = new FilterableTable<T>(beanType)
 				.setBeans(new SortableLazyList<T>(entityProvider, entityProvider, 100))
                 .withProperties(getTablePropertyNames())
-                .withColumnHeaders(getTablePropertyHeaders());
+                .withColumnHeaders(getTablePropertyHeaders())
+                ;
 		
-		table.addGeneratedColumn("id", new Table.ColumnGenerator() {	
+		
+		
+		table.addGeneratedColumn(getLinkPropertyText(), new Table.ColumnGenerator() {	
 			@Override
 			public Object generateCell(Table source, Object itemId, Object columnId) {
 				Item x = source.getItem(itemId);
-				Property<String> id = x.getItemProperty("id");
 				
-				Button button = new Button(id.getValue());
+				Property<String> linkId = x.getItemProperty(getLinkPropertyId());
+				Property<?> linkText = x.getItemProperty(getLinkPropertyText());
+				Converter<String, Object> linkTextConverter = table.getConverter(getLinkPropertyText());
+				
+				String text = "";
+				if (linkText.getValue() != null) {
+					if (linkTextConverter != null) {
+						text = linkTextConverter.convertToPresentation(linkText.getValue(), String.class, Locale.getDefault());
+					} else {
+						text = linkText.getValue().toString();
+					}
+				} else {
+					text = "null";
+				}
+				
+				Button button = new Button(text);
 				button.setStyleName("link");
-				button.addClickListener(event -> { onTableIdClick(event, id.getValue()); } );
+				button.addClickListener(event -> { onTableIdClick(event, linkId.getValue()); } );
 				return button;
 			}
 		});

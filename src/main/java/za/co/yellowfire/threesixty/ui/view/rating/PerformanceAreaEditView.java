@@ -17,7 +17,7 @@ import za.co.yellowfire.threesixty.ui.view.AbstractRepositoryEntityEditView;
 public final class PerformanceAreaEditView extends AbstractRepositoryEntityEditView<PerformanceArea, String> {
 	private static final long serialVersionUID = 1L;
 	
-	public static final String TITLE = "Performance Area";
+	public static final String TITLE = "Discipline";
 	public static final String VIEW_NAME = "performance-area";
 	public static final String EDIT_ID = VIEW_NAME + "-edit";
     public static final String TITLE_ID = VIEW_NAME + "--title";
