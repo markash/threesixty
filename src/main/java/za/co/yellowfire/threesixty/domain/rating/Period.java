@@ -28,6 +28,8 @@ public class Period implements Auditable<User, String> {
 	public static final String FIELD_END = "end";
 	public static final String FIELD_DEADLINE_PUBLISH = "deadline.publishAssessment";
 	public static final String FIELD_DEADLINE_COMPLETE = "deadline.completeAssessment";
+	public static final String FIELD_DEADLINE_SELF_ASSESSMENT = "deadline.selfAssessment";
+	public static final String FIELD_DEADLINE_ASSESSOR_ASSESSMENT = "deadline.managerAssessment";
 	public static final String FIELD_ACTIVE = "active";
 	
 	@Id
@@ -35,7 +37,7 @@ public class Period implements Auditable<User, String> {
 	
 	private Date start;
 	private Date end;
-	private PeriodDeadline deadline;
+	private PeriodDeadline deadline = new PeriodDeadline();
 	private boolean active = true;
 	@DBRef
 	private User createdBy;
@@ -60,7 +62,7 @@ public class Period implements Auditable<User, String> {
 		return period;
 	}
 	
-	public Period() {}
+	public Period() { }
 	
 	@Override
 	public String getId() { return this.id; }
@@ -74,7 +76,7 @@ public class Period implements Auditable<User, String> {
 	public void setEnd(LocalDate end) { this.end = Date.from(end.atStartOfDay().atOffset(ZoneOffset.UTC).toInstant()); }
 	public void setEnd(Date end) { this.end = end; }
 	
-	public PeriodDeadline getDeadline() { return deadline; }
+	public PeriodDeadline getDeadline() { if (deadline == null) { this.deadline = new PeriodDeadline(); } return deadline; }
 	public void setDeadline(PeriodDeadline deadline) { this.deadline = deadline; }
 
 	public boolean isActive() { return active; }

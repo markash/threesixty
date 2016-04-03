@@ -81,12 +81,18 @@ public class I8n {
 			String END = "End Date";
 			String DEADLINE_PUBLISH = "Publish Deadline";
 			String DEADLINE_COMPLETE = "Complete Deadline";
+			String DEADLINE_SELF_ASSESSMENT = "Self Assessment Deadline";
+			String DEADLINE_ASSESSOR_ASSESSMENT = "Manager Assessment Deadline";
 			String ACTIVE = "Active";
 		}
 		
 		public interface Fields {
 			String START = I8n.Period.Columns.START;
 			String END = I8n.Period.Columns.END;
+			String DEADLINE_PUBLISH = I8n.Period.Columns.DEADLINE_PUBLISH;
+			String DEADLINE_COMPLETE = I8n.Period.Columns.DEADLINE_COMPLETE;
+			String DEADLINE_SELF_ASSESSMENT = I8n.Period.Columns.DEADLINE_SELF_ASSESSMENT;
+			String DEADLINE_ASSESSOR_ASSESSMENT = I8n.Period.Columns.DEADLINE_ASSESSOR_ASSESSMENT;
 			String ACTIVE = I8n.Period.Columns.ACTIVE;
 		}
 	}

@@ -30,11 +30,15 @@ public class OutcomeService implements za.co.yellowfire.threesixty.domain.questi
 	}
 	
 	public Outcome save(final Outcome outcome, final User changedBy) {
+		LOG.info("Outcome {} changed by {}", outcome != null ? outcome : "null", changedBy != null ? changedBy.getId() : "null");
+		
 		outcome.auditChangedBy(changedBy);
 		return outcomeRepository.save(outcome);
 	}
 	
 	public void delete(final Outcome outcome, final User changedBy) {
+		LOG.info("Outcome {} deleted by {}", outcome != null ? outcome : "null", changedBy != null ? changedBy.getId() : "null");
+		
 		outcome.setActive(false);
 		outcome.auditChangedBy(changedBy);
 		outcomeRepository.save(outcome);

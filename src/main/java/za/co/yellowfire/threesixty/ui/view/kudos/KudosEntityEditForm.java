@@ -47,7 +47,7 @@ import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm;
 
 @SuppressWarnings("serial")
 public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
-	private static final Logger LOG = LoggerFactory.getLogger(KudosEntityEditForm.class);
+	//óprivate static final Logger LOG = LoggerFactory.getLogger(KudosEntityEditForm.class);
 	
 	@PropertyId("badge")
 	private MComboBox badgeField = 

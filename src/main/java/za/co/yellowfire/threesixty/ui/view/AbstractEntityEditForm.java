@@ -23,6 +23,8 @@ import za.co.yellowfire.threesixty.ui.component.PanelBuilder;
 @SuppressWarnings("serial")
 public abstract class AbstractEntityEditForm<T extends Persistable<String>> extends HorizontalLayout {
 	
+	public static String[] DEFAULT_NESTED_PROPERTIES = new String[] {};
+	
 	@PropertyId("id")
     protected TextField idField = new TextField("Id");
 	
@@ -41,6 +43,13 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
         idField.setNullRepresentation("");
 	}
 
+	/**
+	 * Returns the list of nested properties that the form group should bind to. The default
+	 * is an empty array.
+	 * @returns An array of nested properties in Java object notation
+	 */
+	protected String[] getNestedProperties() { return DEFAULT_NESTED_PROPERTIES; }
+	
 	public T getValue() { return this.fieldGroup.getItemDataSource().getBean(); }
 	
 	public void bindToEmpty() {
@@ -49,7 +58,7 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
 	
 	public void bind(final T newValue) {
 		T value = newValue != null ? newValue : buildEmpty();
-		this.fieldGroup = BeanBinder.bind(value, this, true);
+		this.fieldGroup = BeanBinder.bind(value, this, true, getNestedProperties());
 				
 		updateFieldContraints();
 		registerDirtyListener();
