@@ -1,5 +1,7 @@
 package za.co.yellowfire.threesixty.ui.view.rating;
 
+import java.util.List;
+
 import org.vaadin.dialogs.ConfirmDialog;
 import org.vaadin.viritin.button.MButton;
 
@@ -11,14 +13,15 @@ import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.UI;
 
 import za.co.yellowfire.threesixty.domain.mail.MailingException;
 import za.co.yellowfire.threesixty.domain.mail.SendGridMailingService;
 import za.co.yellowfire.threesixty.domain.rating.Assessment;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentStatus;
+import za.co.yellowfire.threesixty.domain.rating.Period;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.component.PanelBuilder;
@@ -74,7 +77,7 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 						service.findPossibleWeightings(),
 						service.findPerformanceAreas(),
 						new MButton[] {publishButton, employeeCompleteButton, managerCompleteButton, concludeButton});
-		
+			
 		this.ratingsField.setCurrentUser(currentUser);
 		this.ratingsField.setAssessmentRatingListener(this::onAssessmentRatingChange);
 		this.ratingsField.setRecalculationListener(this::onRecalculation);
@@ -93,6 +96,7 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
         		));
 		
 		maintainAssessment();
+		restrictAvailablePeriodsForEmployee();
 	}
 	
 	@Override
@@ -337,7 +341,26 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 		this.employeeField.commit();
 		this.managerField.commit();
 		
+		/* Set the available period available for the employee assessment */
+		refreshAvailablePeriodsForEmployee();
+		
 		/*Fire the change */
 		this.ratingsField.fireAssessmentParticipantsChanged();
+	}
+	
+	private void restrictAvailablePeriodsForEmployee() {
+		if (getValue() != null) {
+			List<Period> assessedPeriods = service.findAssessmentPeriodsForEmployee(getValue().getEmployee(), getValue());
+			for (Period period : assessedPeriods) {
+				this.periodField.removeItem(period);
+			}
+		}
+	}
+	
+	private void refreshAvailablePeriodsForEmployee() {
+		if (getValue() != null) {
+			this.periodField.removeAllItems();
+			this.periodField.addItems(service.findAvailablePeriodsForEmployee(getValue().getEmployee(), getValue()));
+		}
 	}
 }

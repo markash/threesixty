@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.4.0.M1</version>
+		<version>1.4.0.M2</version>
 		<relativePath />
 	</parent>
 
@@ -57,7 +57,7 @@
 		<dependency>
 		   <groupId>org.vaadin</groupId>
 		   <artifactId>viritin</artifactId>
-		   <version>1.49</version>
+		   <version>1.54</version>
 		</dependency>		
 		<dependency>
 		   <groupId>org.vaadin.addon</groupId>
@@ -113,7 +113,7 @@
 			<dependency>
 				<groupId>com.vaadin</groupId>
 				<artifactId>vaadin-bom</artifactId>
-				<version>7.6.4</version>
+				<version>7.6.8</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -153,7 +153,7 @@
 			<plugin> 
 				<groupId>com.heroku.sdk</groupId> 
 				<artifactId>heroku-maven-plugin</artifactId> 
-				<version>0.5.7</version> 
+				<version>1.0.2</version> 
 				<configuration> 
 					<appName>yellowfire-threesixty</appName>
 					<includes> 

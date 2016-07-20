@@ -50,7 +50,9 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
 	 */
 	protected String[] getNestedProperties() { return DEFAULT_NESTED_PROPERTIES; }
 	
-	public T getValue() { return this.fieldGroup.getItemDataSource().getBean(); }
+	public T getValue() { 
+		return this.fieldGroup != null ? this.fieldGroup.getItemDataSource().getBean() : null; 
+	}
 	
 	public void bindToEmpty() {
 		bind(null);

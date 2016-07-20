@@ -2,7 +2,9 @@ package za.co.yellowfire.threesixty.domain.rating;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,31 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 	
 	public List<Period> findActivePeriods() {
 		return periodRepository.findByActive(true, new Sort(Direction.DESC, Period.FIELD_START));
+	}
+	
+	public List<Period> findAvailablePeriodsForEmployee(final User user, final Assessment assessment) {
+		Set<Period> periods = new HashSet<>(periodRepository.findByActive(true, new Sort(Direction.DESC, Period.FIELD_START)));
+		
+		for (Period assessedPeriod : findAssessmentPeriodsForEmployee(user, assessment)) {
+			periods.remove(assessedPeriod);
+		}
+		return new ArrayList<Period>(periods);
+	}
+	
+	public List<Period> findAssessmentPeriodsForEmployee(final User user, final Assessment assessment) {
+		
+		List<Assessment> assessments;
+		if (assessment.getId() != null) {
+			assessments = assessmentRepository.findByEmployeeExcludingAssessment(user.getId(), assessment.getId());
+		} else {
+			assessments = assessmentRepository.findByEmployee(user.getId());
+		}
+		
+		Set<Period> periods = new HashSet<>();
+		for (Assessment value : assessments) {
+			periods.add(value.getPeriod());
+		}
+		return new ArrayList<Period>(periods);
 	}
 	
 	public List<Double> findPossibleRatings() {
