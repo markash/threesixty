@@ -63,10 +63,10 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 	
 	public List<Period> findAssessmentPeriodsForEmployee(final User user, final Assessment assessment) {
 		
-		List<Assessment> assessments;
+		List<Assessment> assessments = new ArrayList<>();
 		if (assessment.getId() != null) {
 			assessments = assessmentRepository.findByEmployeeExcludingAssessment(user.getId(), assessment.getId());
-		} else {
+		} else if (user != null) {
 			assessments = assessmentRepository.findByEmployee(user.getId());
 		}
 		
