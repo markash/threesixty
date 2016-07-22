@@ -9,6 +9,7 @@ import com.vaadin.ui.Layout;
 import com.vaadin.ui.VerticalLayout;
 
 import za.co.yellowfire.threesixty.domain.rating.Assessment;
+import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
 import za.co.yellowfire.threesixty.domain.rating.Period;
 import za.co.yellowfire.threesixty.domain.rating.PeriodService;
 import za.co.yellowfire.threesixty.ui.I8n;
@@ -36,7 +37,8 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<Period> {
 	
 	@SuppressWarnings("unused")
 	private final PeriodService service;
-
+	private final AssessmentService assessmentService;
+	
 	private String[] nestedProperties = new String[] {
 			Period.FIELD_DEADLINE_PUBLISH, 
 			Period.FIELD_DEADLINE_COMPLETE, 
@@ -48,8 +50,10 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<Period> {
 	private MStatsField employeeAssessments = new MStatsField("0", "Self-rating assessments completed", "0% up from the previous week", I8n.Assessment.ICON, MStatsField.STYLE_WARNING);
 	private MStatsField completedAssessments = new MStatsField("0", "Completed assessments", "0% up from the previous week", I8n.Assessment.ICON, MStatsField.STYLE_SUCCESS);
 	
-	public PeriodEntityEditForm(final PeriodService service) {
-		this.service = service;
+	public PeriodEntityEditForm(final PeriodService periodService, final AssessmentService assessmentService) {
+		this.service = periodService;
+		this.assessmentService = assessmentService;
+		
 		this.startField.setDateFormat(I8n.Format.DATE);
 		this.endField.setDateFormat(I8n.Format.DATE);
 		this.publishDeadlineField.setDateFormat(I8n.Format.DATE);
@@ -91,10 +95,14 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<Period> {
 		addComponents(fieldsPanel, statsPanel);
 		setExpandRatio(fieldsPanel, 2);
 		setExpandRatio(statsPanel, 3);
+		
+		long count = assessmentService.countAssessmentsFor(getValue());
+		registeredUsers.setStatistic(String.valueOf(count));
 	}
 	
 	@Override
 	protected Period buildEmpty() {
 		return Period.EMPTY();
 	}
+	
 }

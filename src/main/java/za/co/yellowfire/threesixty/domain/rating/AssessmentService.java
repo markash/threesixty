@@ -104,6 +104,13 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 		assessmentRepository.save(assessment);
 	}
 	
+	public long countAssessmentsFor(final Period period) {
+		if (period != null) {
+			return assessmentRepository.countByPeriod(period.getId());
+		}
+		return 0L;
+	}
+	
 	public AssessmentRepository getAssessmentRepository() { return this.assessmentRepository; }
 	public PeriodRepository getPeriodRepository() { return this.periodRepository; }
 }

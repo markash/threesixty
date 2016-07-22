@@ -7,6 +7,7 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.UI;
 
+import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
 import za.co.yellowfire.threesixty.domain.rating.Period;
 import za.co.yellowfire.threesixty.domain.rating.PeriodService;
 import za.co.yellowfire.threesixty.domain.user.UserService;
@@ -26,11 +27,12 @@ public final class PeriodEditView extends AbstractEntityEditView<Period> {
 
     @Autowired
     public PeriodEditView(
-    		final PeriodService service, 
+    		final PeriodService periodService, 
+    		final AssessmentService assessmentService,
     		final UserService userService) {
     	
-    	super(service, 
-    			new PeriodEntityEditForm(service),
+    	super(periodService, 
+    			new PeriodEntityEditForm(periodService, assessmentService),
     			userService.getCurrentUser().isAdmin()
     			);
     }

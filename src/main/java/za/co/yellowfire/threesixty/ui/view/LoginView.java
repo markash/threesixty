@@ -62,7 +62,7 @@ public class LoginView extends VerticalLayout implements View {
 
         loginPanel.addComponent(buildLabels());
         loginPanel.addComponent(buildFields());
-        loginPanel.addComponent(new CheckBox("Remember me", true));
+        //loginPanel.addComponent(new CheckBox("Remember me", true));
         return loginPanel;
     }
 

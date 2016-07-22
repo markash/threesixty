@@ -14,4 +14,7 @@ public interface AssessmentRepository extends MongoRepository<Assessment, String
 	
 	@Query("{$and: [{id: {$ne: ?1}}, {employee.id: {$eq: ?0}}]}")
 	List<Assessment> findByEmployeeExcludingAssessment(final String userName, final String assessmentId);
+	
+	@Query(value = "{period.id: {$eq: ?0}}", count = true)
+	long countByPeriod(final String periodId);
 }
