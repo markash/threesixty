@@ -1,5 +1,9 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
@@ -9,7 +13,8 @@ public enum AssessmentStatus {
 	Created("Created", false),
 	EmployeeCompleted("Employee Completed", false),
 	ManagerCompleted("Manager Completed", false),
-	Reviewed("Reviewed", false);
+	Reviewed("Reviewed", false),
+	All("All", false);
 	
 	private final String description;
 	private final boolean allowEditing;
@@ -50,6 +55,14 @@ public enum AssessmentStatus {
 		case "Reviewed": return Reviewed;
 		default: throw new IllegalArgumentException("The assessment status " + description + " is unknown.");
 		}
+	}
+	
+	public static List<AssessmentStatus> list() {
+		return Arrays.asList(Creating, Created, EmployeeCompleted, ManagerCompleted, Reviewed);
+	}
+	
+	public static Stream<AssessmentStatus> stream() {
+		return list().stream();
 	}
 	
 	public String toString() {

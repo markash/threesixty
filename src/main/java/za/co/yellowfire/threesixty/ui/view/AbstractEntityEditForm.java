@@ -59,9 +59,10 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
 	}
 	
 	public void bind(final T newValue) {
-		T value = newValue != null ? newValue : buildEmpty();
+		T value = newValue != null ? buildEntity(newValue) :buildEntity(buildEmpty());
 		this.fieldGroup = BeanBinder.bind(value, this, true, getNestedProperties());
-				
+		
+		updateDependentFields();
 		updateFieldContraints();
 		registerDirtyListener();
 	}
@@ -112,6 +113,14 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
 		}
 	}
 	
+	/**
+	 * Provide a hoot for subclasses to update dependant fields
+	 */
+	protected void updateDependentFields() { }
+	
+	/**
+	 * Update the field constraints to the new bound value
+	 */
 	protected void updateFieldContraints() {
 		idField.setEnabled(getValue().isNew());
 		
@@ -120,8 +129,19 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
 			field.addValueChangeListener(this::onValueChange);
 		}
 	}
-	
+		
 	protected abstract T buildEmpty();
+	
+	/**
+	 * Provides the form the capability of enriching the entity with data that is not part of the entity read from
+	 * the data source.
+	 * 
+	 * @param entity The entity
+	 * @return The enriched entity
+	 */
+	protected T buildEntity(T entity) {
+		return entity;
+	}
 	
 	public void layout() {
 		if (!layoutCompleted) {

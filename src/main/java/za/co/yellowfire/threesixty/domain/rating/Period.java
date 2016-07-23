@@ -10,10 +10,14 @@ import org.joda.time.DateTime;
 import org.springframework.data.annotation.AccessType;
 import org.springframework.data.annotation.AccessType.Type;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Auditable;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import za.co.yellowfire.threesixty.domain.user.User;
+import za.co.yellowfire.threesixty.ui.I8n;
+import za.co.yellowfire.threesixty.ui.component.field.MStatsField;
+import za.co.yellowfire.threesixty.ui.component.field.MStatsModel;
 
 /**
  * An assessment period
@@ -30,6 +34,10 @@ public class Period implements Auditable<User, String> {
 	public static final String FIELD_DEADLINE_COMPLETE = "deadline.completeAssessment";
 	public static final String FIELD_DEADLINE_SELF_ASSESSMENT = "deadline.selfAssessment";
 	public static final String FIELD_DEADLINE_ASSESSOR_ASSESSMENT = "deadline.managerAssessment";
+	public static final String FIELD_REGISTERED_ASSESSMENTS = "registeredAssessments";
+	public static final String FIELD_PUBLISHED_ASSESSMENTS = "publishedAssessments";
+	public static final String FIELD_EMPLOYEE_ASSESSMENTS = "employeeAssessments";
+	public static final String FIELD_COMPLETED_ASSESSMENTS = "completedAssessments";
 	public static final String FIELD_ACTIVE = "active";
 	
 	@Id
@@ -45,6 +53,15 @@ public class Period implements Auditable<User, String> {
 	private User modifiedBy;
 	private DateTime createdDate;
 	private DateTime modifiedDate;
+	
+	@Transient
+	private MStatsModel registeredAssessments = new MStatsModel();
+	@Transient
+	private MStatsModel publishedAssessments = new MStatsModel();
+	@Transient
+	private MStatsModel employeeAssessments = new MStatsModel();
+	@Transient
+	private MStatsModel completedAssessments = new MStatsModel();
 	
 	public static Period EMPTY() {
 		return new Period();
@@ -108,6 +125,16 @@ public class Period implements Auditable<User, String> {
 	
 	@Override
 	public void setLastModifiedDate(DateTime lastModifiedDate) { this.modifiedDate = lastModifiedDate; }
+	
+	public MStatsModel getRegisteredAssessments() { return registeredAssessments; }
+	public MStatsModel getPublishedAssessments() { return publishedAssessments; }
+	public MStatsModel getEmployeeAssessments() { return employeeAssessments; }
+	public MStatsModel getCompletedAssessments() { return completedAssessments; }
+	
+	public void setRegisteredAssessments(MStatsModel registeredAssessments) { this.registeredAssessments = registeredAssessments; }
+	public void setPublishedAssessments(MStatsModel publishedAssessments) { this.publishedAssessments = publishedAssessments; }
+	public void setEmployeeAssessments(MStatsModel employeeAssessments) { this.employeeAssessments = employeeAssessments; }
+	public void setCompletedAssessments(MStatsModel completedAssessments) { this.completedAssessments = completedAssessments; }
 	
 	public void auditChangedBy(final User user) {
 		if (isNew()) {

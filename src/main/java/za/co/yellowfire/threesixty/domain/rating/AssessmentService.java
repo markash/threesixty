@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -67,7 +68,7 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 		if (assessment.getId() != null) {
 			assessments = assessmentRepository.findByEmployeeExcludingAssessment(user.getId(), assessment.getId());
 		} else if (user != null) {
-			assessments = assessmentRepository.findByEmployee(user.getId());
+			assessments = assessmentRepository.findByEmployeeId(user.getId());
 		}
 		
 		Set<Period> periods = new HashSet<>();
@@ -109,6 +110,10 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 			return assessmentRepository.countByPeriod(period.getId());
 		}
 		return 0L;
+	}
+	
+	public Map<AssessmentStatus, AssessmentStatusCount> countAssessmentsStatusFor(final Period period) {
+		return assessmentRepository.countAssessmentsFor(period);
 	}
 	
 	public AssessmentRepository getAssessmentRepository() { return this.assessmentRepository; }

@@ -2,31 +2,35 @@ package za.co.yellowfire.threesixty.ui.component.field;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.vaadin.data.fieldgroup.PropertyId;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.CustomField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
-public class MStatsField extends VerticalLayout {
+public class MStatsField extends CustomField<MStatsModel> {
 	
 	public final static String STYLE_WARNING = "stat-warning";
 	public final static String STYLE_INFO = "stat-info";
 	public final static String STYLE_ERROR = "stat-error";
 	public final static String STYLE_SUCCESS = "stat-success";
 	
-	private final static String FIELD_STATISTIC = "statistic";
-	private final static String FIELD_STATISTIC_LABEL = "statisticLabel";
-	private final static String FIELD_STATISTIC_INFO = "statisticInfoAsHtml";
-	private final static String FIELD_STATISTIC_ICON = "statisticIconAsHtml";
+	@PropertyId(MStatsModel.FIELD_STATISTIC)
+	private MLabel statText = new MLabel();
+	@PropertyId(MStatsModel.FIELD_STATISTIC_LABEL)
+	private MLabel statDesc = new MLabel();
+	@PropertyId(MStatsModel.FIELD_STATISTIC_INFO)
+	private MLabel statInfo = new MLabel("", ContentMode.HTML);
+	@PropertyId(MStatsModel.FIELD_STATISTIC_ICON)
+	private MLabel statPic = new MLabel("", ContentMode.HTML);
+	private String styleName = null;
+	private VerticalLayout layout = null;
 	
-	private BeanItem<MStatsField> statsFieldGroup;
-	
-	private String statistic;
-	private String statisticLabel;
-	private String statisticInfo;
-	private FontAwesome statisticIcon;
+	private BeanItem<MStatsModel> statsFieldGroup;
 	
 	public MStatsField() {
 		this("0", "Some interesting event", "0% up from last week", FontAwesome.ANDROID);
@@ -37,73 +41,63 @@ public class MStatsField extends VerticalLayout {
 	}
 	
 	public MStatsField(final String statistic, final String label, final String info, final FontAwesome icon, final String styleName) {
-		setStyleName("stats-panel");
+		this.styleName = styleName;
+	}
+
+	public String getStatistic() { return this.getValue().getStatistic(); }
+	public String getStatisticLabel() { return getValue().getStatisticLabel(); }
+	
+	public void setStatistic(String statistic) { this.getValue().setStatistic(statistic); }
+	public void setStatisticLabel(String statisticLabel) { this.getValue().setStatisticLabel(statisticLabel); }
+	public void setStatisticInfo(String statisticInfo) { this.getValue().setStatisticInfo(statisticInfo); }
+	public void setStatisticIcon(FontAwesome statisticIcon) { this.getValue().setStatisticIcon(statisticIcon); }
+
+	@Override
+	protected Component initContent() {
+		layout = new VerticalLayout();
+		layout.setStyleName("stats-panel");
 		
 		if (StringUtils.isNotBlank(styleName)) {
-			addStyleName(styleName);
+			layout.addStyleName(styleName);
 		}
 		
-		this.statistic = statistic;
-		this.statisticLabel = label;
-		this.statisticInfo = info;
-		this.statisticIcon = icon;
-		this.statsFieldGroup = new BeanItem<>(this);
+		if (getValue() != null) {
+			this.statsFieldGroup = new BeanItem<MStatsModel>(getValue());
+		} else {
+			this.statsFieldGroup = new BeanItem<MStatsModel>(new MStatsModel());
+		}
 		
-		MLabel statText = new MLabel(this.statsFieldGroup.getItemProperty(FIELD_STATISTIC)); 
+		statText = new MLabel(this.statsFieldGroup.getItemProperty(MStatsModel.FIELD_STATISTIC)); 
 		statText.setSizeUndefined();
 		statText.setStyleName("stats-text");
 		statText.addStyleName(ValoTheme.LABEL_H1);
+		statText.setImmediate(true);
 		
-		MLabel statDesc = new MLabel(this.statsFieldGroup.getItemProperty(FIELD_STATISTIC_LABEL)); 
+		statDesc = new MLabel(this.statsFieldGroup.getItemProperty(MStatsModel.FIELD_STATISTIC_LABEL)); 
 		statDesc.setSizeUndefined();
 		statDesc.setStyleName("stats-label");
 		statDesc.addStyleName(ValoTheme.LABEL_H4);
 		
-		MLabel statInfo = new MLabel(this.statsFieldGroup.getItemProperty(FIELD_STATISTIC_INFO), ContentMode.HTML); 
+		statInfo = new MLabel(this.statsFieldGroup.getItemProperty(MStatsModel.FIELD_STATISTIC_INFO), ContentMode.HTML); 
 		statInfo.setStyleName("stats-info");
 		
-		MLabel statPic = new MLabel(this.statsFieldGroup.getItemProperty(FIELD_STATISTIC_ICON), ContentMode.HTML); 
+		statPic = new MLabel(this.statsFieldGroup.getItemProperty(MStatsModel.FIELD_STATISTIC_ICON), ContentMode.HTML); 
 		statPic.setStyleName("stats-icon");
-		
-		
-		addComponents(statText, statDesc, statInfo, statPic);
+
+		layout.addComponents(statText, statDesc, statInfo, statPic);
+		return layout;
 	}
 
-	public String getStatistic() {
-		return statistic;
-	}
-
-	public void setStatistic(String statistic) {
-		this.statistic = statistic;
-	}
-
-	public String getStatisticLabel() {
-		return statisticLabel;
-	}
-
-	public void setStatisticLabel(String statisticLabel) {
-		this.statisticLabel = statisticLabel;
-	}
-
-	public String getStatisticInfoAsHtml() {
-		return FontAwesome.INFO_CIRCLE.getHtml() + "  " + statisticInfo;
-	}
-
-	public void setStatisticInfo(String statisticInfo) {
-		this.statisticInfo = statisticInfo;
-	}
-
-	public String getStatisticIconAsHtml() {
-		return statisticIcon.getHtml();
-	}
-
-	public FontAwesome getStatisticIcon() {
-		return statisticIcon;
-	}
-
-	public void setStatisticIcon(FontAwesome statisticIcon) {
-		this.statisticIcon = statisticIcon;
-	}
 	
-	
+	@Override
+	protected void setInternalValue(MStatsModel newValue) {
+		super.setInternalValue(newValue);
+		
+		if (newValue != null && this.statsFieldGroup != null) {
+			this.statText.getPropertyDataSource().setValue(newValue.getStatistic());
+		}
+	}
+
+	@Override
+	public Class<? extends MStatsModel> getType() { return MStatsModel.class; }
 }
