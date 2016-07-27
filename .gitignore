@@ -69,3 +69,6 @@ mvnw.cmd
 /.apt_generated/
 /bin/
 /target/
+.idea/*
+.idea/libraries/*.xml
+.vagrant/*
