@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.AccessType;
 import org.springframework.data.annotation.AccessType.Type;
 import org.springframework.data.annotation.Id;
@@ -23,6 +25,7 @@ import za.co.yellowfire.threesixty.domain.GridFsClient;
 @AccessType(Type.FIELD)
 public final class User implements Auditable<User, String> {
 	private static final long serialVersionUID = 1L;
+	private static final Logger LOG = LoggerFactory.getLogger(User.class);
 	
 	public static final String USER_ADMIN = "admin";
 	public static final String USER_ADMIN_PASSWORD = "password";
@@ -59,6 +62,7 @@ public final class User implements Auditable<User, String> {
 	private DateTime createdDate;
 	private DateTime modifiedDate;
 	private boolean active = true;
+	private boolean passwordChange = true;
 	
     @Transient
     private byte[] imageContent = new byte[0];
@@ -134,12 +138,25 @@ public final class User implements Auditable<User, String> {
     public boolean isActive() { return active; }
 	public void setActive(boolean active) { this.active = active; }
 
+	public boolean isPasswordChangeRequired() { return passwordChange; }
+	public void setPasswordChangeRequired(final boolean passwordChange) { this.passwordChange = passwordChange; }
+	
 	public byte[] getPictureContent() { return this.imageContent; };
     public String getPictureName() { return this.image; }
     
     public void retrievePicture(final GridFsClient client) throws IOException {
     	if (client != null && image != null) {
     		this.imageContent = client.retrieveFileContents(image);
+    	}
+    }
+    
+    public void retrievePictureSilently(final GridFsClient client) {
+    	try {
+	    	if (client != null && image != null) {
+	    		this.imageContent = client.retrieveFileContents(image);
+	    	}
+    	} catch (IOException e) {
+    		LOG.warn("Unable to retrieve the profile picture for user {} : {}", getId(), e.getMessage());
     	}
     }
     

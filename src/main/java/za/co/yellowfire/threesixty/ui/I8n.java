@@ -18,6 +18,8 @@ public class I8n {
 		String CHANGE = "Change...";
 		String EDIT = "Edit...";
 		String CLEAR_ALL = "Clear all";
+		String CHANGE_PASSWORD = "Change Password";
+		String RESET_PASSWORD = "Reset Password";
 	}
 	
 	public interface Fields {
@@ -113,6 +115,18 @@ public class I8n {
 			String MANAGER = "Manager";
 			String EMPLOYEE = "Employee";
 			String PERIOD = "Period";
+		}
+	}
+	
+	public interface ChangePassword {
+		public interface Fields {
+			String OLD_PASSWORD = "Old Password";
+			String NEW_PASSWORD = "New Password";
+			String CONFIRM_PASSWORD = "Confirm Password";
+		}
+		
+		public interface Errors {
+			String PASSWORDS_DO_NOT_MATCH = "The new and confirm passwords do not match";
 		}
 	}
 	

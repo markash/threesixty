@@ -1,4 +1,4 @@
-package za.co.yellowfire.threesixty.ui.view;
+package za.co.yellowfire.threesixty.ui.view.user;
 
 import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;

@@ -7,13 +7,13 @@ import com.vaadin.server.Resource;
 import za.co.yellowfire.threesixty.domain.user.Role;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.view.DashboardView;
-import za.co.yellowfire.threesixty.ui.view.UserSearchView;
 import za.co.yellowfire.threesixty.ui.view.kudos.BadgeSearchView;
 import za.co.yellowfire.threesixty.ui.view.kudos.IdealSearchView;
 import za.co.yellowfire.threesixty.ui.view.kudos.KudosEditView;
 import za.co.yellowfire.threesixty.ui.view.rating.AssessmentSearchView;
 import za.co.yellowfire.threesixty.ui.view.rating.PerformanceAreaSearchView;
 import za.co.yellowfire.threesixty.ui.view.rating.PeriodSearchView;
+import za.co.yellowfire.threesixty.ui.view.user.UserSearchView;
 import za.co.yellowfire.threesixty.ui.view.user.notification.UserNotificationSearchView;
 
 public enum DashboardViewType {

@@ -92,6 +92,11 @@ public class UserService {
 			administrator.setLastName("Administrator");
 			administrator.setEmail("admin@localhost");
 			administrator.setCreatedDate(DateTime.now());
+			administrator.setPasswordChangeRequired(false);
+			administrator = userRepository.save(administrator);
+		} else {
+			administrator.setPasswordChangeRequired(false);
+			administrator.setLastModifiedDate(DateTime.now());
 			administrator = userRepository.save(administrator);
 		}
 		
@@ -119,12 +124,31 @@ public class UserService {
 		if (user == null) { return new Response<>(RequestResult.UNAUTHORIZED.setDescription("The user is invalid")); }
 		if (!user.getPassword().equals(password)) { return new Response<>(RequestResult.UNAUTHORIZED.setDescription("The user is invalid")); }
 		
-		try {
-			user.retrievePicture(client);
-		} catch (IOException e) {
-			LOG.warn("Unable to retrieve the profile picture for user {} : {}", user.getId(), e.getMessage());
-		}
+		user.retrievePictureSilently(client);
 		return new Response<>(RequestResult.OK, user);
+	}
+	
+	public Response<User> changePassword(final String userName, final String oldPassword, final String newPassword) {
+		User user = userRepository.findOne(userName);
+		if (user == null) { return new Response<>(RequestResult.UNAUTHORIZED.setDescription("The user is invalid")); }
+		if (!user.getPassword().equals(oldPassword)) { return new Response<>(RequestResult.UNAUTHORIZED.setDescription("The user is invalid")); }
+		
+		user.setPassword(newPassword);
+		user.setPasswordChangeRequired(false);
+		user.setLastModifiedBy(user);
+		user.setLastModifiedDate(DateTime.now());
+		
+		user = userRepository.save(user);
+		user.retrievePictureSilently(client);
+		
+		return new Response<>(RequestResult.OK, user);
+	}
+	
+	public void resetPassword(User user, String changedBy) {
+		user.setPasswordChangeRequired(true);
+		user.setLastModifiedBy(user);
+		user.setLastModifiedDate(DateTime.now());
+		user = userRepository.save(user);
 	}
 	
 	public User findUser(final String id) throws IOException {
@@ -148,6 +172,8 @@ public class UserService {
 		user.auditChangedBy(changedBy);
 		return userRepository.save(user);
 	}
+	
+	
 	
 	public void delete(final User user, final User changedBy) {
 		user.setActive(false);

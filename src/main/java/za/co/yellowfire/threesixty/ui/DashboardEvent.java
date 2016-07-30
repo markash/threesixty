@@ -2,22 +2,32 @@ package za.co.yellowfire.threesixty.ui;
 
 import za.co.yellowfire.threesixty.domain.user.User;
 
-//import com.vaadin.demo.dashboard.domain.Transaction;
-
 /*
  * Event bus events used in Dashboard are listed here as inner classes.
  */
 public abstract class DashboardEvent {
 
-    public static final class UserLoginEvent {
-        private final User user;
+	public static abstract class AbstractUserEvent {
+		private final User user;
 
-        public UserLoginEvent(final User user) {
+        public AbstractUserEvent(final User user) {
             this.user = user;
         }
         public User getUser() { return user; }
+	}
+	
+    public static final class UserLoginEvent extends AbstractUserEvent {
+        public UserLoginEvent(final User user) {
+            super(user);
+        }
     }
 
+    public static final class UserChangePasswordEvent extends AbstractUserEvent {
+        public UserChangePasswordEvent(final User user) {
+            super(user);
+        }
+    }
+    
     public static class BrowserResizeEvent {
 
     }

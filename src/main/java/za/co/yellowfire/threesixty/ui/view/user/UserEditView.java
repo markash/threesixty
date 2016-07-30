@@ -1,4 +1,4 @@
-package za.co.yellowfire.threesixty.ui.view;
+package za.co.yellowfire.threesixty.ui.view.user;
 
 import java.io.IOException;
 
@@ -30,6 +30,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
+import za.co.yellowfire.threesixty.Response;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.ProfileUpdatedEvent;
@@ -41,6 +42,8 @@ import za.co.yellowfire.threesixty.ui.component.button.HeaderButtons;
 import za.co.yellowfire.threesixty.ui.component.field.PictureSelectionForm;
 import za.co.yellowfire.threesixty.ui.component.field.PictureSelectionForm.FileEvent;
 import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
+import za.co.yellowfire.threesixty.ui.view.AbstractDashboardPanel;
+import za.co.yellowfire.threesixty.ui.view.RatingQuestionWindow;
 import za.co.yellowfire.threesixty.ui.view.RatingQuestionWindow.SaveEvent;
 import za.co.yellowfire.threesixty.ui.view.RatingQuestionWindow.SaveListener;
 
@@ -62,8 +65,8 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
 
     @PropertyId("id")
     private TextField idField = new TextField("User name");
-    @PropertyId("password")
-    private PasswordField passwordField = new PasswordField("Password");
+    //@PropertyId("password")
+    //private PasswordField passwordField = new PasswordField("Password");
     @PropertyId("firstName")
     private TextField firstNameField = new TextField("Name");
     @PropertyId("lastName")
@@ -96,7 +99,8 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
     private Button saveButton = ButtonBuilder.SAVE(this::save);
 	private Button resetButton = ButtonBuilder.RESET(this::reset);
 	private Button createButton = ButtonBuilder.NEW(this::create);	
-    private Button[] buttons = new Button[] {saveButton, resetButton, createButton};
+	private Button resetPasswordButton = ButtonBuilder.RESET_PASSWORD(this::onResetPassword);	
+    private Button[] buttons = new Button[] {saveButton, resetButton, createButton, resetPasswordButton};
    
     private BeanFieldGroup<User> fieldGroup;
     private UserService service;
@@ -149,8 +153,8 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
         idField.setWidth(100.0f, Unit.PERCENTAGE);
         idField.setNullRepresentation("");
         
-        passwordField.setWidth(100.0f, Unit.PERCENTAGE);
-        passwordField.setNullRepresentation("");
+        //passwordField.setWidth(100.0f, Unit.PERCENTAGE);
+        //passwordField.setNullRepresentation("");
         
         firstNameField.setNullRepresentation("");
         firstNameField.setWidth(100.0f, Unit.PERCENTAGE);
@@ -184,7 +188,7 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
         details.addComponent(buildPanel(
         		buildHorizontalPanel(
         				buildVerticalPanel(pictureField, pictureButton), 
-        				buildVerticalPanel(idField, passwordField)), 
+        				buildVerticalPanel(idField/*, passwordField*/)), 
         		firstNameField, 
         		lastNameField, 
         		buildHorizontalPanel(salutationField, genderField),
@@ -305,6 +309,23 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
 	
 	protected void onChangePicture(ClickEvent event) {
 		UI.getCurrent().addWindow(pictureWindow);
+	}
+	
+	protected void onResetPassword(ClickEvent event) {
+		final String currentUserId = service.getCurrentUser().getId();
+		service.resetPassword(getUser(), currentUserId);
+		
+		if (getUser().getId().equalsIgnoreCase(currentUserId)) {
+			NotificationBuilder.showNotification(
+					"Password reset", 
+					"Your password has been reset and can be changed on next logon.", 
+					5000);
+		} else {
+			NotificationBuilder.showNotification(
+					"Password reset", 
+					"User's password has been reset and can be changed on next logon.", 
+					5000);
+		}
 	}
 	
 	protected void onSelectedPicture(FileEvent event) {

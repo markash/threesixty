@@ -1,6 +1,6 @@
 package za.co.yellowfire.threesixty.ui;
 
-//import org.vaadin.googleanalytics.tracking.GoogleAnalyticsTracker;
+import org.vaadin.googleanalytics.tracking.GoogleAnalyticsTracker;
 
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
@@ -14,8 +14,8 @@ public class DashboardNavigator extends Navigator {
 	private static final long serialVersionUID = 1L;
 	
 	// Provide a Google Analytics tracker id here
-    //private static final String TRACKER_ID = null;// "UA-658457-6";
-    //private GoogleAnalyticsTracker tracker;
+    private static final String TRACKER_ID = "UA-81670605-1";
+    private GoogleAnalyticsTracker tracker;
 
     private static final DashboardViewType ERROR_VIEW = DashboardViewType.DASHBOARD;
     //private ViewProvider errorViewProvider;
@@ -23,29 +23,24 @@ public class DashboardNavigator extends Navigator {
     public DashboardNavigator(final ComponentContainer container, final ViewProvider viewProvider) {
         super(UI.getCurrent(), container);
 
-        //String host = getUI().getPage().getLocation().getHost();
-        //if (TRACKER_ID != null && host.endsWith("demo.vaadin.com")) {
-        //    initGATracker(TRACKER_ID);
-        //}
+        String host = getUI().getPage().getLocation().getHost();
+        if (TRACKER_ID != null) {
+            initGATracker(TRACKER_ID);
+        }
         initViewChangeListener();
         initViewProviders(viewProvider);
     }
 
-    //private void initGATracker(final String trackerId) {
-        //tracker = new GoogleAnalyticsTracker(trackerId, "demo.vaadin.com");
-
-        // GoogleAnalyticsTracker is an extension add-on for UI so it is
-        // initialized by calling .extend(UI)
-        //tracker.extend(UI.getCurrent());
-    //}
+    private void initGATracker(final String trackerId) {
+        tracker = new GoogleAnalyticsTracker(trackerId, "www.threesixty.com");
+        tracker.extend(UI.getCurrent());
+    }
 
     private void initViewChangeListener() {
         addViewChangeListener(new ViewChangeListener() {
 
             @Override
             public boolean beforeViewChange(final ViewChangeEvent event) {
-                // Since there's no conditions in switching between the views
-                // we can always return true.
                 return true;
             }
 
@@ -58,10 +53,9 @@ public class DashboardNavigator extends Navigator {
                 //DashboardEventBus.post(new BrowserResizeEvent());
                 //DashboardEventBus.post(new CloseOpenWindowsEvent());
 
-                //if (tracker != null) {
-                    // The view change is submitted as a pageview for GA tracker
-                //    tracker.trackPageview("/dashboard/" + event.getViewName());
-                //}
+                if (tracker != null) {
+                    tracker.trackPageview("/dashboard/" + event.getViewName());
+                }
             }
         });
     }

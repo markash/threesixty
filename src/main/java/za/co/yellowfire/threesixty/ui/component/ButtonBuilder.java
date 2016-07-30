@@ -73,6 +73,10 @@ public class ButtonBuilder {
 		return ButtonBuilder.build(I8n.Button.CHANGE, FontAwesome.UPLOAD, listener, styles);	
 	}
 	
+	public static Button RESET_PASSWORD(final ClickListener listener, final String...styles) {
+		return ButtonBuilder.build(I8n.Button.RESET_PASSWORD, FontAwesome.REPEAT, listener, styles);	
+	}
+	
 	public static Button CLEAR_ALL(final ClickListener listener, final String...styles) {
 		Button button = ButtonBuilder.build(I8n.Button.CLEAR_ALL, null, listener, styles);	
 		button.setWidthUndefined();

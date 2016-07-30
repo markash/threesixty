@@ -24,7 +24,7 @@ import za.co.yellowfire.threesixty.ui.DashboardEvent.NotificationsCountUpdatedEv
 import za.co.yellowfire.threesixty.ui.DashboardEvent.PostViewChangeEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.ProfileUpdatedEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.ReportsCountUpdatedEvent;
-import za.co.yellowfire.threesixty.ui.view.UserMenu;
+import za.co.yellowfire.threesixty.ui.view.user.UserMenu;
 
 @SuppressWarnings("serial")
 public class DashboardMenu extends CustomComponent {

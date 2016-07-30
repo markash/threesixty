@@ -24,11 +24,13 @@ import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.BrowserResizeEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.CloseOpenWindowsEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.ProfileUpdatedEvent;
+import za.co.yellowfire.threesixty.ui.DashboardEvent.UserChangePasswordEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLoginEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLogoutEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEventBus;
 import za.co.yellowfire.threesixty.ui.view.LoginView;
 import za.co.yellowfire.threesixty.ui.view.MainView;
+import za.co.yellowfire.threesixty.ui.view.security.ChangePasswordView;
 
 @SuppressWarnings("serial")
 @Theme("dashboard")
@@ -77,8 +79,11 @@ public class MainUI extends UI {
      */
     private void updateContent() {
         
-        if (getCurrentUser() != null) {
+    	User user = getCurrentUser();
+        if ( user != null && !user.isPasswordChangeRequired()) {
             getNavigator().navigateTo(MainView.VIEW_NAME);
+        } else if ( user != null && user.isPasswordChangeRequired()) {
+        	getNavigator().navigateTo(ChangePasswordView.VIEW_NAME);
         } else {
         	getNavigator().navigateTo(LoginView.VIEW_NAME);
         }
@@ -90,6 +95,12 @@ public class MainUI extends UI {
         updateContent();
     }
 
+    @Subscribe
+    public void userPasswordChanged(final UserChangePasswordEvent event) {
+        VaadinSession.getCurrent().setAttribute(User.class, event.getUser());
+        updateContent();
+    }
+    
     @Subscribe
     public void userLogout(final UserLogoutEvent event) {
         // When the user logs out, current VaadinSession gets closed and the

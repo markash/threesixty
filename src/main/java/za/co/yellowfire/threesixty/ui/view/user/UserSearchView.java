@@ -1,4 +1,4 @@
-package za.co.yellowfire.threesixty.ui.view;
+package za.co.yellowfire.threesixty.ui.view.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -11,6 +11,7 @@ import com.vaadin.ui.UI;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserRepository;
 import za.co.yellowfire.threesixty.ui.component.SpringEntityProvider;
+import za.co.yellowfire.threesixty.ui.view.AbstractTableSearchView;
 
 @SpringView(name = UserSearchView.VIEW_NAME)
 public final class UserSearchView extends AbstractTableSearchView<User, String> /*, DashboardEditListener*/ {
