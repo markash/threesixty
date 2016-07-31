@@ -23,14 +23,12 @@ import com.vaadin.ui.Image;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.RichTextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-import za.co.yellowfire.threesixty.Response;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.ProfileUpdatedEvent;
@@ -43,7 +41,6 @@ import za.co.yellowfire.threesixty.ui.component.field.PictureSelectionForm;
 import za.co.yellowfire.threesixty.ui.component.field.PictureSelectionForm.FileEvent;
 import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
 import za.co.yellowfire.threesixty.ui.view.AbstractDashboardPanel;
-import za.co.yellowfire.threesixty.ui.view.RatingQuestionWindow;
 import za.co.yellowfire.threesixty.ui.view.RatingQuestionWindow.SaveEvent;
 import za.co.yellowfire.threesixty.ui.view.RatingQuestionWindow.SaveListener;
 

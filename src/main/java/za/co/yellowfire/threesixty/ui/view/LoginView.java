@@ -13,7 +13,6 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -27,8 +26,8 @@ import za.co.yellowfire.threesixty.Response;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLoginEvent;
-import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
 import za.co.yellowfire.threesixty.ui.DashboardEventBus;
+import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
 
 @SpringView(name = LoginView.VIEW_NAME)
 public class LoginView extends VerticalLayout implements View {

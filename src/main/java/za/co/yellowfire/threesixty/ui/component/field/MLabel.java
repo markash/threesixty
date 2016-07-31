@@ -1,14 +1,8 @@
 package za.co.yellowfire.threesixty.ui.component.field;
 
-import java.util.Collection;
-
-import com.vaadin.data.Container;
 import com.vaadin.data.Property;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Label;
-
-import za.co.yellowfire.threesixty.ui.component.container.RepositoryContainer;
 
 @SuppressWarnings("serial")
 public class MLabel extends Label {

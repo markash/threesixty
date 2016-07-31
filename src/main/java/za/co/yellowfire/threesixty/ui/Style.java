@@ -2,6 +2,10 @@ package za.co.yellowfire.threesixty.ui;
 
 public interface Style {
 
+	public interface Percentage {
+		String _100 = "100%";
+	}
+	
 	public interface Button {
 		String ICON_EDIT = "icon-edit";
 	}

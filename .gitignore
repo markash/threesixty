@@ -59,6 +59,8 @@ $RECYCLE.BIN/
 *.lnk
 *.project
 
+*.box
+
 .apt_generated/*
 .mvn/*
 .settings/*

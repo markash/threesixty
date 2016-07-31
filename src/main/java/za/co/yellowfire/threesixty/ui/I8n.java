@@ -30,6 +30,11 @@ public class I8n {
 		String MODIFIED_BY = "Modified by";
 	}
 	
+	public interface Styles {
+		String LOGIN_PANEL = "login-panel";
+		String FIELDS = "fields";
+	}
+	
 	public interface Notifications {
 		String HEADER = "Notifications";
 		String BUTTON_VIEW_ALL = "View All Notifications";
