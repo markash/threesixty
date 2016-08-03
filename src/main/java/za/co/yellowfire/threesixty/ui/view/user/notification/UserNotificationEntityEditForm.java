@@ -1,60 +1,94 @@
 package za.co.yellowfire.threesixty.ui.view.user.notification;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import java.util.Arrays;
+
+import org.vaadin.viritin.fields.MDateField;
+import org.vaadin.viritin.fields.MTextArea;
+import org.vaadin.viritin.fields.MTextField;
 
 import com.vaadin.data.fieldgroup.PropertyId;
+import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.DateField;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
 
+import za.co.yellowfire.threesixty.domain.user.UserRepository;
+import za.co.yellowfire.threesixty.domain.user.notification.NotificationCategory;
 import za.co.yellowfire.threesixty.domain.user.notification.UserNotification;
+import za.co.yellowfire.threesixty.ui.I8n;
+import za.co.yellowfire.threesixty.ui.Style;
 import za.co.yellowfire.threesixty.ui.component.PanelBuilder;
+import za.co.yellowfire.threesixty.ui.component.field.MComboBox;
 import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm;
 
-@Component
 @SuppressWarnings("serial")
 public class UserNotificationEntityEditForm extends AbstractEntityEditForm<UserNotification> {
 	
-	@Autowired
 	@PropertyId("createdBy")
-	private ComboBox createdByField;
-	
-	@Autowired
+	private MComboBox createdByField;
+
 	@PropertyId("createdAt")
-	private DateField createdAtField;
+	private MDateField createdAtField = new MDateField(I8n.Fields.CREATED_TIME).withFullWidth();
 	
-	@Autowired
 	@PropertyId("lastModifiedBy")
-	private ComboBox modifiedByField;
+	private MComboBox modifiedByField;
 	
-	@Autowired
 	@PropertyId("lastModifiedAt")
-	private DateField modifiedAtField;
+	private MDateField modifiedAtField = new MDateField(I8n.Fields.MODIFIED_TIME).withFullWidth();
 	
-	@Autowired @Qualifier("notification")
 	@PropertyId("category")
-	private ComboBox categoryField;
+	private MComboBox categoryField;
 	
-	@Autowired @Qualifier("notification")
 	@PropertyId("action")
-	private TextField actionField;
+	private MTextField actionField;
 	
-	@Autowired @Qualifier("notification")
 	@PropertyId("time")
-	private DateField timeField;
+	private MDateField timeField;
 	
-	@Autowired @Qualifier("notification")
 	@PropertyId("content")
-	private TextArea contentField;
-	
-	@Autowired @Qualifier("notification")
+	private MTextArea contentField;
+
 	@PropertyId("user")
 	private ComboBox userField;
+	
+	public UserNotificationEntityEditForm(final UserRepository userRepository) {
+		this.createdByField = 
+				new MComboBox(I8n.Fields.CREATED_BY, new IndexedContainer(userRepository.findByActive(true)))
+					.withWidth(100.0f, Unit.PERCENTAGE)
+					.withDisabled();
 		
+		this.modifiedByField = 
+				new MComboBox(I8n.Fields.MODIFIED_BY, new IndexedContainer(userRepository.findByActive(true)))
+					.withWidth(100.0f, Unit.PERCENTAGE)
+					.withDisabled();
+		
+		this.categoryField = 
+				new MComboBox(I8n.Notifications.Fields.CATEGORY, new IndexedContainer(Arrays.asList(NotificationCategory.values())))
+					.withWidth(Style.Percentage._100)
+					.withDisabled();
+
+		this.timeField = new MDateField(I8n.Notifications.Fields.TIME).withFullWidth();
+		this.timeField.setDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		this.timeField.setWidth(100.0f, Unit.PERCENTAGE);
+		this.timeField.setEnabled(false);
+		
+		this.contentField = 
+				new MTextArea(I8n.Notifications.Fields.CONTENT)
+					.withFullWidth()
+					.withNullRepresentation("");
+		this.contentField.setEnabled(false);
+
+		
+		this.actionField = 
+				new MTextField(I8n.Notifications.Fields.ACTION)
+					.withFullWidth()
+					.withNullRepresentation("");
+
+		this.actionField.setEnabled(false);
+			
+		this.modifiedAtField.setEnabled(false);
+		this.createdAtField.setEnabled(false);
+	}
+
 	@Override
 	protected void internalLayout() {
 		

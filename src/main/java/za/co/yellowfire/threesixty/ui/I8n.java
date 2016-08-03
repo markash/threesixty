@@ -28,12 +28,15 @@ public class I8n {
 		String MODIFIED_TIME = "Modified at";
 		String CREATED_BY = "Created by";
 		String MODIFIED_BY = "Modified by";
+		String DESCRIPTION = "Description";
+		String MOTIVATION = "Motivation";
 	}
 	
 	public interface Styles {
 		String LOGIN_PANEL = "login-panel";
 		String FIELDS = "fields";
 	}
+	
 	
 	public interface Notifications {
 		String HEADER = "Notifications";
@@ -65,6 +68,9 @@ public class I8n {
 	}
 	
 	public interface Kudos {
+		String SINGULAR = "Kudos";
+		String PLURAL = "Kudos";
+		
 		public interface Fields {
 			String BADGE = "Badge";
 			String RECIPIENT = "Recipient";
@@ -123,6 +129,12 @@ public class I8n {
 		}
 	}
 	
+	public interface UserNotification {
+		public interface Fields {
+			String CREATED_BY = "Created By";
+			String MODIFIED_BY = "Modified By";
+		}
+	}
 	public interface ChangePassword {
 		public interface Fields {
 			String OLD_PASSWORD = "Old Password";

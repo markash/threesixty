@@ -12001,16 +12001,21 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .kudos-received .v-grid-cell {
 	padding-right: 2px;
 	padding-left: 2px;
-	line-height: 100px;
+	line-height: 80px;
 	vertical-align: top;
 }
 
 .dashboard .kudos-received .message {
-	padding-top: 10px;
+	padding-top: 2px;
+	white-space: normal;
 }
 
+.v-grid-cell {
+    white-space: normal;
+} 
+    
 .dashboard .kudos-received .v-grid-cell .gwt-Image {
-	width: 60px;
+	width: 80px;
 }
 
 .dashboard .assessment-rating-header {

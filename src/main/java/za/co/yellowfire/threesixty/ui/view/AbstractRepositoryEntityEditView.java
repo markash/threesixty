@@ -86,6 +86,7 @@ public abstract class AbstractRepositoryEntityEditView<T extends Persistable<Str
 	
 	protected void onSave(ClickEvent event) {
 		try {
+			onPreSave(event);
 			//Validate the field group
 	        form.commit();
 	        //Persist the outcome
@@ -99,6 +100,8 @@ public abstract class AbstractRepositoryEntityEditView<T extends Persistable<Str
             Notification.show("Error while updating", Type.ERROR_MESSAGE);
         }
 	}
+	
+	protected void onPreSave(final ClickEvent event) {}
 	
 	protected void onPostSave(final ClickEvent event) {}
 	

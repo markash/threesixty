@@ -28,9 +28,12 @@ public class Kudos implements Auditable<User, String>, VisualEntity {
 	private String message;
 	@DBRef
 	private Badge badge;
+	/* The donor of the kudos */
+	@DBRef
+	private User donor;
+	/* The recipient of the kudos */
 	@DBRef
 	private User recipient;
-	
 	/* Image */
 	private String image;
 	@Transient
@@ -55,6 +58,9 @@ public class Kudos implements Auditable<User, String>, VisualEntity {
 	
 	public Badge getBadge() { return badge; }
 	public void setBadge(final Badge badge) { this.badge = badge; }
+	
+	public User getDonor() { return this.donor; }
+	public void setDonor(final User donor) { this.donor = donor; }
 	
 	public User getRecipient() { return this.recipient; }
 	public void setRecipient(final User recipient) { this.recipient = recipient; }

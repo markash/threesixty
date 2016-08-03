@@ -7,11 +7,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.AccessType;
+import org.springframework.data.annotation.AccessType.Type;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.annotation.AccessType.Type;
 import org.springframework.data.domain.Auditable;
 import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.gridfs.GridFsResource;
 
 import za.co.yellowfire.threesixty.domain.GridFsClient;
 import za.co.yellowfire.threesixty.domain.VisualEntity;
@@ -63,6 +64,13 @@ public class Badge implements Auditable<User, String>, VisualEntity {
     	if (client != null && image != null) {
     		this.imageContent = client.retrieveFileContents(image);
     	}
+    }
+    
+    public GridFsResource retrievePictureFile(final GridFsClient client) throws IOException {
+    	if (client != null && image != null) {
+    		return client.retrieveResource(image);
+    	}
+    	return null;
     }
     
     public boolean hasPicture() { return this.image != null && this.imageContent.length > 0; }

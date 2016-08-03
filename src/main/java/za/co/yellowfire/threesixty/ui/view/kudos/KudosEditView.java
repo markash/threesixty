@@ -15,6 +15,7 @@ import za.co.yellowfire.threesixty.domain.kudos.KudosRepository;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.resource.BadgeClientService;
+import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.component.button.CrudHeaderButtonConfig;
 import za.co.yellowfire.threesixty.ui.view.AbstractRepositoryEntityEditView;
 
@@ -22,7 +23,7 @@ import za.co.yellowfire.threesixty.ui.view.AbstractRepositoryEntityEditView;
 public final class KudosEditView extends AbstractRepositoryEntityEditView<Kudos, String> {
 	private static final long serialVersionUID = 1L;
 	
-	public static final String TITLE = "Kudos";
+	public static final String TITLE = I8n.Kudos.SINGULAR;
 	public static final String VIEW_NAME = "kudos";
 	public static final String EDIT_ID = VIEW_NAME + "-edit";
     public static final String TITLE_ID = VIEW_NAME + "-title";
@@ -56,7 +57,7 @@ public final class KudosEditView extends AbstractRepositoryEntityEditView<Kudos,
 	protected void onCreate(ClickEvent event) {
 		UI.getCurrent().getNavigator().navigateTo(KudosEditView.VIEW_NEW());
 	}
-	
+
 	@Override
 	protected void onPostSave(ClickEvent event) {
 		super.onPostSave(event);

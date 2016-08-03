@@ -1,23 +1,23 @@
 package za.co.yellowfire.threesixty.ui.view.kudos;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.vaadin.viritin.fields.MTextField;
 
 import com.vaadin.data.fieldgroup.PropertyId;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
 
 import za.co.yellowfire.threesixty.domain.kudos.Ideal;
+import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.component.PanelBuilder;
 import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm;
 
-@Component
 @SuppressWarnings("serial")
 public class IdealEntityEditForm extends AbstractEntityEditForm<Ideal> {
 	
-	@Autowired
 	@PropertyId("description")
-	private TextField descriptionField;
+	private MTextField descriptionField = 
+		new MTextField(I8n.Fields.DESCRIPTION)
+			.withNullRepresentation("")
+			.withFullWidth();
 	
 	@Override
 	protected void internalLayout() {
@@ -37,6 +37,5 @@ public class IdealEntityEditForm extends AbstractEntityEditForm<Ideal> {
 	@Override
 	protected Ideal buildEmpty() {
 		return Ideal.EMPTY();
-	}
-	
+	}	
 }

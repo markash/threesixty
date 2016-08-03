@@ -7,6 +7,7 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.UI;
 
+import za.co.yellowfire.threesixty.domain.user.UserRepository;
 import za.co.yellowfire.threesixty.domain.user.notification.UserNotification;
 import za.co.yellowfire.threesixty.domain.user.notification.UserNotificationRepository;
 import za.co.yellowfire.threesixty.ui.I8n;
@@ -25,8 +26,8 @@ public final class UserNotificationEditView extends AbstractRepositoryEntityEdit
     public static final String VIEW_NEW() { return VIEW("new_" + VIEW_NAME); }
     
     @Autowired
-    public UserNotificationEditView(final UserNotificationRepository repository, final UserNotificationEntityEditForm form) {
-    	super(repository, form);
+    public UserNotificationEditView(final UserNotificationRepository repository, final UserRepository userRepository) {
+    	super(repository, new UserNotificationEntityEditForm(userRepository));
     }
 
     @Override

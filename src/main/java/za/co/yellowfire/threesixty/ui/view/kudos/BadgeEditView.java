@@ -8,8 +8,10 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.UI;
 
 import za.co.yellowfire.threesixty.MainUI;
+import za.co.yellowfire.threesixty.domain.GridFsClient;
 import za.co.yellowfire.threesixty.domain.kudos.Badge;
 import za.co.yellowfire.threesixty.domain.kudos.BadgeRepository;
+import za.co.yellowfire.threesixty.domain.kudos.IdealRepository;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.view.AbstractRepositoryEntityEditView;
 
@@ -25,8 +27,11 @@ public final class BadgeEditView extends AbstractRepositoryEntityEditView<Badge,
     public static final String VIEW_NEW() { return VIEW("new_" + VIEW_NAME); }
     
     @Autowired
-    public BadgeEditView(final BadgeRepository repository, final BadgeEntityEditForm form) {
-    	super(repository, form);
+    public BadgeEditView(
+    		final BadgeRepository repository, 
+    		final IdealRepository idealRepository,
+			final GridFsClient client) {
+    	super(repository, new BadgeEntityEditForm(repository, idealRepository, client));
     }
 
     @Override

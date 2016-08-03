@@ -1,53 +1,55 @@
 package za.co.yellowfire.threesixty.ui.view.kudos;
 
 import java.io.IOException;
-import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import org.vaadin.viritin.fields.MTextArea;
+import org.vaadin.viritin.fields.MTextField;
 
 import com.vaadin.data.fieldgroup.PropertyId;
+import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
 import za.co.yellowfire.threesixty.domain.GridFsClient;
 import za.co.yellowfire.threesixty.domain.kudos.Badge;
 import za.co.yellowfire.threesixty.domain.kudos.BadgeRepository;
+import za.co.yellowfire.threesixty.domain.kudos.IdealRepository;
+import za.co.yellowfire.threesixty.ui.I8n;
+import za.co.yellowfire.threesixty.ui.Style;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
 import za.co.yellowfire.threesixty.ui.component.ByteArrayStreamResource;
 import za.co.yellowfire.threesixty.ui.component.PanelBuilder;
+import za.co.yellowfire.threesixty.ui.component.field.MComboBox;
 import za.co.yellowfire.threesixty.ui.component.field.PictureSelectionForm;
 import za.co.yellowfire.threesixty.ui.component.field.PictureSelectionForm.FileEvent;
 import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm;
 
-@Component
-@SuppressWarnings("serial")
 public class BadgeEntityEditForm extends AbstractEntityEditForm<Badge> {
-	
+	private static final long serialVersionUID = 1L;
 	private static final String WINDOW_PICTURE = "Badge picture";
 	
-	@Autowired
 	@PropertyId("description")
-	private TextField descriptionField;
+	private MTextField descriptionField = 
+		new MTextField(I8n.Fields.DESCRIPTION)
+			.withFullWidth()
+			.withNullRepresentation("");
 	
-	@Autowired @Qualifier("kudos")
 	@PropertyId("ideal")
-	private ComboBox idealField;
+	private MComboBox idealField;
 	
-	@Autowired @Qualifier("kudos")
 	@PropertyId("motivation")
-	private TextArea motivationField;
-	
+	private MTextArea motivationField = new MTextArea(I8n.Fields.MOTIVATION)
+			.withFullWidth()
+			.withNullRepresentation("")
+			.withRows(7);
+
 	//TODO Make this into a component
 	private Image pictureField = new Image(null, new ThemeResource("img/profile-pic-300px.jpg"));
     private Window pictureWindow = new Window(WINDOW_PICTURE, new PictureSelectionForm(this::onSelectedPicture));
@@ -56,8 +58,14 @@ public class BadgeEntityEditForm extends AbstractEntityEditForm<Badge> {
     private GridFsClient client;
     
     @Autowired
-	public BadgeEntityEditForm(final BadgeRepository repository, final GridFsClient client) {
+	public BadgeEntityEditForm(
+			final BadgeRepository repository, 
+			final IdealRepository idealRepository,
+			final GridFsClient client) {
 		this.client = client;
+		
+		this.idealField = new MComboBox(new IndexedContainer(idealRepository.findByActive(true)))
+				.withWidth(Style.Percentage._100);
 		
 		this.pictureField.setHeight(150.0f, Unit.PIXELS);
 		this.pictureField.setImmediate(true);
@@ -127,7 +135,7 @@ public class BadgeEntityEditForm extends AbstractEntityEditForm<Badge> {
 	protected void displayPicture() {
 		
 		if (getValue().hasPicture()) {
-			this.pictureField.setSource(new ByteArrayStreamResource(getValue().getPictureContent(), getValue().getPictureName() + "." + new Date().getTime() + " .png"));
+			this.pictureField.setSource(new ByteArrayStreamResource(getValue().getPictureContent(), getValue().getPictureName()));
 			this.pictureField.markAsDirty();
 		}
 	}

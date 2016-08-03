@@ -9,6 +9,7 @@ import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.data.fieldgroup.FieldGroup.CommitHandler;
 import com.vaadin.data.fieldgroup.PropertyId;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.server.Responsive;
@@ -81,6 +82,12 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
 	
 	public boolean isValid() {
 		return this.fieldGroup.isValid();
+	}
+	
+	public void addCommitHandler(final CommitHandler commitHandler) {
+		if (commitHandler != null) {
+			this.fieldGroup.addCommitHandler(commitHandler);
+		}
 	}
 	
 	public void addDirtyListener(final DirtyListener listener) {

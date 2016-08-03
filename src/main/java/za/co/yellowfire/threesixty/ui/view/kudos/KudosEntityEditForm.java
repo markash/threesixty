@@ -3,20 +3,15 @@ package za.co.yellowfire.threesixty.ui.view.kudos;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import com.vaadin.data.fieldgroup.PropertyId;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
@@ -33,7 +28,6 @@ import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.resource.BadgeClientService;
 import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.Style;
-import za.co.yellowfire.threesixty.ui.component.ImageBuilder;
 import za.co.yellowfire.threesixty.ui.component.LabelBuilder;
 import za.co.yellowfire.threesixty.ui.component.PanelBuilder;
 import za.co.yellowfire.threesixty.ui.component.button.CrudHeaderButtons;
@@ -47,7 +41,6 @@ import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm;
 
 @SuppressWarnings("serial")
 public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
-	//óprivate static final Logger LOG = LoggerFactory.getLogger(KudosEntityEditForm.class);
 	
 	@PropertyId("badge")
 	private MComboBox badgeField = 
@@ -121,13 +114,12 @@ public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
 		if (receivedField == null) {
 			receivedField = new Grid(new KudosContainer(badgeClientService));
 			receivedField.setColumnOrder("picture", "message");
-			receivedField.getColumn("picture").setRenderer(new ImageRenderer()).setWidth(80.0f);
+			receivedField.getColumn("picture").setRenderer(new ImageRenderer()).setWidth(85.0f);
 			receivedField.getColumn("message").setRenderer(new HtmlRenderer());
 			receivedField.removeHeaderRow(0);
 			receivedField.setWidth(100.0f, Unit.PERCENTAGE);
-			receivedField.setHeight(100.0f, Unit.PERCENTAGE);
 			receivedField.setStyleName("kudos-received");
-			receivedField.setResponsive(true);
+			receivedField.setResponsive(false);
 			receivedField.setCellStyleGenerator(cell -> (String) cell.getPropertyId());
 		}
 		return receivedField;
@@ -154,56 +146,6 @@ public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
 		return panel;
 	}
 	
-	protected HorizontalLayout[] buildReceivedItems() {
-		
-		HorizontalLayout[] items;
-		
-		List<Kudos> received = this.repository.findByRecipient(
-				userService.getCurrentUser(),
-				new Sort(Direction.DESC, "createdDate"));
-		
-		if (received != null && received.size() > 0) {
-			if (received.size() > 10) {
-				received = received.subList(0, 10);
-			}
-			
-			int i = 0;
-			items = new HorizontalLayout[received.size()];
-			for(Kudos kudos : received) {
-				
-				if (kudos.getBadge() != null) { 
-					try {
-						kudos.getBadge().retrievePicture(client);
-					} catch (IOException e) {
-						System.out.println("Unable retrieve kudos badge: " + kudos.getBadge().getPictureName());
-					}
-				}
-				
-				Image badgeField = ImageBuilder.build(kudos.getBadge());
-				Label messageField = LabelBuilder.build(kudos.getMessage(), ContentMode.HTML);
-				
-				badgeField.addStyleName(Style.Kudos.Received.IMAGE);
-				HorizontalLayout item = PanelBuilder.HORIZONTAL(Style.Kudos.Received.ITEM, badgeField, messageField);
-				item.setExpandRatio(badgeField, 1.0f);
-				item.setExpandRatio(messageField, 8.0f);
-				
-				item.setSpacing(true);
-				item.setMargin(false);
-				
-				if (i % 2 == 0) {
-					item.addStyleName(Style.Kudos.Received.HEADER);
-				}
-				
-				items[i++] = item;
-			}
-		} else {
-			items = new HorizontalLayout[1];
-			items[0] = PanelBuilder.HORIZONTAL(Style.Kudos.Received.ITEM, LabelBuilder.build(I8n.Kudos.Received.NONE, Style.Text.BOLDED, Style.Text.ITALICIZED));
-		}
-		
-		return items;
-	}
-	
 	@Override
 	protected void updateFieldContraints() {
 		super.updateFieldContraints();
@@ -224,7 +166,9 @@ public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
 
 	@Override
 	protected Kudos buildEmpty() {
-		return Kudos.EMPTY();
+		Kudos kudos = Kudos.EMPTY();
+		kudos.setDonor(userService.getCurrentUser());
+		return kudos;
 	}
 	
 	protected void onSelectedPicture(FileEvent event) {

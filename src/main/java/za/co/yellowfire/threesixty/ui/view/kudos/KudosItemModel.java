@@ -2,6 +2,7 @@ package za.co.yellowfire.threesixty.ui.view.kudos;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,7 @@ public class KudosItemModel implements Serializable {
 		String uri = service.getUri(proxied.getBadge().getId());
 		LOG.debug("Badge uri {}", uri);
 		
-		return new ExternalResource(uri);
+		return new ExternalResource(uri, "image/svg");
 		
 //		if (!pictureRetrieved) {
 //			try {
@@ -46,5 +47,28 @@ public class KudosItemModel implements Serializable {
 	}
 	
 	public void setMessage(final String message) {}
-	public String getMessage() { return "<span style=\"vertical-align:top\">" + proxied.getMessage() + "</span>"; }
+	public String getMessage() { 
+		return "<div id=\"kudos-received-wrapper\" style=\"float: left; width: 100%;overflow-wrap: break-word;\">" +
+				"<div id=\"kudos-received-date\" style=\"float: right; color: #666;\">" +
+				getReceivedDate() +
+				"</div>" +
+				"<strong><i>" + 
+				proxied.getBadge().getIdeal().getId() + 
+				"</i> kudos received from " +
+				getDonorName() +
+				"</strong>" +
+				"<p style=\"overflow-wrap: break-word;\">" + proxied.getMessage() + "</p>" +
+				"</div>"; 
+	}
+	
+	private String getDonorName() {
+		return proxied.getDonor() != null && StringUtils.isNotBlank(proxied.getDonor().getFirstName()) ? proxied.getDonor().getFirstName() : "Unknown"; 
+	}
+	
+	private String getReceivedDate() {
+		if (proxied.getCreatedDate() != null) {
+			return proxied.getCreatedDate().toString("dd MMM yyyy");
+		}
+		return "";
+	}
 }

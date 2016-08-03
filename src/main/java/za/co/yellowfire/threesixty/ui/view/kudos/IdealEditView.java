@@ -25,8 +25,8 @@ public final class IdealEditView extends AbstractRepositoryEntityEditView<Ideal,
     public static final String VIEW_NEW() { return VIEW("new_" + VIEW_NAME); }
     
     @Autowired
-    public IdealEditView(final IdealRepository repository, final IdealEntityEditForm form) {
-    	super(repository, form);
+    public IdealEditView(final IdealRepository repository) {
+    	super(repository, new IdealEntityEditForm());
     }
 
     @Override
