@@ -11,6 +11,8 @@ Three**Sixty** current provides the assessment module whereby the employee and m
 * The manager assessing the performance of the employee together with feedback 
 * The manager and employee review the assessment together for the final assessment score
 
+![alt text](http://res.cloudinary.com/yellowfire/image/upload/v1456549916/Assessment%20screen.png "Assessment screen")
+
 ### Kudos feature (Beta)
 
 Three**Sixty** provide a recognition currency called `kudos` that employees can use to recognise their collegues and be recognised for their contribution.
