@@ -60,6 +60,9 @@ public class MStatsModel implements Serializable {
 			
 			if (model.getStatisticInfo() != null)
 				this.statisticInfo =  model.getStatisticInfo();
+			
+			if (model.getStatisticIcon() != null)
+				this.statisticIcon =  model.getStatisticIcon();
 		}
 	}
 }

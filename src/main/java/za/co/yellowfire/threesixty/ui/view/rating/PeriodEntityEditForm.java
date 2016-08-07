@@ -5,6 +5,7 @@ import java.util.Map;
 import org.vaadin.viritin.fields.MDateField;
 
 import com.vaadin.data.fieldgroup.PropertyId;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Layout;
@@ -143,21 +144,22 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<Period> {
 				case Created:
 					model.setStatisticLabel("Published assessments");
 					model.setStatisticInfo("0% up from the previous week");
-					model.setStatisticIcon(I8n.Assessment.ICON);
+					model.setStatisticIcon(FontAwesome.FILE_O);
 					model.setStyleName(MStatsField.STYLE_INFO);
 					break;
 				case EmployeeCompleted:
 					model.setStatisticLabel("Self-rating assessments completed");
 					model.setStatisticInfo("0% up from the previous week");
-					model.setStatisticIcon(I8n.Assessment.ICON);
+					model.setStatisticIcon(FontAwesome.FILE);
 					model.setStyleName(MStatsField.STYLE_WARNING);
 					break;
 				case ManagerCompleted:
+					model.setStatisticIcon(FontAwesome.FILE_TEXT_O);
 					break;
 				case Reviewed:
 					model.setStatisticLabel("Completed assessments");
 					model.setStatisticInfo("0% up from the previous week");
-					model.setStatisticIcon(I8n.Assessment.ICON);
+					model.setStatisticIcon(FontAwesome.FILE_TEXT);
 					model.setStyleName(MStatsField.STYLE_SUCCESS);
 					break;
 				}

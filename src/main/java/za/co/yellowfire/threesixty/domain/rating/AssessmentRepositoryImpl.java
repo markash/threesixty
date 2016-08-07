@@ -36,6 +36,9 @@ public class AssessmentRepositoryImpl implements AssessmentRepositoryCustom {
 		Map<AssessmentStatus, AssessmentStatusCount> results = AssessmentStatus.stream()
 				.collect(Collectors.toMap(as -> as, as -> new AssessmentStatusCount(as, 0L)));
 		
+		/* Initialise the summary status count to 0 */
+		results.put(AssessmentStatus.All, new AssessmentStatusCount(AssessmentStatus.All, 0L));
+		
 		if (period == null || period.getId() == null) {
 			return results;
 		}
