@@ -3,6 +3,7 @@ package za.co.yellowfire.threesixty.ui.view.kudos;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.vaadin.viritin.fields.IntegerField;
 import org.vaadin.viritin.fields.MTextArea;
 import org.vaadin.viritin.fields.MTextField;
 
@@ -37,7 +38,7 @@ public class BadgeEntityEditForm extends AbstractEntityEditForm<Badge> {
 	
 	@PropertyId("description")
 	private MTextField descriptionField = 
-		new MTextField(I8n.Fields.DESCRIPTION)
+		new MTextField(I8n.Badge.Fields.DESCRIPTION)
 			.withFullWidth()
 			.withNullRepresentation("");
 	
@@ -45,11 +46,15 @@ public class BadgeEntityEditForm extends AbstractEntityEditForm<Badge> {
 	private MComboBox idealField;
 	
 	@PropertyId("motivation")
-	private MTextArea motivationField = new MTextArea(I8n.Fields.MOTIVATION)
+	private MTextArea motivationField = new MTextArea(I8n.Badge.Fields.MOTIVATION)
 			.withFullWidth()
 			.withNullRepresentation("")
 			.withRows(7);
 
+	@PropertyId("value")
+	private IntegerField valueField = new IntegerField(I8n.Badge.Fields.VALUE)
+			.withFullWidth();
+	
 	//TODO Make this into a component
 	private Image pictureField = new Image(null, new ThemeResource("img/profile-pic-300px.jpg"));
     private Window pictureWindow = new Window(WINDOW_PICTURE, new PictureSelectionForm(this::onSelectedPicture));
@@ -64,7 +69,7 @@ public class BadgeEntityEditForm extends AbstractEntityEditForm<Badge> {
 			final GridFsClient client) {
 		this.client = client;
 		
-		this.idealField = new MComboBox(new IndexedContainer(idealRepository.findByActive(true)))
+		this.idealField = new MComboBox(I8n.Badge.Fields.IDEAL, new IndexedContainer(idealRepository.findByActive(true)))
 				.withWidth(Style.Percentage._100);
 		
 		this.pictureField.setHeight(150.0f, Unit.PIXELS);
@@ -78,7 +83,7 @@ public class BadgeEntityEditForm extends AbstractEntityEditForm<Badge> {
 		addComponent(PanelBuilder.FORM(
         		PanelBuilder.HORIZONTAL(
         				PanelBuilder.VERTICAL_CENTERED(pictureField, pictureButton), 
-        				PanelBuilder.VERTICAL(idField, descriptionField, idealField)
+        				PanelBuilder.VERTICAL(idField, descriptionField, idealField, valueField)
         		)
         ));
         addComponent(motivationField);

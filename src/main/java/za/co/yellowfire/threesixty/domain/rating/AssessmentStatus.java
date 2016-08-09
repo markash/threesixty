@@ -58,7 +58,7 @@ public enum AssessmentStatus {
 	}
 	
 	public static List<AssessmentStatus> list() {
-		return Arrays.asList(Creating, Created, EmployeeCompleted, ManagerCompleted, Reviewed);
+		return Arrays.asList(All, Creating, Created, EmployeeCompleted, ManagerCompleted, Reviewed);
 	}
 	
 	public static Stream<AssessmentStatus> stream() {

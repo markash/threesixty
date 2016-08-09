@@ -420,5 +420,22 @@
   .italicized {
   	font-style: italic;
   }
+  
+  .wallet-panel {
+    margin-bottom: 10px;  
+    
+    .wallet-label {
+      width: initial;
+      margin-right: 5px;
+    }
+   
+    .wallet-negative-value {
+      color: #fc8675
+    }
+
+    .wallet-positive-value {
+      color: #65cea7
+    }
+  }
 }
 

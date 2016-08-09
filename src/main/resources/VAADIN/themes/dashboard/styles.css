@@ -11986,8 +11986,10 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .dashboard .kudos-received-header .v-slot-h3 {
-	text-align: left;
-	padding-top: 8px;
+	float: left;
+	margin-left: 5px;
+	margin-bottom: 9px;
+	padding-top: 12px;
 }
 
 .dashboard .kudos-received-header .h3 {
@@ -11996,6 +11998,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .kudos-received-header .toolbar {
 	margin-right: 5px;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 .dashboard .kudos-received .v-grid-cell {
@@ -12329,3 +12333,23 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .stat-success {
 	background-color: #65cea7;
 }
+
+.dashboard .v-slot-wallet-panel {
+    margin-botton: 10px !important;	
+}
+
+.dashboard .wallet-panel .wallet-label {
+	width: initial !important;
+	margin-right: 5px !important;
+}
+
+.dashboard .wallet-panel .wallet-negative-value {
+	width: initial !important;
+	color: #fc8675
+}
+
+.dashboard .wallet-panel .wallet-positive-value {
+	width: initial !important;
+    color: #65cea7
+}
+	

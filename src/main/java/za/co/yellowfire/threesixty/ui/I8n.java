@@ -62,8 +62,21 @@ public class I8n {
 	}
 	
 	public interface Ideal {	
+		String SINGULAR = "Ideal";
+		String PLURAL = "Ideals";
 		public interface Fields {
 			String IDEAL = "Ideal";
+		}
+	}
+	
+	public interface Badge {
+		String SINGULAR = "Badge";
+		String PLURAL = "Badges";
+		public interface Fields {
+			String DESCRIPTION = I8n.Fields.DESCRIPTION;
+			String IDEAL = I8n.Ideal.SINGULAR;
+			String MOTIVATION = "Motivation";
+			String VALUE = "Value";
 		}
 	}
 	

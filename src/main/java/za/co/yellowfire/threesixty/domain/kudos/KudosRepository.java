@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.repository.Query;
 
 import za.co.yellowfire.threesixty.domain.user.User;
 
-public interface KudosRepository extends MongoRepository<Kudos, String> {
+public interface KudosRepository extends MongoRepository<Kudos, String>, KudosRepositoryCustom {
 	
 	List<Kudos> findByRecipient(final User user, Sort sort);
 	

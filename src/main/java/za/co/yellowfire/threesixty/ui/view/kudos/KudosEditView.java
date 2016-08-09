@@ -60,7 +60,7 @@ public final class KudosEditView extends AbstractRepositoryEntityEditView<Kudos,
 
 	@Override
 	protected void onPostSave(ClickEvent event) {
-		super.onPostSave(event);
+		((KudosEntityEditForm) getForm()).onPostSave();
 	}
 	
 	protected User getCurrentUser() {

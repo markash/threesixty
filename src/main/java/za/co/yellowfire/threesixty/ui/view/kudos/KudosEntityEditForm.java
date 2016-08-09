@@ -1,20 +1,21 @@
 package za.co.yellowfire.threesixty.ui.view.kudos;
 
-import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.vaadin.viritin.layouts.MCssLayout;
+import org.vaadin.viritin.layouts.MHorizontalLayout;
+import org.vaadin.viritin.layouts.MVerticalLayout;
 
 import com.vaadin.data.fieldgroup.PropertyId;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.renderers.ImageRenderer;
@@ -24,6 +25,7 @@ import za.co.yellowfire.threesixty.domain.GridFsClient;
 import za.co.yellowfire.threesixty.domain.kudos.BadgeRepository;
 import za.co.yellowfire.threesixty.domain.kudos.Kudos;
 import za.co.yellowfire.threesixty.domain.kudos.KudosRepository;
+import za.co.yellowfire.threesixty.domain.kudos.KudosWallet;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.resource.BadgeClientService;
 import za.co.yellowfire.threesixty.ui.I8n;
@@ -35,8 +37,6 @@ import za.co.yellowfire.threesixty.ui.component.container.kudos.BadgeContainer;
 import za.co.yellowfire.threesixty.ui.component.container.user.UserContainer;
 import za.co.yellowfire.threesixty.ui.component.field.MComboBox;
 import za.co.yellowfire.threesixty.ui.component.field.MRichTextArea;
-import za.co.yellowfire.threesixty.ui.component.field.PictureField;
-import za.co.yellowfire.threesixty.ui.component.field.PictureSelectionForm.FileEvent;
 import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm;
 
 @SuppressWarnings("serial")
@@ -58,16 +58,18 @@ public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
 			new MRichTextArea(I8n.Kudos.Fields.MESSAGE)
 			.withWidth(100.0f, Unit.PERCENTAGE);
 
-	private PictureField pictureField = 
-			new PictureField(I8n.Kudos.Fields.PICTURE, this::onSelectedPicture);
+	//private PictureField pictureField = 
+	//		new PictureField(I8n.Kudos.Fields.PICTURE, this::onSelectedPicture);
 	
 	private Grid receivedField;
 	
     private GridFsClient client;
     private KudosRepository repository;
     private UserService userService;
-    final BadgeClientService badgeClientService;
+    private final BadgeClientService badgeClientService;
     private CrudHeaderButtons headerButtons;
+    private KudosWallet wallet;
+    private Label value;
     
 	public KudosEntityEditForm(
 			final BadgeRepository badgeRepository, 
@@ -82,6 +84,8 @@ public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
 		
 		this.recipientField.setContainerDataSource(new UserContainer(userService, true));
 		this.badgeField.setContainerDataSource(new BadgeContainer(badgeRepository));
+		
+		this.wallet = repository.getWallet(userService.getCurrentUser());
 	}
 	
 	public void setHeaderButtons(final CrudHeaderButtons headerButtons) {
@@ -91,6 +95,8 @@ public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
 	@Override
 	protected void internalLayout() {
 
+		//Label walletCaption = LabelBuilder.build("Wallet Balance: $" + wallet.getBalance().getValue(), Style.Text.BOLDED, ValoTheme.LABEL_H3, ValoTheme.LABEL_NO_MARGIN);
+		
 		Label headerCaption = LabelBuilder.build("Give kudos where due", Style.Text.BOLDED, ValoTheme.LABEL_H3, ValoTheme.LABEL_NO_MARGIN);
 		headerCaption.setSizeUndefined();
 		
@@ -101,14 +107,56 @@ public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
 		header.setSpacing(true);
 		
 		/* Layout the form */
-		addComponent(PanelBuilder.FORM(
-				header,
-        		PanelBuilder.HORIZONTAL(badgeField, recipientField),
-        		messageField
-        ));
-        addComponent(buildReceivedPanel());
+		addComponent(
+				new MVerticalLayout(
+						buildWalletTotal(),
+						new MHorizontalLayout(
+							PanelBuilder.FORM(
+									header,
+					        		PanelBuilder.HORIZONTAL(badgeField, recipientField),
+					        		messageField
+					        ),
+							buildReceivedPanel()
+						))
+						.withResponsive(true)
+						.withFullWidth()
+				.withMargin(false)
+				.withFullWidth()
+				);
+				
+//	
+//		addComponent(PanelBuilder.FORM(
+//				header,
+//        		PanelBuilder.HORIZONTAL(badgeField, recipientField),
+//        		messageField
+//        ));
+//        addComponent(buildReceivedPanel());
 	}
+	
+	private MCssLayout buildWalletTotal() {
+		List<String> styles = Arrays.asList(ValoTheme.LABEL_H2, ValoTheme.LABEL_NO_MARGIN);
+		Label label = LabelBuilder.build("Wallet Balance: ", "wallet-label", styles);
 		
+		value = LabelBuilder.build(
+				getWalletValue(), 
+				styles);
+		decorateWalletValue();
+		
+		return new MCssLayout(label, value)
+				.withStyleName("wallet-panel")
+				.withFullWidth();
+	}
+	
+	private String getWalletValue() {
+		return "$ " + Math.abs(wallet.getBalance().getValue());
+	}
+	
+	private void decorateWalletValue() {
+		value.removeStyleName("wallet-positive-value");
+		value.removeStyleName("wallet-negative-value");
+		value.addStyleName(wallet.getBalance().getValue() >= 0 ? "wallet-positive-value" : "wallet-negative-value");
+	}
+	
 	private Grid buildReceivedTable() {
 	
 		if (receivedField == null) {
@@ -160,8 +208,8 @@ public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
 		buildReceivedPanel();
 		
 		/* Update the picture */
-		fetchPicture();
-		displayPicture();
+		//fetchPicture();
+		//displayPicture();
 	}
 
 	@Override
@@ -171,45 +219,13 @@ public class KudosEntityEditForm extends AbstractEntityEditForm<Kudos> {
 		return kudos;
 	}
 	
-	protected void onSelectedPicture(FileEvent event) {
-		try {
-			if (getValue() != null) {
-				getValue().setPicture(event.getFile());
-				displayPicture();
-			}
-		} catch (IOException e) {
-			Notification.show("Error changing kudos picture", e.getMessage(), Type.ERROR_MESSAGE);
-		}
-	}
-	
-	protected void onPostSave(final ClickEvent event) {
-		try {
-			if (getValue() != null) {
-				getValue().storePicture(client);
-			}
-		} catch (IOException e) {
-			Notification.show("Store badge picture error", e.getMessage(), Type.ERROR_MESSAGE);
-		}
-	}
-	
-	protected void fetchPicture() {
-		try {
-			if (getValue() != null) {
-				getValue().retrievePicture(client);
-			}
-		} catch (IOException e) {
-			Notification.show("Retrieve badge picture error", e.getMessage(), Type.ERROR_MESSAGE);
-		}
-	}
-	
-	protected void displayPicture() {
+	public void onPostSave() {
+		this.wallet = repository.getWallet(userService.getCurrentUser());
 		
-		if (getValue().hasPicture()) {
-			this.pictureField.setSource(getValue().getPictureContent(), getValue().getPictureName() + "." + new Date().getTime() + " .png");
-			this.pictureField.markAsDirty();
-		}
+		value.setValue(getWalletValue());
+		decorateWalletValue();
 	}
-
+	
 	private class KudosContainer extends BeanItemContainer<KudosItemModel> {
 		private final BadgeClientService service;
 		

@@ -3,6 +3,10 @@ package za.co.yellowfire.threesixty.domain.kudos;
 import java.io.File;
 import java.io.IOException;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -24,9 +28,15 @@ public class Badge implements Auditable<User, String>, VisualEntity {
 	private static final String IMAGE_PREFIX = "badge_";
 	public static final Badge EMPTY() { return new Badge(); }
 	
-	@Id
+	public static final String FIELD_VALUE = "value";
+	
+	@Id @NotNull
 	private String id;
+	/** The description of the badge */
 	private String description;
+	/** The face-value of the badge */
+	@NotNull @Min(value = 0) @Max(value = 1000)
+	private Integer value = 0;
 	@DBRef
 	private Ideal ideal;
 	private String motivation;
@@ -43,13 +53,15 @@ public class Badge implements Auditable<User, String>, VisualEntity {
 	private DateTime createdDate;
 	private DateTime modifiedDate;
 	
-	
 	@Override
 	public String getId() { return this.id; }
     public void setId(String id) { this.id = id; }
     
     public String getDescription() { return description; }
 	public void setDescription(String description) { this.description = description; }
+	
+	public Integer getValue() { return this.value; }
+	public void setValue(final Integer value) { this.value = value != null ? value : 0; }
 	
 	public Ideal getIdeal() { return ideal; }
 	public void setIdeal(Ideal ideal) { this.ideal = ideal; }
@@ -133,6 +145,6 @@ public class Badge implements Auditable<User, String>, VisualEntity {
 	}
 	@Override
 	public String toString() {
-		return this.id;
+		return this.id + " ($" + this.value + ")";
 	}	
 }
