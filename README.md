@@ -4,6 +4,11 @@
 
 Three**Sixty** is a web application platform to streamline the 360 review process for managers and employees by integrating the employee recognition and evaluation into a single view. Through continuous recognition and evaluation the employee is engaged in the process of maintaining and striving to achieve personal as well as corporate objectives.
 
+### Dashboard Analytics (Beta)
+Three**Sixty** provides in application analytics of the performance review process.
+
+![alt text](http://res.cloudinary.com/yellowfire/image/upload/v1475921216/Dashboard%20screen.png "Dashboard screen")
+
 ### Assessment feature (Current)
 
 Three**Sixty** current provides the assessment module whereby the employee and manager are able to review the progress made by the employee against the outlined goals which goes through a 3 step process of

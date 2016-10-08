@@ -37,7 +37,7 @@ public class MainView extends HorizontalLayout implements View {
         addComponent(content);
         setExpandRatio(content, 1.0f);
 
-        new DashboardNavigator(content, MainUI.getViewProvider());
+        new DashboardNavigator(content, MainUI.getViewProvider(), MainUI.getTracker());
     }
     
     @Override

@@ -12,28 +12,20 @@ import com.vaadin.ui.UI;
 @SuppressWarnings("serial")
 public class DashboardNavigator extends Navigator {
 	private static final long serialVersionUID = 1L;
-	
-	// Provide a Google Analytics tracker id here
-    private static final String TRACKER_ID = "UA-81670605-1";
-    private GoogleAnalyticsTracker tracker;
-
     private static final DashboardViewType ERROR_VIEW = DashboardViewType.DASHBOARD;
     //private ViewProvider errorViewProvider;
 
-    public DashboardNavigator(final ComponentContainer container, final ViewProvider viewProvider) {
+    private GoogleAnalyticsTracker tracker;
+    
+    public DashboardNavigator(
+    		final ComponentContainer container, 
+    		final ViewProvider viewProvider,
+    		final GoogleAnalyticsTracker tracker) {
         super(UI.getCurrent(), container);
-
-        String host = getUI().getPage().getLocation().getHost();
-        if (TRACKER_ID != null) {
-            initGATracker(TRACKER_ID);
-        }
+        this.tracker = tracker;
+        
         initViewChangeListener();
         initViewProviders(viewProvider);
-    }
-
-    private void initGATracker(final String trackerId) {
-        tracker = new GoogleAnalyticsTracker(trackerId, "www.threesixty.com");
-        tracker.extend(UI.getCurrent());
     }
 
     private void initViewChangeListener() {

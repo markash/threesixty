@@ -17,7 +17,7 @@ import za.co.yellowfire.threesixty.ui.view.AbstractTableSearchView;
 public final class PerformanceAreaSearchView extends AbstractTableSearchView<PerformanceArea, String> {
 	private static final long serialVersionUID = 1L;
 	
-	public static final String TITLE = "Disciplines";
+	public static final String TITLE = "Performance Areas";
 	public static final String EDIT_ID = "area-edit";
     public static final String TITLE_ID = "area-title";
     public static final String VIEW_NAME = "performance-areas";

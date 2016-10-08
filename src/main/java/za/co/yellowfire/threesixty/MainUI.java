@@ -1,6 +1,7 @@
 package za.co.yellowfire.threesixty;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.vaadin.googleanalytics.tracking.GoogleAnalyticsTracker;
 
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.annotations.PreserveOnRefresh;
@@ -46,6 +47,9 @@ public class MainUI extends UI {
     @Autowired
     private DashboardEventBus dashboardEventbus;
     
+    private static final String TRACKER_ID = "UA-81670605-1";
+    private GoogleAnalyticsTracker tracker;
+    
     @Override
     protected void init(VaadinRequest request) {
     	Navigator navigator = new Navigator(this, this);
@@ -57,6 +61,10 @@ public class MainUI extends UI {
     	
     	Responsive.makeResponsive(this);
         addStyleName(ValoTheme.UI_WITH_MENU);
+
+        if (TRACKER_ID != null) {
+            initGATracker(TRACKER_ID, getUI().getPage().getLocation().getHost());
+        }
         
         updateContent();
 
@@ -89,6 +97,13 @@ public class MainUI extends UI {
         }
     }
     
+    private void initGATracker(final String trackerId, final String hostName) {
+        tracker = new GoogleAnalyticsTracker(trackerId, hostName);
+        tracker.extend(UI.getCurrent());
+        getNavigator().addViewChangeListener(tracker);
+        System.out.println("Tracking " + trackerId + " : " + hostName);
+        
+    }
     @Subscribe
     public void userLogin(final UserLoginEvent event) {
         VaadinSession.getCurrent().setAttribute(User.class, event.getUser());
@@ -132,5 +147,9 @@ public class MainUI extends UI {
     
     public static ViewProvider getViewProvider() { 
     	return ((MainUI) getCurrent()).viewProvider; 
+    }
+    
+    public static GoogleAnalyticsTracker getTracker() { 
+    	return ((MainUI) getCurrent()).tracker; 
     }
 }

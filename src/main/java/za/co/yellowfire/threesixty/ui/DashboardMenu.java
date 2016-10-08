@@ -75,7 +75,7 @@ public class DashboardMenu extends CustomComponent {
         Label logo = new Label(FontAwesome.ROCKET.getHtml(), ContentMode.HTML);
         Label name = new Label("&nbsp;&nbsp;Three <strong>Sixty</strong>", ContentMode.HTML);
         HorizontalLayout logoWrapper = new HorizontalLayout(logo, name);
-        logoWrapper.setComponentAlignment(logo, Alignment.MIDDLE_CENTER);
+        logoWrapper.setComponentAlignment(logo, Alignment.TOP_CENTER);
         logoWrapper.addStyleName("valo-menu-title");
         return logoWrapper;
     }

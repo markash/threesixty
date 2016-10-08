@@ -57,13 +57,15 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 		this.mailingService = mailingService;
 		this.currentUser = currentUser;
 		
+		List<User> users = service.findActiveUsers();
+		
 		this.managerField = 
-				new MComboBox(I8n.Assessment.Fields.MANAGER, new IndexedContainer(service.findActiveUsers()))
+				new MComboBox(I8n.Assessment.Fields.MANAGER, new IndexedContainer(users))
 					.withWidth(100.0f, Unit.PERCENTAGE)
 					.withDisabled();
 		
 		this.employeeField = 
-				new MComboBox(I8n.Assessment.Fields.EMPLOYEE, new IndexedContainer(service.findActiveUsers()))
+				new MComboBox(I8n.Assessment.Fields.EMPLOYEE, new IndexedContainer(users))
 					.withWidth(100.0f, Unit.PERCENTAGE)
 					.valueChangeListener(this::onEmployeeSelected);
 		

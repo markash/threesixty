@@ -46,8 +46,7 @@ public class LoginView extends VerticalLayout implements View {
         addComponent(loginForm);
         setComponentAlignment(loginForm, Alignment.MIDDLE_CENTER);
         NotificationBuilder.showNotification("Welcome to Three<strong>Sixty</strong>",
-        		"<span>The seamless employee recognition and evaluation system built with <a href=\"http://www.spring.io\">Spring.io</a> and "
-        		+ "<a href=\"https://vaadin.com\">Vaadin framework</a>.</span> <span>The default administration user is admin and password to continue.</span>", 
+        		"<span>The seamless employee recognition and evaluation system.</span><br />", 
         		20000, 
         		true);
     }
@@ -74,7 +73,16 @@ public class LoginView extends VerticalLayout implements View {
         final TextField username = new TextField("Username");
         username.setIcon(FontAwesome.USER);
         username.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
-
+        username.setDescription("The users are <br />"
+        		+ "<ul>"
+        		+ "<li><strong>admin</strong> with password <strong>password</strong>"
+        		+ "<li><strong>katie</strong> with password <strong>password</strong>"
+        		+ "<li><strong>marmite</strong> with password <strong>password</strong>"
+        		+ "<li><strong>brown</strong> with password <strong>password</strong>"
+        		+ "<li><strong>linus</strong> with password <strong>password</strong>"
+        		+ "<li><strong>lucy</strong> with password <strong>password</strong>"
+        		+ "</ul>");
+        
         final PasswordField password = new PasswordField("Password");
         password.setIcon(FontAwesome.LOCK);
         password.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);

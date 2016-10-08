@@ -37,12 +37,12 @@ public enum DashboardViewType {
 
     private final String viewName;
     private final Class<? extends View> viewClass;
-    private final Resource icon;
+    private final FontAwesome icon;
     private final boolean stateful;
     private final Role role;
     
     private DashboardViewType(final String viewName,
-            final Class<? extends View> viewClass, final Resource icon,
+            final Class<? extends View> viewClass, final FontAwesome icon,
             final boolean stateful,
             final Role role) {
         this.viewName = viewName;
@@ -55,7 +55,7 @@ public enum DashboardViewType {
     public boolean isStateful() { return stateful; }
     public String getViewName() { return viewName; }
     public Class<? extends View> getViewClass() { return viewClass; }
-    public Resource getIcon() { return icon; }
+    public FontAwesome getIcon() { return icon; }
     
     public boolean isAccessibleBy(final User user) {
     	if (this.role == null) { return true; }

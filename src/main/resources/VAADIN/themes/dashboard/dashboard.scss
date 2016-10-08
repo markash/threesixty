@@ -54,7 +54,7 @@ $v-included-components: remove($v-included-components, twincolselect);
 $view-padding: round($v-unit-size / 1.5) !default;
 
 // Slight adjustment to menu background-color
-$valo-menu-background-color: #414B56;
+$valo-menu-background-color: rgb(4, 73, 112);
 
 @mixin dashboard {
   @include valo;
