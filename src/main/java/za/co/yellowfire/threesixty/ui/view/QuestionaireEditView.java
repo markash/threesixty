@@ -142,7 +142,6 @@ public final class QuestionaireEditView extends AbstractDashboardPanel /*, Dashb
         return details;
 	}
 	
-	@SuppressWarnings("unchecked")
 	protected MTable<Question<?>> getTable() {
 		if (this.table == null) {
 

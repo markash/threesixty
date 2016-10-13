@@ -15,8 +15,6 @@ import org.springframework.data.domain.Auditable;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import za.co.yellowfire.threesixty.domain.user.User;
-import za.co.yellowfire.threesixty.ui.I8n;
-import za.co.yellowfire.threesixty.ui.component.field.MStatsField;
 import za.co.yellowfire.threesixty.ui.component.field.MStatsModel;
 
 /**

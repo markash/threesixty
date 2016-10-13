@@ -14,13 +14,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Optional;
+
+import za.co.yellowfire.threesixty.domain.statistics.CounterStatistic;
+import za.co.yellowfire.threesixty.domain.statistics.CounterStatistic.CounterFormat;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserRepository;
 
 @Service
 public class AssessmentService implements za.co.yellowfire.threesixty.domain.question.Service<Assessment> {
 	
-	private static final Logger LOG = LoggerFactory.getLogger(AssessmentService.class);
+	//private static final Logger LOG = LoggerFactory.getLogger(AssessmentService.class);
 	
 	private final AssessmentRepository assessmentRepository;
 	private final PerformanceAreaRepository performanceAreaRepository;
@@ -110,6 +114,14 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 			return assessmentRepository.countByPeriod(period.getId());
 		}
 		return 0L;
+	}
+	
+	public CounterStatistic getAssessmentsCounterStatistic() {
+		return new CounterStatistic("AssessmentsCounter", assessmentRepository.countActive());
+	}
+	
+	public CounterStatistic getPerformanceAreasCounterStatistic() {
+		return new CounterStatistic("PerformanceAreasCounter", performanceAreaRepository.countActive());
 	}
 	
 	public Map<AssessmentStatus, AssessmentStatusCount> countAssessmentsStatusFor(final Period period) {

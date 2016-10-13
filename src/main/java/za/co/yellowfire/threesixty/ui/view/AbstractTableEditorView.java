@@ -99,7 +99,6 @@ public abstract class AbstractTableEditorView<T, ID extends Serializable> extend
 		
 		SpringEntityProvider<T> entityProvider = new SpringEntityProvider<T>(repository);
 		
-		@SuppressWarnings("unchecked")
 		MTable<T> table = new MTable<T>(beanType)
 				.setBeans(new SortableLazyList<T>(entityProvider, entityProvider, 100))
                 .withProperties(getTablePropertyNames())

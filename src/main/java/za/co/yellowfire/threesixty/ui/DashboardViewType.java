@@ -2,8 +2,6 @@ package za.co.yellowfire.threesixty.ui;
 
 import com.vaadin.navigator.View;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Resource;
-
 import za.co.yellowfire.threesixty.domain.user.Role;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.view.DashboardView;

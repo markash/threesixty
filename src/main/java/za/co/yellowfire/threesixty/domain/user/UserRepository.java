@@ -12,4 +12,7 @@ public interface UserRepository extends MongoRepository<User, String> {
 	
 	@Query("{active: {$eq: ?0}}")
 	List<User> findByActive(final boolean active);
+	
+	@Query(value = "{active: {$eq: true}}", count = true)
+	int countActive();
 }

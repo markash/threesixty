@@ -1,8 +1,11 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import za.co.yellowfire.threesixty.domain.statistics.CounterStatistic;
 import za.co.yellowfire.threesixty.domain.user.User;
 
 @Service
@@ -40,5 +43,9 @@ public class PeriodService implements za.co.yellowfire.threesixty.domain.questio
 
 	public void setPeriodRepository(PeriodRepository periodRepository) {
 		this.periodRepository = periodRepository;
+	}
+	
+	public CounterStatistic getPeriodCounterStatistic() {
+		return new CounterStatistic("PersiodsCounter", Optional.of(periodRepository.countActive()));
 	}
 }

@@ -17,4 +17,7 @@ public interface AssessmentRepository extends MongoRepository<Assessment, String
 	
 	@Query(value = "{period.id: {$eq: ?0}}", count = true)
 	long countByPeriod(final String periodId);
+	
+	@Query(value = "{active: {$eq: true}}", count = true)
+	int countActive();
 }

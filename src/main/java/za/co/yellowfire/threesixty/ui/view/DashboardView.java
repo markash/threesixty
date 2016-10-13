@@ -1,9 +1,21 @@
 package za.co.yellowfire.threesixty.ui.view;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.byteowls.vaadin.chartjs.ChartJs;
+import com.byteowls.vaadin.chartjs.config.LineChartConfig;
+import com.byteowls.vaadin.chartjs.data.Dataset;
+import com.byteowls.vaadin.chartjs.data.LineDataset;
+import com.byteowls.vaadin.chartjs.options.Hover;
+import com.byteowls.vaadin.chartjs.options.Position;
+import com.byteowls.vaadin.chartjs.options.Tooltips;
+import com.byteowls.vaadin.chartjs.options.scale.Axis;
+import com.byteowls.vaadin.chartjs.options.scale.CategoryScale;
+import com.byteowls.vaadin.chartjs.options.scale.LinearScale;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.navigator.View;
@@ -11,30 +23,26 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Responsive;
 import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.MenuBar.Command;
-import com.vaadin.ui.MenuBar.MenuItem;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import za.co.yellowfire.threesixty.MainUI;
+import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
+import za.co.yellowfire.threesixty.domain.rating.PeriodService;
+import za.co.yellowfire.threesixty.domain.statistics.CounterStatistic;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.CloseOpenWindowsEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEventBus;
 import za.co.yellowfire.threesixty.ui.DashboardViewType;
-import za.co.yellowfire.threesixty.ui.component.chart.TestChart;
 import za.co.yellowfire.threesixty.ui.component.field.MCard;
 import za.co.yellowfire.threesixty.ui.component.notification.NotificationsButton;
 import za.co.yellowfire.threesixty.ui.view.user.UserSearchView;
@@ -53,11 +61,16 @@ public final class DashboardView extends Panel implements View /*, DashboardEdit
     private NotificationsButton notificationsButton;
     private CssLayout dashboardPanels;
     private final VerticalLayout root;
-    
+    private UserService userService;
+    private AssessmentService assessmentService;
+    private PeriodService periodService;
     
     @Autowired
-    public DashboardView(final UserService userService) {
-        this.notificationsButton = NotificationsButton.BELL("dashboard-notifications", userService, this::onViewNotifications);
+    public DashboardView(final UserService userService, final AssessmentService assessmentService, final PeriodService periodService) {
+        this.userService = userService;
+        this.assessmentService = assessmentService;
+        this.periodService = periodService;
+    	this.notificationsButton = NotificationsButton.BELL("dashboard-notifications", userService, this::onViewNotifications);
         
     	addStyleName(ValoTheme.PANEL_BORDERLESS);
         setSizeFull();
@@ -162,7 +175,7 @@ public final class DashboardView extends Panel implements View /*, DashboardEdit
         dashboardPanels.addComponent(buildAssessmentsCard());
         dashboardPanels.addComponent(buildPerformanceAreasCard());
 
-        //dashboardPanels.addComponent(buildTopGrossingMovies());
+        dashboardPanels.addComponent(buildPeriodProgressChart());
         //dashboardPanels.addComponent(buildNotes());
         //dashboardPanels.addComponent(buildChart());
         //dashboardPanels.addComponent(buildTop10TitlesByRevenue());
@@ -172,26 +185,111 @@ public final class DashboardView extends Panel implements View /*, DashboardEdit
     }
 
     public Component buildUserCard() {
-    	MCard card = new MCard("Users", FontAwesome.USERS, "The number of active users registered within the system.", "354", UserSearchView.VIEW_NAME);
+    	MCard card = new MCard(
+    			"Users", 
+    			FontAwesome.USERS, 
+    			"The number of active users registered within the system.", 
+    			userService.getUsersCounterStatistic(), 
+    			UserSearchView.VIEW_NAME);
     	return card;
     }
     
     public Component buildPeriodsCard() {
     	DashboardViewType type = DashboardViewType.PERIOD_SEARCH;
-    	MCard card = new MCard("Periods", type.getIcon(), "The number of assessment period.", "1", type.getViewName());
+    	MCard card = new MCard(
+    			"Periods", 
+    			type.getIcon(), 
+    			"The number of assessment period.", 
+    			periodService.getPeriodCounterStatistic(), 
+    			type.getViewName());
     	return card;
     }
     
     public Component buildAssessmentsCard() {
     	DashboardViewType type = DashboardViewType.ASSESSMENT_SEARCH;
-    	MCard card = new MCard("Assessments", type.getIcon(), "The number of assessment.", "12", type.getViewName());
+    	MCard card = new MCard(
+    			"Assessments", 
+    			type.getIcon(), 
+    			"The number of assessment.", 
+    			assessmentService.getAssessmentsCounterStatistic(), 
+    			type.getViewName());
     	return card;
     }
     
-    public Component buildPerformanceAreasCard() {
+    private Component buildPerformanceAreasCard() {
     	DashboardViewType type = DashboardViewType.PERFORMANCE_AREA_SEARCH;
-    	MCard card = new MCard("KPAs", type.getIcon(), "The number of key performance areas tracked by the application.", "34543", type.getViewName());
+    	MCard card = new MCard(
+    			"KPAs", 
+    			type.getIcon(), 
+    			"The number of key performance areas tracked by the application.", 
+    			assessmentService.getPerformanceAreasCounterStatistic(), 
+    			type.getViewName());
     	return card;
+    }
+    
+    private Component buildPeriodProgressChart() {
+    	LineChartConfig lineConfig = new LineChartConfig();
+        lineConfig.data()
+            .labels("January", "February", "March", "April", "May", "June", "July")
+            .addDataset(new LineDataset().label("My First dataset").fill(false))
+            .addDataset(new LineDataset().label("My Second dataset").fill(false))
+            .addDataset(new LineDataset().label("Hidden dataset").hidden(true))
+            .and()
+        .options()
+            .responsive(true)
+            .title()
+            .display(true)
+            .text("Chart.js Line Chart")
+            .and()
+        .tooltips()
+            .mode(Tooltips.Mode.LABEL)
+            .and()
+        .hover()
+            .mode(Hover.Mode.DATASET)
+            .and()
+        .scales()
+        .add(Axis.X, new CategoryScale()
+                .display(true)
+                .scaleLabel()
+                    .display(true)
+                    .labelString("Month")
+                    .and()
+                .position(Position.TOP))
+        .add(Axis.Y, new LinearScale()
+                .display(true)
+                .scaleLabel()
+                    .display(true)
+                    .labelString("Value")
+                    .and()
+                .ticks()
+                    .suggestedMin(-10)
+                    .suggestedMax(250)
+                    .and()
+                .position(Position.RIGHT))
+        .and()
+        .done();
+        
+        // add random data for demo
+        List<String> labels = lineConfig.data().getLabels();
+        for (Dataset<?, ?> ds : lineConfig.data().getDatasets()) {
+            LineDataset lds = (LineDataset) ds;
+            List<Double> data = new ArrayList<>();
+            for (int i = 0; i < labels.size(); i++) {
+                data.add((double) Math.round(Math.random() * 100));
+            }
+            lds.dataAsList(data);
+            lds.borderColor("rgb(4, 73, 112)");
+            lds.backgroundColor("rgb(4, 73, 112)");
+        }
+
+        ChartJs chart = new ChartJs(lineConfig);
+        //chart.addClickListener((a,b) -> {
+        //    LineDataset dataset = (LineDataset) lineConfig.data().getDatasets().get(a);
+        //    ChartUtils.notification(a, b, dataset);
+        //});
+        chart.setWidth(70, Unit.PERCENTAGE);
+        chart.setJsLoggingEnabled(true);
+        return chart;
     }
     
 //    private Component buildTopGrossingMovies() {
@@ -246,65 +344,65 @@ public final class DashboardView extends Panel implements View /*, DashboardEdit
 //        return createContentWrapper(new TopSixTheatersChart());
 //    }
 //
-    private Component createContentWrapper(final Component content) {
-        final CssLayout slot = new CssLayout();
-        slot.setWidth("100%");
-        slot.addStyleName("dashboard-panel-slot");
-
-        CssLayout card = new CssLayout();
-        card.setWidth("100%");
-        card.addStyleName(ValoTheme.LAYOUT_CARD);
-
-        HorizontalLayout toolbar = new HorizontalLayout();
-        toolbar.addStyleName("dashboard-panel-toolbar");
-        toolbar.setWidth("100%");
-
-        Label caption = new Label(content.getCaption());
-        caption.addStyleName(ValoTheme.LABEL_H4);
-        caption.addStyleName(ValoTheme.LABEL_COLORED);
-        caption.addStyleName(ValoTheme.LABEL_NO_MARGIN);
-        content.setCaption(null);
-
-        MenuBar tools = new MenuBar();
-        tools.addStyleName(ValoTheme.MENUBAR_BORDERLESS);
-        MenuItem max = tools.addItem("", FontAwesome.EXPAND, new Command() {
-
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-                if (!slot.getStyleName().contains("max")) {
-                    selectedItem.setIcon(FontAwesome.COMPRESS);
-                    toggleMaximized(slot, true);
-                } else {
-                    slot.removeStyleName("max");
-                    selectedItem.setIcon(FontAwesome.EXPAND);
-                    toggleMaximized(slot, false);
-                }
-            }
-        });
-        max.setStyleName("icon-only");
-        MenuItem root = tools.addItem("", FontAwesome.COG, null);
-        root.addItem("Configure", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-                Notification.show("Not implemented in this demo");
-            }
-        });
-        root.addSeparator();
-        root.addItem("Close", new Command() {
-            @Override
-            public void menuSelected(final MenuItem selectedItem) {
-                Notification.show("Not implemented in this demo");
-            }
-        });
-
-        toolbar.addComponents(caption, tools);
-        toolbar.setExpandRatio(caption, 1);
-        toolbar.setComponentAlignment(caption, Alignment.MIDDLE_LEFT);
-
-        card.addComponents(toolbar, content);
-        slot.addComponent(card);
-        return slot;
-    }
+//    private Component createContentWrapper(final Component content) {
+//        final CssLayout slot = new CssLayout();
+//        slot.setWidth("100%");
+//        slot.addStyleName("dashboard-panel-slot");
+//
+//        CssLayout card = new CssLayout();
+//        card.setWidth("100%");
+//        card.addStyleName(ValoTheme.LAYOUT_CARD);
+//
+//        HorizontalLayout toolbar = new HorizontalLayout();
+//        toolbar.addStyleName("dashboard-panel-toolbar");
+//        toolbar.setWidth("100%");
+//
+//        Label caption = new Label(content.getCaption());
+//        caption.addStyleName(ValoTheme.LABEL_H4);
+//        caption.addStyleName(ValoTheme.LABEL_COLORED);
+//        caption.addStyleName(ValoTheme.LABEL_NO_MARGIN);
+//        content.setCaption(null);
+//
+//        MenuBar tools = new MenuBar();
+//        tools.addStyleName(ValoTheme.MENUBAR_BORDERLESS);
+//        MenuItem max = tools.addItem("", FontAwesome.EXPAND, new Command() {
+//
+//            @Override
+//            public void menuSelected(final MenuItem selectedItem) {
+//                if (!slot.getStyleName().contains("max")) {
+//                    selectedItem.setIcon(FontAwesome.COMPRESS);
+//                    toggleMaximized(slot, true);
+//                } else {
+//                    slot.removeStyleName("max");
+//                    selectedItem.setIcon(FontAwesome.EXPAND);
+//                    toggleMaximized(slot, false);
+//                }
+//            }
+//        });
+//        max.setStyleName("icon-only");
+//        MenuItem root = tools.addItem("", FontAwesome.COG, null);
+//        root.addItem("Configure", new Command() {
+//            @Override
+//            public void menuSelected(final MenuItem selectedItem) {
+//                Notification.show("Not implemented in this demo");
+//            }
+//        });
+//        root.addSeparator();
+//        root.addItem("Close", new Command() {
+//            @Override
+//            public void menuSelected(final MenuItem selectedItem) {
+//                Notification.show("Not implemented in this demo");
+//            }
+//        });
+//
+//        toolbar.addComponents(caption, tools);
+//        toolbar.setExpandRatio(caption, 1);
+//        toolbar.setComponentAlignment(caption, Alignment.MIDDLE_LEFT);
+//
+//        card.addComponents(toolbar, content);
+//        slot.addComponent(card);
+//        return slot;
+//    }
 
     
     public void onViewNotifications(final ClickEvent event) {
@@ -321,24 +419,24 @@ public final class DashboardView extends Panel implements View /*, DashboardEdit
 //        titleLabel.setValue(name);
 //    }
 
-    private void toggleMaximized(final Component panel, final boolean maximized) {
-        for (Iterator<Component> it = root.iterator(); it.hasNext();) {
-            it.next().setVisible(!maximized);
-        }
-        dashboardPanels.setVisible(true);
-
-        for (Iterator<Component> it = dashboardPanels.iterator(); it.hasNext();) {
-            Component c = it.next();
-            c.setVisible(!maximized);
-        }
-
-        if (maximized) {
-            panel.setVisible(true);
-            panel.addStyleName("max");
-        } else {
-            panel.removeStyleName("max");
-        }
-    }
+//    private void toggleMaximized(final Component panel, final boolean maximized) {
+//        for (Iterator<Component> it = root.iterator(); it.hasNext();) {
+//            it.next().setVisible(!maximized);
+//        }
+//        dashboardPanels.setVisible(true);
+//
+//        for (Iterator<Component> it = dashboardPanels.iterator(); it.hasNext();) {
+//            Component c = it.next();
+//            c.setVisible(!maximized);
+//        }
+//
+//        if (maximized) {
+//            panel.setVisible(true);
+//            panel.addStyleName("max");
+//        } else {
+//            panel.removeStyleName("max");
+//        }
+//    }
 //
 //    public final class NotificationsButton extends Button {
 //        private static final String STYLE_UNREAD = "unread";

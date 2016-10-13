@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -26,6 +27,7 @@ import za.co.yellowfire.threesixty.RequestResult;
 import za.co.yellowfire.threesixty.Response;
 import za.co.yellowfire.threesixty.domain.GridFsClient;
 import za.co.yellowfire.threesixty.domain.InvalidUserException;
+import za.co.yellowfire.threesixty.domain.statistics.CounterStatistic;
 import za.co.yellowfire.threesixty.domain.user.notification.NotificationCategory;
 import za.co.yellowfire.threesixty.domain.user.notification.NotificationSummary;
 import za.co.yellowfire.threesixty.domain.user.notification.UserNotification;
@@ -34,6 +36,7 @@ import za.co.yellowfire.threesixty.domain.user.notification.UserNotificationRepo
 @Service		
 public class UserService {
 	private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
+	
 	private UserRepository userRepository;
 	private RoleRepository roleRepository;
 	private CountryRepository countryRepository;
@@ -247,6 +250,10 @@ public class UserService {
 						aggregation, 
 						UserNotification.class, 
 						NotificationSummary.class).getMappedResults();
+	}
+	
+	public CounterStatistic getUsersCounterStatistic() {
+		return new CounterStatistic("UsersCounter", Optional.of(userRepository.countActive()));
 	}
 	
 	public void notify(final User to, final String message) {

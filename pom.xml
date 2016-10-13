@@ -58,7 +58,12 @@
 		   <groupId>org.vaadin</groupId>
 		   <artifactId>viritin</artifactId>
 		   <version>1.54</version>
-		</dependency>		
+		</dependency>
+		<dependency>
+		    <groupId>org.vaadin</groupId>
+		    <artifactId>volga</artifactId>
+		    <version>0.1</version>
+		</dependency>	
 		<dependency>
 		   <groupId>org.vaadin.addon</groupId>
 		   <artifactId>confirmdialog</artifactId>
@@ -68,6 +73,11 @@
 		   <groupId>org.vaadin.addons</groupId>
 		   <artifactId>googleanalyticstracker</artifactId>
 		   <version>2.1.0</version>
+		</dependency>
+		<dependency>
+		  <groupId>com.byteowls</groupId>
+		  <artifactId>vaadin-chartjs</artifactId>
+		  <version>0.3.0</version>
 		</dependency>
 		<dependency>
 		  <groupId>com.google.guava</groupId>
@@ -194,6 +204,14 @@
 		    <id>vaadin-prereleases</id>
 		    <name>Vaadin Pre-releases</name>
 		    <url>https://maven.vaadin.com/vaadin-prereleases</url>
+		</repository>
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>bintray</name>
+			<url>http://jcenter.bintray.com</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>

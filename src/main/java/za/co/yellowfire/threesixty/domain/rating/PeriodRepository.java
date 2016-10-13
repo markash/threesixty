@@ -14,4 +14,6 @@ public interface PeriodRepository extends MongoRepository<Period, String> {
 	List<Period> findByActive(final boolean active, final Sort sort);
 	@Query("{start: {$eq: ?0}, end: {$eq: ?1}, active: {$eq: ?2}}")
 	List<Period> findByStartEndActive(final Date start, final Date end, final boolean active);
+	@Query(value = "{active: {$eq: true}}", count = true)
+	int countActive();
 }
