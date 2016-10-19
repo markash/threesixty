@@ -95,6 +95,10 @@ public class I8n {
 		public interface Received {
 			String NONE = "No kudos received as yet.";
 		}
+		
+		public interface Wallet {
+			String CURRENCY_SYMBOL = "$";
+		}
 	}
 	
 	public interface Period {

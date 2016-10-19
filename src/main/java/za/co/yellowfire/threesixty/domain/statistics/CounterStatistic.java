@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Optional;
 
-import za.co.yellowfire.threesixty.domain.statistics.CounterStatistic.CounterFormat;
+import org.apache.commons.lang3.StringUtils;
 
 public class CounterStatistic implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -13,6 +13,8 @@ public class CounterStatistic implements Serializable {
 	private Optional<Number> value;
 	private CounterFormat format = CounterFormat.INTEGER;
 	private Number defaultValue = 0L;
+	private String prefix = "";
+	private String suffix = "";
 	
 	public CounterStatistic(String type, Optional<Number> value) {
 		this(type, value, CounterFormat.INTEGER, 0L);
@@ -26,24 +28,41 @@ public class CounterStatistic implements Serializable {
 		this(type, value, format, 0L);
 	}
 
-	public CounterStatistic(String type, Optional<Number> value, CounterFormat format, Number defaultValue) {
+	public CounterStatistic(
+			final String type, 
+			final Optional<Number> value, 
+			final CounterFormat format, 
+			final Number defaultValue) {
 		this.type = type;
 		this.value = value;
 		this.format = format;
 		this.defaultValue = defaultValue;
 	}
 
-	
-
 	public String getType() { return type; }
 	public Optional<Number> getValue() { return value; }
+	
 	public String getFormattedValue() {
+		return StringUtils.defaultString(prefix, "") + getFormattedNumberValue() + StringUtils.defaultString(suffix, "");
+	}
+	
+	private String getFormattedNumberValue() {
 		switch (format) {
-			case INTEGER: return DecimalFormat.getIntegerInstance().format(getValue().orElse(defaultValue));
-			case NUMBER: return DecimalFormat.getNumberInstance().format(getValue().orElse(defaultValue));
-			case PERCENTAGE: return DecimalFormat.getPercentInstance().format(getValue().orElse(defaultValue));
-			default: return DecimalFormat.getIntegerInstance().format(getValue().orElse(defaultValue));
+		case INTEGER: return DecimalFormat.getIntegerInstance().format(getValue().orElse(defaultValue));
+		case NUMBER: return DecimalFormat.getNumberInstance().format(getValue().orElse(defaultValue));
+		case PERCENTAGE: return DecimalFormat.getPercentInstance().format(getValue().orElse(defaultValue));
+		default: return DecimalFormat.getIntegerInstance().format(getValue().orElse(defaultValue));
 		}
+	}
+	
+	public CounterStatistic prefix(final String value) {
+		this.prefix = value;
+		return this;
+	}
+	
+	public CounterStatistic suffix(final String value) {
+		this.suffix = value;
+		return this;
 	}
 	
 	@Override

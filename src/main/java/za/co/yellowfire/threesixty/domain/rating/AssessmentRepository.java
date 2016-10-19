@@ -20,4 +20,7 @@ public interface AssessmentRepository extends MongoRepository<Assessment, String
 	
 	@Query(value = "{active: {$eq: true}}", count = true)
 	int countActive();
+	
+	@Query(value = "{$and: [{status: {$nin: ['Creating','Reviewed']}} ,{$or: [{employee.id: {$eq : ?0} }, {manager.id: {$eq : ?0}} ]}]}", count = true)
+	int countActiveDue(final String userName);
 }

@@ -120,6 +120,10 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 		return new CounterStatistic("AssessmentsCounter", assessmentRepository.countActive());
 	}
 	
+	public CounterStatistic getAssessmentsDueCounterStatistic(final String userName) {
+		return new CounterStatistic("AssessmentsDueCounter", assessmentRepository.countActiveDue(userName));
+	}
+	
 	public CounterStatistic getPerformanceAreasCounterStatistic() {
 		return new CounterStatistic("PerformanceAreasCounter", performanceAreaRepository.countActive());
 	}

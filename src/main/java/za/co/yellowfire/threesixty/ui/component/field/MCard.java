@@ -21,7 +21,12 @@ public class MCard extends CustomComponent {
 	private String viewName;
 	private CounterStatistic statistic;
 	
-	public MCard(final String title, final FontAwesome icon, final String description, final CounterStatistic statistic, final String viewName) {
+	public MCard(
+			final String title, 
+			final FontAwesome icon, 
+			final String description, 
+			final CounterStatistic statistic, 
+			final String viewName) {
 		super();
 		
 		this.title = title;

@@ -2,7 +2,6 @@ package za.co.yellowfire.threesixty.ui.view;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,6 +34,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import za.co.yellowfire.threesixty.MainUI;
+import za.co.yellowfire.threesixty.domain.kudos.KudosRepository;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
 import za.co.yellowfire.threesixty.domain.rating.PeriodService;
 import za.co.yellowfire.threesixty.domain.statistics.CounterStatistic;
@@ -43,6 +43,7 @@ import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.CloseOpenWindowsEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEventBus;
 import za.co.yellowfire.threesixty.ui.DashboardViewType;
+import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.component.field.MCard;
 import za.co.yellowfire.threesixty.ui.component.notification.NotificationsButton;
 import za.co.yellowfire.threesixty.ui.view.user.UserSearchView;
@@ -64,13 +65,19 @@ public final class DashboardView extends Panel implements View /*, DashboardEdit
     private UserService userService;
     private AssessmentService assessmentService;
     private PeriodService periodService;
+    private KudosRepository kudosRepository;
     
     @Autowired
-    public DashboardView(final UserService userService, final AssessmentService assessmentService, final PeriodService periodService) {
+    public DashboardView(
+    		final UserService userService, 
+    		final AssessmentService assessmentService, 
+    		final PeriodService periodService,
+    		final KudosRepository kudosRepository) {
         this.userService = userService;
         this.assessmentService = assessmentService;
         this.periodService = periodService;
-    	this.notificationsButton = NotificationsButton.BELL("dashboard-notifications", userService, this::onViewNotifications);
+    	this.kudosRepository = kudosRepository;
+        this.notificationsButton = NotificationsButton.BELL("dashboard-notifications", userService, this::onViewNotifications);
         
     	addStyleName(ValoTheme.PANEL_BORDERLESS);
         setSizeFull();
@@ -170,16 +177,16 @@ public final class DashboardView extends Panel implements View /*, DashboardEdit
         
         Responsive.makeResponsive(dashboardPanels);
 
-        dashboardPanels.addComponent(buildUserCard());
-        dashboardPanels.addComponent(buildPeriodsCard());
-        dashboardPanels.addComponent(buildAssessmentsCard());
-        dashboardPanels.addComponent(buildPerformanceAreasCard());
-
-        dashboardPanels.addComponent(buildPeriodProgressChart());
-        //dashboardPanels.addComponent(buildNotes());
-        //dashboardPanels.addComponent(buildChart());
-        //dashboardPanels.addComponent(buildTop10TitlesByRevenue());
-        //dashboardPanels.addComponent(buildPopularMovies());
+        if (userService.getCurrentUser().isAdmin()) {
+	        dashboardPanels.addComponent(buildUserCard());
+	        dashboardPanels.addComponent(buildPeriodsCard());
+	        dashboardPanels.addComponent(buildAssessmentsCard());
+	        dashboardPanels.addComponent(buildPerformanceAreasCard());
+	        dashboardPanels.addComponent(buildPeriodProgressChart());
+        } else {
+        	dashboardPanels.addComponent(buildKudosCard());
+        	dashboardPanels.addComponent(buildAssessmentsDueCard());
+        }
 
         return dashboardPanels;
     }
@@ -225,6 +232,33 @@ public final class DashboardView extends Panel implements View /*, DashboardEdit
     			assessmentService.getPerformanceAreasCounterStatistic(), 
     			type.getViewName());
     	return card;
+    }
+    
+    private Component buildKudosCard() {
+    	CounterStatistic walletBalanceStatistic = 
+    			new CounterStatistic(
+    					"WalletBalanceStatistic", 
+    					kudosRepository.getWallet(userService.getCurrentUser()).getBalance().getValue())
+    			.prefix(I8n.Kudos.Wallet.CURRENCY_SYMBOL);
+    	
+    	DashboardViewType type = DashboardViewType.KUDOS;
+    	return new MCard(
+    			"", 
+    			type.getIcon(), 
+    			"Kudos Wallet balance.", 
+    			walletBalanceStatistic, 
+    			type.getViewName());
+    }
+    
+    private Component buildAssessmentsDueCard() {
+    	
+    	DashboardViewType type = DashboardViewType.ASSESSMENT_SEARCH;
+    	return new MCard(
+    			"Assessments Due", 
+    			type.getIcon(), 
+    			"The number of assessments that are due which includes self and subordinate assessments.", 
+    			assessmentService.getAssessmentsDueCounterStatistic(userService.getCurrentUser().getId()), 
+    			type.getViewName());
     }
     
     private Component buildPeriodProgressChart() {
