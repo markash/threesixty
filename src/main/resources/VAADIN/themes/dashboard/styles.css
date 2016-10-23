@@ -12412,3 +12412,154 @@ div.v-layout.v-horizontal.v-widget {
 .valo-card-container {
     padding: 2px 16px;
 }	
+
+
+.v-tree {
+    position: relative;
+    white-space: nowrap;
+}
+
+.v-tree:focus {
+    outline: none;
+}
+
+.v-tree-node:before {
+    content: "";
+    position: absolute;
+    display: inline-block;
+    z-index: 3;
+    width: 1.9em;
+    height: 28px;
+    cursor: pointer;
+    background: red;
+    opacity: 0;
+}
+
+.v-tree-node-caption {
+    height: 28px;
+    line-height: 27px;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: top;
+}
+
+.v-tree-node-caption > div {
+    display: inline-block;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+.v-tree-node-caption > div:before {
+    content: "\f0da";
+    font-family: ThemeIcons;
+    display: inline-block;
+    width: 0.5em;
+    text-align: center;
+    margin: 0 0.6em 0 0.8em;
+    -webkit-transition: all 100ms;
+    -moz-transition: all 100ms;
+    transition: all 100ms;
+}
+
+.v-tree-node-caption span {
+    padding-right: 28px;
+    cursor: pointer;
+    display: inline-block;
+    width: 100%;
+}
+
+.v-tree-node-caption .v-icon {
+    padding-right: 0;
+    width: auto;
+    min-width: 1em;
+}
+
+.v-tree-node-caption:after {
+    content: "";
+    display: block;
+    vertical-align: top;
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    margin-top: -28px;
+    width: 100%;
+    height: 28px;
+    border-radius: 4px;
+    opacity: 0;
+    -webkit-transition: opacity 120ms;
+    -moz-transition: opacity 120ms;
+    transition: opacity 120ms;
+}
+
+.v-tree-node-expanded > .v-tree-node-caption > div:before {
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    transform: rotate(90deg);
+    content: "\f0da";
+    font-family: ThemeIcons;
+}
+
+.v-tree-node-expanded:before {
+    content: "\f0d7";
+    font-family: ThemeIcons;
+}
+
+.v-tree-node-leaf:before, .v-tree-node-leaf > .v-tree-node-caption > div:before {
+    visibility: hidden;
+}
+
+.v-tree-node-focused:after {
+    opacity: 1;
+    border: 1px solid #e61a1a;
+}
+
+.v-tree-node-selected {
+    color: #f8eded;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+.v-tree-node-selected:after {
+    opacity: 1;
+    background-color: #e61a1a;
+    background-image: -webkit-linear-gradient(top, #e81c1c 2%, #da1616 98%);
+    background-image: linear-gradient(to bottom,#e81c1c 2%, #da1616 98%);
+    border: none;
+}
+
+.v-tree-node-children {
+    padding-left: 19px;
+}
+
+.v-tree-node-drag-top:before, .v-tree-node-drag-bottom:after, .v-tree-node-drag-bottom.v-tree-node-dragfolder.v-tree-node-expanded > .v-tree-node-children:before {
+    content: "\2022";
+    display: block;
+    position: absolute;
+    height: 2px;
+    width: 100%;
+    background: #e61a1a;
+    font-size: 32px;
+    line-height: 2px;
+    color: #e61a1a;
+    text-indent: -4px;
+    text-shadow: 0 0 1px #fafafa, 0 0 1px #fafafa;
+    opacity: 1;
+    visibility: visible;
+}
+
+.v-tree-node-drag-bottom.v-tree-node-dragfolder.v-tree-node-expanded:after {
+    content: none;
+}
+
+.v-tree-node-caption-drag-center {
+    -webkit-box-shadow: 0 0 0 2px #e61a1a;
+    box-shadow: 0 0 0 2px #e61a1a;
+    position: relative;
+    border-radius: 4px;
+}
+
+.v-ff .v-tree-node-drag-top:before, .v-ff .v-tree-node-drag-bottom:after {
+    line-height: 1px;
+}

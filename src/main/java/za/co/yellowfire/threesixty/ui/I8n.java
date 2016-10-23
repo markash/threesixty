@@ -169,4 +169,10 @@ public class I8n {
 		String SINGULAR = "User";
 		String PLURAL = "Users";
 	}
+	
+	public interface Organization {
+		FontAwesome ICON = FontAwesome.SITEMAP;
+		String SINGULAR = "Organization";
+		String PLURAL = "Organization";
+	}
 }

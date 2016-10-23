@@ -8,6 +8,7 @@ import za.co.yellowfire.threesixty.ui.view.DashboardView;
 import za.co.yellowfire.threesixty.ui.view.kudos.BadgeSearchView;
 import za.co.yellowfire.threesixty.ui.view.kudos.IdealSearchView;
 import za.co.yellowfire.threesixty.ui.view.kudos.KudosEditView;
+import za.co.yellowfire.threesixty.ui.view.org.OrganizationView;
 import za.co.yellowfire.threesixty.ui.view.rating.AssessmentSearchView;
 import za.co.yellowfire.threesixty.ui.view.rating.PerformanceAreaSearchView;
 import za.co.yellowfire.threesixty.ui.view.rating.PeriodSearchView;
@@ -16,6 +17,7 @@ import za.co.yellowfire.threesixty.ui.view.user.notification.UserNotificationSea
 
 public enum DashboardViewType {
     DASHBOARD("dashboard", DashboardView.class, FontAwesome.HOME, true, null), 
+    ORGANIZATION(OrganizationView.VIEW_NAME, OrganizationView.class, I8n.Organization.ICON, true, null),
     USER_SEARCH(UserSearchView.VIEW_NAME, UserSearchView.class, FontAwesome.USERS, true, Role.ADMIN),
     //RATING(RatingView.VIEW_NAME, RatingView.class, FontAwesome.QUESTION_CIRCLE, true, Role.ADMIN),
     //QUESTIONAIRE_SEARCH(QuestionaireSearchView.VIEW_NAME, QuestionaireSearchView.class, FontAwesome.BRIEFCASE, true, Role.ADMIN),
@@ -27,10 +29,6 @@ public enum DashboardViewType {
     IDEAL_SEARCH(IdealSearchView.VIEW_NAME, IdealSearchView.class, FontAwesome.DIAMOND, true, Role.ADMIN),
     NOTIFICATION_SEARCH(UserNotificationSearchView.VIEW_NAME, UserNotificationSearchView.class, FontAwesome.ENVELOPE_O, true, null),
     KUDOS(KudosEditView.VIEW_NAME, KudosEditView.class, FontAwesome.HEART_O, true, null)
-    //SALES("sales", SalesView.class, FontAwesome.BAR_CHART_O, false), 
-    //TRANSACTIONS("transactions", TransactionsView.class, FontAwesome.TABLE, false), 
-    //REPORTS("reports", ReportsView.class, FontAwesome.FILE_TEXT_O, true), 
-    //SCHEDULE("schedule", ScheduleView.class, FontAwesome.CALENDAR_O, false)
     ;
 
     private final String viewName;
