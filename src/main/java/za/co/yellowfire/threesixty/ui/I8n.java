@@ -174,5 +174,15 @@ public class I8n {
 		FontAwesome ICON = FontAwesome.SITEMAP;
 		String SINGULAR = "Organization";
 		String PLURAL = "Organization";
+		
+		public interface Level {
+			FontAwesome ORGANIZATION = Organization.ICON;
+			FontAwesome GROUP = FontAwesome.INSTITUTION;
+			FontAwesome REGION = FontAwesome.LANGUAGE;
+			FontAwesome DIVISION = FontAwesome.INDUSTRY;
+			FontAwesome DEPARTMENT = FontAwesome.CUBES;
+			FontAwesome TEAM = FontAwesome.CUBE;
+			FontAwesome OTHER = FontAwesome.FOLDER;
+		}
 	}
 }

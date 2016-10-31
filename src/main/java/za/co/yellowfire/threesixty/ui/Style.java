@@ -45,4 +45,8 @@ public interface Style {
 		String ROW = "assessment-rating-row";
 		String ROW_ODD = "assessment-rating-row-odd";
 	}
+	
+	public interface Organization {
+		String HEADER = "organization-header";
+	}
 }

@@ -12563,3 +12563,23 @@ div.v-layout.v-horizontal.v-widget {
 .v-ff .v-tree-node-drag-top:before, .v-ff .v-tree-node-drag-bottom:after {
     line-height: 1px;
 }
+
+.dashboard .organization-header {
+    width: 100%;
+    text-align: right;
+    white-space: normal;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    background-color: rgb(4, 73, 112);
+    color: rgba(255, 255, 255, 0.87);
+}
+
+.dashboard .organization-header .v-slot-h3 {
+    text-align: left;
+    padding-top: 8px;
+}
+
+.dashboard .organization-header .h3 {
+    white-space: normal;
+    color: rgba(255, 255, 255, 0.87);
+}

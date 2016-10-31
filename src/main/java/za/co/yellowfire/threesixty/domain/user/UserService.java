@@ -27,13 +27,17 @@ import za.co.yellowfire.threesixty.RequestResult;
 import za.co.yellowfire.threesixty.Response;
 import za.co.yellowfire.threesixty.domain.GridFsClient;
 import za.co.yellowfire.threesixty.domain.InvalidUserException;
+import za.co.yellowfire.threesixty.domain.organization.Organization;
+import za.co.yellowfire.threesixty.domain.organization.OrganizationRepository;
+import za.co.yellowfire.threesixty.domain.organization.OrganizationService;
+import za.co.yellowfire.threesixty.domain.organization.OrganizationType;
 import za.co.yellowfire.threesixty.domain.statistics.CounterStatistic;
 import za.co.yellowfire.threesixty.domain.user.notification.NotificationCategory;
 import za.co.yellowfire.threesixty.domain.user.notification.NotificationSummary;
 import za.co.yellowfire.threesixty.domain.user.notification.UserNotification;
 import za.co.yellowfire.threesixty.domain.user.notification.UserNotificationRepository;
 	
-@Service		
+@Service
 public class UserService {
 	private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 	
@@ -43,6 +47,7 @@ public class UserService {
 	private JobProfileRepository jobProfileRepository;
 	private PositionRepository positionRepository;
 	private UserNotificationRepository userNotificationRepository;
+	private OrganizationService organizationService;
 	
 	private UserConfiguration userConfiguration;
 	
@@ -60,6 +65,7 @@ public class UserService {
 			final PositionRepository positionRepository,
 			final UserNotificationRepository userNotificationRepository,
 			final UserConfiguration userConfiguration,
+			final OrganizationService organizationService,
 			final GridFsClient client) {
 		
 		super();
@@ -69,6 +75,7 @@ public class UserService {
 		this.jobProfileRepository = jobProfileRepository;
 		this.positionRepository = positionRepository;
 		this.userNotificationRepository = userNotificationRepository;
+		this.organizationService = organizationService;
 		this.client = client;
 	}
 
@@ -113,6 +120,45 @@ public class UserService {
 				}
 				positionRepository.save(position);
 			}
+		}
+		
+		/* Sample organisation */
+		if (organizationService.count() == 0) {
+//			Organization root = new Organization("Organization");
+//			root.child(
+//					new Organization("Division 1").child(
+//							new Organization("Department A").child(
+//									new Organization("Team X"),
+//									new Organization("Team Y")),
+//							new Organization("Department B")).child(
+//									new Organization("Team S"),
+//									new Organization("Team T")),
+//					new Organization("Division 2")).child(
+//							new Organization("Department A").child(
+//									new Organization("Team X"),
+//									new Organization("Team Y"),
+//							new Organization("Department B")).child(
+//									new Organization("Team S"),
+//									new Organization("Team T")
+//							)
+//					);
+
+			Organization root = new Organization("Organization", OrganizationType.Organization).child(
+					new Organization("Division 1", OrganizationType.Division).child(
+							new Organization("Department A", OrganizationType.Department).child(
+									new Organization("Team X", OrganizationType.Team), 
+									new Organization("Team Y", OrganizationType.Team), 
+									new Organization("Team Z", OrganizationType.Team)), 
+							new Organization("Department B", OrganizationType.Department)),
+					new Organization("Division 2", OrganizationType.Division).child(
+							new Organization("Department X", OrganizationType.Department), 
+							new Organization("Department Z", OrganizationType.Department).child(
+									new Organization("Team 1", OrganizationType.Team), 
+									new Organization("Team 2", OrganizationType.Team), 
+									new Organization("Team 3", OrganizationType.Team)))
+					);
+
+			organizationService.persist(root);
 		}
 		
 		/* Ensure the countries are defined */
