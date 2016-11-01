@@ -34,6 +34,10 @@ public class OrganizationModel {
 		return organization.hasChildren();
 	}
 	
+	public Organization getOrganization() {
+		return organization;
+	}
+
 	public List<OrganizationModel> getChildren() {
 		return organization.getChildren()
 				.stream()

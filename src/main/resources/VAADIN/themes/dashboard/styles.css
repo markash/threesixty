@@ -12513,7 +12513,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .v-tree-node-focused:after {
     opacity: 1;
-    border: 1px solid #e61a1a;
+    border: 1px solid rgb(4, 73, 112);
 }
 
 .v-tree-node-selected {
@@ -12523,9 +12523,9 @@ div.v-layout.v-horizontal.v-widget {
 
 .v-tree-node-selected:after {
     opacity: 1;
-    background-color: #e61a1a;
-    background-image: -webkit-linear-gradient(top, #e81c1c 2%, #da1616 98%);
-    background-image: linear-gradient(to bottom,#e81c1c 2%, #da1616 98%);
+    background-color: rgb(4, 73, 112);
+    background-image: -webkit-linear-gradient(top, rgb(4, 73, 112) 2%, rgb(4, 73, 112) 98%);
+    background-image: linear-gradient(to bottom,rgb(4, 73, 112) 2%, rgb(4, 73, 112) 98%);
     border: none;
 }
 
@@ -12539,10 +12539,10 @@ div.v-layout.v-horizontal.v-widget {
     position: absolute;
     height: 2px;
     width: 100%;
-    background: #e61a1a;
+    background: rgb(4, 73, 112);
     font-size: 32px;
     line-height: 2px;
-    color: #e61a1a;
+    color: rgb(4, 73, 112);
     text-indent: -4px;
     text-shadow: 0 0 1px #fafafa, 0 0 1px #fafafa;
     opacity: 1;
@@ -12554,8 +12554,8 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .v-tree-node-caption-drag-center {
-    -webkit-box-shadow: 0 0 0 2px #e61a1a;
-    box-shadow: 0 0 0 2px #e61a1a;
+    -webkit-box-shadow: 0 0 0 2px rgb(4, 73, 112);
+    box-shadow: 0 0 0 2px rgb(4, 73, 112);
     position: relative;
     border-radius: 4px;
 }
@@ -12577,9 +12577,15 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .organization-header .v-slot-h3 {
     text-align: left;
     padding-top: 8px;
+    padding-bottom: 6px;
+    padding-left: 8px;
 }
 
 .dashboard .organization-header .h3 {
     white-space: normal;
     color: rgba(255, 255, 255, 0.87);
+}
+
+.dashboard .organization-panel {
+	border: 0px;
 }

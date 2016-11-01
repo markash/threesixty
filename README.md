@@ -34,8 +34,8 @@ Three**Sixty** is currently running in a Heroku dyno at https://yellowfire-three
 
 ### Divisio
 
-* **Spring Boot 1.4.0** for the container
-* **Vaadin 7.6.8** for the user interface
+* **Spring Boot 1.4.1** for the container
+* **Vaadin 7.7.3** for the user interface
 * **Viritin 1.54** for the Vaadin sugar
 * **MongoDB** for the data repository
 * **Heroku** for the platforma as a service
@@ -44,6 +44,8 @@ Three**Sixty** is currently running in a Heroku dyno at https://yellowfire-three
 ### Use-case
 ![alt text](http://res.cloudinary.com/yellowfire/image/upload/v1459657700/threesixty-use-case.png "High-level Use-case")
 
+### Organisation Structure
+![alt text](http://res.cloudinary.com/yellowfire/image/upload/v1478030902/Organization.png "Organisation Structure")
 
 ### Domain
 ![alt text](http://res.cloudinary.com/yellowfire/image/upload/v1459657699/threesixty-conceptual-domain.png "Conceptual Domain")

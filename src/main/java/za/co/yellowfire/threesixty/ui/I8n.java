@@ -175,6 +175,9 @@ public class I8n {
 		String SINGULAR = "Organization";
 		String PLURAL = "Organization";
 		
+		public interface Fields {
+			String NAME = "Name";
+		}
 		public interface Level {
 			FontAwesome ORGANIZATION = Organization.ICON;
 			FontAwesome GROUP = FontAwesome.INSTITUTION;

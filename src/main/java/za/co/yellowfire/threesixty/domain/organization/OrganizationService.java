@@ -26,13 +26,17 @@ public class OrganizationService {
 		if (parent != null) {
 			node.setParent(parent);
 		}
-		node = repository.save(node);
+		node = save(node);
 		
 		if (node.hasChildren()) {
 			for(Organization child : node.getChildren()) {
 				persist(child, node);
 			}
 		}		
+	}
+	
+	public Organization save(final Organization node) {
+		return repository.save(node);
 	}
 	
 	public List<Organization> retrieveRoots() {

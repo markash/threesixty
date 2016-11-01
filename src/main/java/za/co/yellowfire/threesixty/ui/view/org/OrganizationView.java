@@ -5,6 +5,8 @@ import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
@@ -12,10 +14,12 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
@@ -30,6 +34,7 @@ import za.co.yellowfire.threesixty.ui.component.LabelBuilder;
 import za.co.yellowfire.threesixty.ui.component.PanelBuilder;
 import za.co.yellowfire.threesixty.ui.component.button.HeaderButtons;
 import za.co.yellowfire.threesixty.ui.component.field.MComboBox;
+import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
 import za.co.yellowfire.threesixty.ui.view.AbstractDashboardPanel;
 
 @SpringView(name = OrganizationView.VIEW_NAME)
@@ -53,6 +58,8 @@ public class OrganizationView extends AbstractDashboardPanel {
 
 	private Tree tree;
 	private Panel panel = new Panel();
+	private OrganizationModel itemId = null;
+	private OrganizationEntityEditForm form = null;
 	private VerticalLayout content = new VerticalLayout();
 	
 	private Button saveButton = ButtonBuilder.SAVE(this::onSave);
@@ -103,6 +110,7 @@ public class OrganizationView extends AbstractDashboardPanel {
 		layout.addComponent(this.tree);
 		
 		this.content.setWidth(Style.Percentage._100);
+		this.panel.setPrimaryStyleName("organization-panel");
 		this.panel.setWidth(Style.Percentage._100);
 		this.content.addComponent(buildPanelHeader());
 		this.content.addComponent(this.panel);
@@ -116,6 +124,7 @@ public class OrganizationView extends AbstractDashboardPanel {
 	protected Tree buildTree() {
 		if (tree == null) {
 			tree = new Tree();
+			tree.setImmediate(true);
 			tree.addItemClickListener(this::nodeClicked);
 		}
 		organizationService.retrieveRoots().forEach(root -> buildNode(root));
@@ -182,12 +191,29 @@ public class OrganizationView extends AbstractDashboardPanel {
 	}
 	
 	protected void nodeClicked(ItemClickEvent event) {
-		OrganizationModel model = (OrganizationModel) event.getItemId();
-		this.panel.setContent(model.getForm());
+		this.itemId = (OrganizationModel) event.getItemId();
+		
+		this.form = new OrganizationEntityEditForm();
+		this.form.bind(itemId.getOrganization());	
+		this.form.layout();
+		this.panel.setContent(this.form);
 	}
 	
 	protected void onSave(ClickEvent event) {
+		if (this.form == null) { return; }
 		
+		try {
+			//Validate the field group
+	        form.commit();
+	        //Persist the outcome
+	        Organization result = this.organizationService.save(form.getValue());
+	        //Notify the user of the outcome
+	        NotificationBuilder.showNotification("Update", getTitle() + " " + result.getId() + " updated successfully.", 2000);
+	        // Refresh the tree by marking it as dirty
+	        tree.markAsDirty();
+		} catch (CommitException exception) {
+            Notification.show("Error while updating", Type.ERROR_MESSAGE);
+        }
 	}
 	
 	protected void onReset(ClickEvent event) {
