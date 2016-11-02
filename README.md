@@ -11,7 +11,7 @@ Three**Sixty** provides in application analytics of the performance review proce
 
 ### Assessment feature (Current)
 
-Three**Sixty** current provides the assessment module whereby the employee and manager are able to review the progress made by the employee against the outlined goals which goes through a 3 step process of
+Three**Sixty** currently provides the assessment module whereby the employee and manager are able to review the progress made by the employee against the outlined goals which goes through a 3 step process of
 * The employee assessing his / her performance with comments
 * The manager assessing the performance of the employee together with feedback 
 * The manager and employee review the assessment together for the final assessment score
