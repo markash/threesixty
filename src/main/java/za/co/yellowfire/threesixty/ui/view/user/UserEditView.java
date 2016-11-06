@@ -88,6 +88,8 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
     private ComboBox positionField;
     @PropertyId("reportsTo")
     private ComboBox reportsToField;
+    @PropertyId("department")
+    private ComboBox departmentField;
     
     private Image pictureField = new Image(null, new ThemeResource("img/profile-pic-300px.jpg"));
     private Window pictureWindow = new Window(WINDOW_PICTURE, new PictureSelectionForm(this::onSelectedPicture));
@@ -116,6 +118,7 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
     	this.roleField = new ComboBox("Role", new IndexedContainer(service.findRoles()));
     	this.reportsToField = new ComboBox("Reports To");
     	this.positionField = new ComboBox("Position", new IndexedContainer(service.findPositions()));
+    	this.departmentField = new ComboBox("Department", new IndexedContainer(service.findDepartments()));
     }
 
     @Override
@@ -181,6 +184,7 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
         roleField.setWidth(100.0f, Unit.PERCENTAGE);
         positionField.setWidth(100.0f, Unit.PERCENTAGE);
         reportsToField.setWidth(100.0f, Unit.PERCENTAGE);
+        departmentField.setWidth(100.0f, Unit.PERCENTAGE);
         
         details.addComponent(buildPanel(
         		buildHorizontalPanel(
@@ -189,6 +193,7 @@ public final class UserEditView extends AbstractDashboardPanel /*, DashboardEdit
         		firstNameField, 
         		lastNameField, 
         		buildHorizontalPanel(salutationField, genderField),
+        		departmentField,
         		positionField,
         		buildHorizontalPanel(roleField, reportsToField)
         		));

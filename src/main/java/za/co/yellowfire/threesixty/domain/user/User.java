@@ -20,6 +20,7 @@ import org.springframework.data.domain.Auditable;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import za.co.yellowfire.threesixty.domain.GridFsClient;
+import za.co.yellowfire.threesixty.domain.organization.Organization;
 
 
 @AccessType(Type.FIELD)
@@ -53,6 +54,8 @@ public final class User implements Auditable<User, String> {
     private String image;
     @DBRef
     private User reportsTo;
+    @DBRef
+    private Organization department;
     @DBRef
     private Position position;
     @DBRef
@@ -118,7 +121,10 @@ public final class User implements Auditable<User, String> {
     public Role getRole() { return role; }
     public void setRole(final Role role) { this.role = role; }
 
-    public User getReportsTo() { return reportsTo; }
+    public Organization getDepartment() { return department; }
+	public void setDepartment(Organization department) { this.department = department; }
+
+	public User getReportsTo() { return reportsTo; }
 	public void setReportsTo(User reportsTo) { this.reportsTo = reportsTo; }
 
 	public Position getPosition() { return position; }

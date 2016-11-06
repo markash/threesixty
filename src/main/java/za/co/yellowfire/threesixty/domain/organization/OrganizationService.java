@@ -35,8 +35,22 @@ public class OrganizationService {
 		}		
 	}
 	
+	public Organization createChildFor(final Organization node) {
+		
+		Organization child = new Organization("Department", node);
+		if (node.getMetadata().isPresent()) {
+			child.setMetadata(node.getMetadata().get().getChild());
+		}
+		persist(child, node);
+		return child;
+	}
+	
 	public Organization save(final Organization node) {
 		return repository.save(node);
+	}
+	
+	public List<Organization> retrieve() {
+		return repository.findByActive(true);
 	}
 	
 	public List<Organization> retrieveRoots() {
@@ -46,6 +60,11 @@ public class OrganizationService {
 			retrieveChildren(root);
 		}
 		return roots;
+	}
+	
+	public void delete(final Organization node) {
+		node.setActive(false);
+		repository.save(node);
 	}
 	
 	private void retrieveChildren(Organization root) {

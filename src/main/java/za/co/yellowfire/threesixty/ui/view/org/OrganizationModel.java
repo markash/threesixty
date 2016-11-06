@@ -11,11 +11,12 @@ import za.co.yellowfire.threesixty.domain.organization.Organization;
 public class OrganizationModel {
 
 	private final Organization organization;
-	private OrganizationIconResolver iconResolver = new OrganizationIconResolver();
+	private OrganizationIconResolver iconResolver;
 	private Layout form;
 	
-	public OrganizationModel(final Organization organization) {
+	public OrganizationModel(final Organization organization, final OrganizationIconResolver iconResolver) {
 		this.organization = organization;
+		this.iconResolver = iconResolver;
 	}
 	
 	public void setForm(final Layout form) {
@@ -41,7 +42,7 @@ public class OrganizationModel {
 	public List<OrganizationModel> getChildren() {
 		return organization.getChildren()
 				.stream()
-				.map(o -> new OrganizationModel(o))
+				.map(o -> new OrganizationModel(o, this.iconResolver))
 				.collect(Collectors.toList());
 	}
 	

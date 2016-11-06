@@ -28,7 +28,6 @@ import za.co.yellowfire.threesixty.Response;
 import za.co.yellowfire.threesixty.domain.GridFsClient;
 import za.co.yellowfire.threesixty.domain.InvalidUserException;
 import za.co.yellowfire.threesixty.domain.organization.Organization;
-import za.co.yellowfire.threesixty.domain.organization.OrganizationRepository;
 import za.co.yellowfire.threesixty.domain.organization.OrganizationService;
 import za.co.yellowfire.threesixty.domain.organization.OrganizationType;
 import za.co.yellowfire.threesixty.domain.statistics.CounterStatistic;
@@ -248,6 +247,14 @@ public class UserService {
 	
 	public List<Position> findPositions() {
 		return positionRepository.findAll(new Sort("id"));
+	}
+	
+	public List<Organization> findDepartments() {
+		return this.organizationService.retrieve();
+	}
+	
+	public List<User> findUsersForDepartment(final Organization organization) {
+		return this.userRepository.findByDepartment(organization.getId());
 	}
 	
 	public int getUnreadNotificationsCount(@NotNull final User user) {

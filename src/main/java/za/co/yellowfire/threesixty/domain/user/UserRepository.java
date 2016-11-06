@@ -15,4 +15,7 @@ public interface UserRepository extends MongoRepository<User, String> {
 	
 	@Query(value = "{active: {$eq: true}}", count = true)
 	int countActive();
+	
+	@Query("{$and: [{active: {$eq: true}}, {department.id: {$eq: ?0}}]}")
+	List<User> findByDepartment(final String departmentId);
 }

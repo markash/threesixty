@@ -4,8 +4,8 @@ import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.vaadin.dialogs.ConfirmDialog;
 
-import com.vaadin.data.Property;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -14,19 +14,21 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
 import za.co.yellowfire.threesixty.domain.organization.Organization;
 import za.co.yellowfire.threesixty.domain.organization.OrganizationService;
+import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.Style;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
@@ -60,19 +62,25 @@ public class OrganizationView extends AbstractDashboardPanel {
 	private Panel panel = new Panel();
 	private OrganizationModel itemId = null;
 	private OrganizationEntityEditForm form = null;
+	private OrganizationIconResolver iconResolver = new OrganizationIconResolver();
 	private VerticalLayout content = new VerticalLayout();
 	
 	private Button saveButton = ButtonBuilder.SAVE(this::onSave);
 	private Button resetButton = ButtonBuilder.RESET(this::onReset);
 	private Button createButton = ButtonBuilder.NEW(this::onCreate);	
+	private Button deleteButton = ButtonBuilder.DELETE(this::onDelete);
 	
-    private Button[] buttons = new Button[] {saveButton, resetButton, createButton};
+    private Button[] buttons = new Button[] {saveButton, resetButton, createButton, deleteButton};
     
+    private UserService userService;
 	private OrganizationService organizationService;
 
 	@Autowired
-	public OrganizationView(final OrganizationService organizationService) {
+	public OrganizationView(
+			final OrganizationService organizationService,
+			final UserService userService) {
 		this.organizationService = organizationService;
+		this.userService = userService;
 	}
 
 	@Override
@@ -132,7 +140,7 @@ public class OrganizationView extends AbstractDashboardPanel {
 	}
 
 	private void buildNode(final Organization node) {
-		buildNode(new OrganizationModel(node), null);
+		buildNode(new OrganizationModel(node, iconResolver), null);
 	}
 
 	private void buildNode(OrganizationModel node, OrganizationModel parent) {
@@ -185,18 +193,51 @@ public class OrganizationView extends AbstractDashboardPanel {
 		return layout;
 	}
 
+	private void loadForm(OrganizationModel model) {
+		Organization node = model.getOrganization();
+		this.form = new OrganizationEntityEditForm(userService, iconResolver);
+		this.form.bind(node);	
+		this.form.layout();
+		this.panel.setContent(this.form);
+		
+		this.createButton.setEnabled((node.getMetadata().isPresent() && node.getMetadata().get().hasChild()));
+	}
+	
+	private void deleteNode() {
+		if (this.itemId == null) { return; }
+		
+		/* Delete the organisation level */
+		this.organizationService.delete(this.itemId.getOrganization());
+		/* Select the parent of the level */
+		OrganizationModel parent = (OrganizationModel) tree.getParent(itemId);
+		/* Remove from the tree */
+		tree.removeItem(this.itemId);
+		/* Maintain the current level to the parent */
+		if (parent != null) {
+			tree.select(parent);
+			/* Change the selected node to the created node */
+			this.itemId = parent;
+			/* Load the node form */
+			loadForm(parent);
+		}
+	}
+	
+	private void resetNode() {
+		if (this.form == null) { return; }
+		
+		this.form.discard();
+	}
+	
 	@Override
 	public void enter(final ViewChangeEvent event) {
 		build();
 	}
 	
 	protected void nodeClicked(ItemClickEvent event) {
+		/* Remember the clicked item model */
 		this.itemId = (OrganizationModel) event.getItemId();
-		
-		this.form = new OrganizationEntityEditForm();
-		this.form.bind(itemId.getOrganization());	
-		this.form.layout();
-		this.panel.setContent(this.form);
+		/* Load the form for the model */
+		loadForm(this.itemId);
 	}
 	
 	protected void onSave(ClickEvent event) {
@@ -217,10 +258,47 @@ public class OrganizationView extends AbstractDashboardPanel {
 	}
 	
 	protected void onReset(ClickEvent event) {
-		
+		ConfirmDialog.show(
+				UI.getCurrent(), 
+				"Confirmation", 
+				"Are you sure that you would like reset?",
+				"Yes",
+				"No",
+				dialog -> { if (dialog.isConfirmed()) resetNode(); }
+				);
 	}
 	
 	protected void onCreate(ClickEvent event) {
+		if (itemId == null) { return; }
 		
+		try {
+			Organization result = this.organizationService.createChildFor(itemId.getOrganization());
+			OrganizationModel node = new OrganizationModel(result, iconResolver); 
+			/* Build the node in the tree */
+			buildNode(node, itemId);
+			/* Select the node in the tree */
+			tree.select(node);
+			/* Change the selected node to the created node */
+			this.itemId = node;
+			/* Load the node form */
+			loadForm(node);
+	        /* Notify the user of the outcome */
+	        NotificationBuilder.showNotification("New", "Created new organization level.", 2000);
+	        /* Refresh the tree by marking it as dirty */
+	        tree.markAsDirty();
+		} catch (Exception exception) {
+            Notification.show("Error while creating", Type.ERROR_MESSAGE);
+        }
+	}
+	
+	protected void onDelete(ClickEvent event) {
+		ConfirmDialog.show(
+				UI.getCurrent(), 
+				"Confirmation", 
+				"Are you sure that you would like to delete this organization level including the linked levels?",
+				"Yes",
+				"No",
+				dialog -> { if (dialog.isConfirmed()) deleteNode(); }
+				);
 	}
 }

@@ -29,7 +29,7 @@ public class Organization implements Auditable<User, String> {
 	@DBRef
 	private Organization parent = null;
 	@Transient
-	private Optional<OrganizationLevelMetadata> metadata;
+	private Optional<OrganizationLevelMetadata> metadata = Optional.empty();
 	@Transient
 	private List<Organization> children = new ArrayList<>();
 	private boolean active = true;
@@ -84,7 +84,17 @@ public class Organization implements Auditable<User, String> {
 	public void setChildren(final List<Organization> children) { this.children =  children; }
 	public List<Organization> getChildren() { return this.children; }
 	public Optional<OrganizationLevelMetadata> getMetadata() { return metadata; }
-	public void setMetadata(Optional<OrganizationLevelMetadata> metadata) { this.metadata = metadata; }
+	
+	public void setMetadata(Optional<OrganizationLevelMetadata> metadata) { 
+		this.metadata = metadata; 
+		if (this.metadata.isPresent()) {
+			OrganizationLevelMetadata m = this.metadata.get();
+			if ((this.type == null && m.getType() !=  null) || (this.type != m.getType())) {
+				this.type = m.getType();
+			}
+		}
+	}
+	
 	public OrganizationType getType() { return type; }
 	public void setType(OrganizationType type) { this.type = type; }
 

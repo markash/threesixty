@@ -1,13 +1,13 @@
 package za.co.yellowfire.threesixty.ui.view.org;
 
-import com.vaadin.server.Resource;
+import com.vaadin.server.FontAwesome;
 
 import za.co.yellowfire.threesixty.domain.organization.OrganizationLevelMetadata;
 import za.co.yellowfire.threesixty.ui.I8n;
 
 public class OrganizationIconResolver {
 
-	public Resource getIcon(OrganizationLevelMetadata metadata) {
+	public FontAwesome getIcon(OrganizationLevelMetadata metadata) {
 		if (metadata != null) {
 			switch (metadata.getType()) {
 			case Organization: return I8n.Organization.Level.ORGANIZATION;

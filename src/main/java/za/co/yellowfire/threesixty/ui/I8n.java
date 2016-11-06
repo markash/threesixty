@@ -177,6 +177,9 @@ public class I8n {
 		
 		public interface Fields {
 			String NAME = "Name";
+			String TYPE = "Type";
+			String LEVELS = "Levels";
+			String USERS = "Users";
 		}
 		public interface Level {
 			FontAwesome ORGANIZATION = Organization.ICON;
