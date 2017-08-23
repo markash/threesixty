@@ -4,21 +4,21 @@ import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.UI;
-
+import io.threesixty.ui.event.LogoutEvent;
+import org.vaadin.spring.events.EventBus;
 import za.co.yellowfire.threesixty.domain.user.User;
-import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLogoutEvent;
-import za.co.yellowfire.threesixty.ui.DashboardEventBus;
 import za.co.yellowfire.threesixty.ui.component.ByteArrayStreamResource;
 
 @SuppressWarnings("serial")
 public class UserMenu extends MenuBar {
 
 	private MenuItem profileItem;
-	
+    private EventBus.SessionEventBus eventBus;
+
 	public UserMenu(final User user) {
         this.addStyleName("user-menu");
-        internalCreateUpdateProfile(user);
+
+        internalCreateUpdateProfile(user == null ? new User() : user);
 	}
 	
 	public void updateUser(final User user) {
@@ -26,7 +26,8 @@ public class UserMenu extends MenuBar {
 	}
 	
 	private void internalCreateUpdateProfile(final User user) {
-		
+
+
 		Resource resource = null;
 		if (user != null && user.hasPicture()) {
 			resource = new ByteArrayStreamResource(user.getPictureContent(), user.getPictureName());
@@ -56,14 +57,14 @@ public class UserMenu extends MenuBar {
 	public class NavigateToProfileCommand implements Command {
 		@Override
 		public void menuSelected(MenuItem selectedItem) {
-			UI.getCurrent().getNavigator().navigateTo(UserEditView.VIEW(getCurrentUser().getId()));
+			//UI.getCurrent().getNavigator().navigateTo(UserEditView.VIEW(getCurrentUser().getId()));
 		}
     }
     
 	public class SignoutCommand implements Command {
 		@Override
 		public void menuSelected(MenuItem selectedItem) {
-			DashboardEventBus.post(new UserLogoutEvent());
+            eventBus.publish(this, new LogoutEvent(this));
 		}
     }
     

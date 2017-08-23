@@ -1,7 +1,7 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * The deadlines for an assessment period
@@ -10,28 +10,31 @@ import java.util.Date;
 public class PeriodDeadline implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	private Date publishAssessment;
-	private Date selfAssessment;
-	private Date managerAssessment;
-	private Date completeAssessment;
+	private LocalDate publishAssessment;
+	private LocalDate selfAssessment;
+	private LocalDate managerAssessment;
+	private LocalDate completeAssessment;
 	
 	public PeriodDeadline() { }
 
-	public PeriodDeadline(Date publishAssessment, Date selfAssessment, Date managerAssessment,
-			Date completeAssessment) {
+	public PeriodDeadline(
+			final LocalDate publishAssessment,
+			final LocalDate selfAssessment,
+			final LocalDate managerAssessment,
+			final LocalDate completeAssessment) {
 		this.publishAssessment = publishAssessment;
 		this.selfAssessment = selfAssessment;
 		this.managerAssessment = managerAssessment;
 		this.completeAssessment = completeAssessment;
 	}
 	
-	public Date getPublishAssessment() { return publishAssessment; }
-	public Date getSelfAssessment() { return selfAssessment; }
-	public Date getManagerAssessment() { return managerAssessment; }
-	public Date getCompleteAssessment() { return completeAssessment; }
+	public LocalDate getPublishAssessment() { return publishAssessment; }
+	public LocalDate getSelfAssessment() { return selfAssessment; }
+	public LocalDate getManagerAssessment() { return managerAssessment; }
+	public LocalDate getCompleteAssessment() { return completeAssessment; }
 	
-	public void setPublishAssessment(Date publishAssessment) { this.publishAssessment = publishAssessment; }
-	public void setSelfAssessment(Date selfAssessment) { this.selfAssessment = selfAssessment; }
-	public void setManagerAssessment(Date managerAssessment) { this.managerAssessment = managerAssessment; }
-	public void setCompleteAssessment(Date completeAssessment) { this.completeAssessment = completeAssessment; }
+	public void setPublishAssessment(final LocalDate publishAssessment) { this.publishAssessment = publishAssessment; }
+	public void setSelfAssessment(final LocalDate selfAssessment) { this.selfAssessment = selfAssessment; }
+	public void setManagerAssessment(final LocalDate managerAssessment) { this.managerAssessment = managerAssessment; }
+	public void setCompleteAssessment(final LocalDate completeAssessment) { this.completeAssessment = completeAssessment; }
 }

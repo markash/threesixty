@@ -1,13 +1,11 @@
 package za.co.yellowfire.threesixty.ui.view.security;
 
-import java.io.Serializable;
+import org.apache.commons.lang3.StringUtils;
+import za.co.yellowfire.threesixty.validation.FieldMatch;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.apache.commons.lang3.StringUtils;
-
-import za.co.yellowfire.threesixty.validation.FieldMatch;
+import java.io.Serializable;
 
 @FieldMatch.List({
     @FieldMatch(

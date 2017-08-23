@@ -1,22 +1,27 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
-import java.util.Optional;
-
+import io.threesixty.ui.component.card.CounterStatisticModel;
+import io.threesixty.ui.security.CurrentUserProvider;
+import io.threesixty.ui.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import za.co.yellowfire.threesixty.domain.statistics.CounterStatistic;
 import za.co.yellowfire.threesixty.domain.user.User;
+
+import java.util.Optional;
 
 @Service
 public class PeriodService implements za.co.yellowfire.threesixty.domain.question.Service<Period> {
 
 	private PeriodRepository periodRepository;
-	
+	private CurrentUserProvider<User> currentUserProvider;
+
 	@Autowired
-	public PeriodService(PeriodRepository periodRepository) {
+	public PeriodService(
+			final PeriodRepository periodRepository,
+			final CurrentUserProvider<User> currentUserProvider) {
 		super();
 		this.periodRepository = periodRepository;
+		this.currentUserProvider = currentUserProvider;
 	}
 
 	@Override
@@ -26,6 +31,8 @@ public class PeriodService implements za.co.yellowfire.threesixty.domain.questio
 
 	@Override
 	public Period save(Period period, User changedBy) {
+		UserPrincipal<User> principal = this.currentUserProvider.get();
+		User user = principal.getUser();
 		period.auditChangedBy(changedBy);
 		return periodRepository.save(period);
 	}
@@ -45,7 +52,7 @@ public class PeriodService implements za.co.yellowfire.threesixty.domain.questio
 		this.periodRepository = periodRepository;
 	}
 	
-	public CounterStatistic getPeriodCounterStatistic() {
-		return new CounterStatistic("PersiodsCounter", Optional.of(periodRepository.countActive()));
+	public CounterStatisticModel getPeriodCounterStatistic() {
+		return new CounterStatisticModel("PeriodsCounter", Optional.of(periodRepository.countActive()));
 	}
 }

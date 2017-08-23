@@ -1,34 +1,30 @@
 package za.co.yellowfire.threesixty;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.vaadin.googleanalytics.tracking.GoogleAnalyticsTracker;
-
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
-import com.vaadin.data.util.converter.ConverterFactory;
-import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewProvider;
+import com.vaadin.server.DefaultErrorHandler;
 import com.vaadin.server.Page;
-import com.vaadin.server.Page.BrowserWindowResizeEvent;
-import com.vaadin.server.Page.BrowserWindowResizeListener;
-import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.navigator.SpringViewProvider;
-import com.vaadin.ui.UI;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.ValoTheme;
-
+import io.threesixty.ui.ApplicationUI;
+import io.threesixty.ui.component.logo.Logo;
+import io.threesixty.ui.component.notification.NotificationBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.vaadin.spring.events.EventBus;
+import org.vaadin.spring.events.annotation.EventBusListenerMethod;
+import org.vaadin.spring.security.VaadinSecurity;
+import org.vaadin.spring.security.util.SecurityExceptionUtils;
+import org.vaadin.spring.security.util.SuccessfulLoginEvent;
+import org.vaadin.spring.sidebar.components.ValoSideBar;
 import za.co.yellowfire.threesixty.domain.user.User;
-import za.co.yellowfire.threesixty.ui.DashboardEvent.BrowserResizeEvent;
-import za.co.yellowfire.threesixty.ui.DashboardEvent.CloseOpenWindowsEvent;
-import za.co.yellowfire.threesixty.ui.DashboardEvent.ProfileUpdatedEvent;
-import za.co.yellowfire.threesixty.ui.DashboardEvent.UserChangePasswordEvent;
-import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLoginEvent;
-import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLogoutEvent;
-import za.co.yellowfire.threesixty.ui.DashboardEventBus;
+import za.co.yellowfire.threesixty.ui.DashboardEvent.*;
 import za.co.yellowfire.threesixty.ui.view.LoginView;
 import za.co.yellowfire.threesixty.ui.view.MainView;
 import za.co.yellowfire.threesixty.ui.view.security.ChangePasswordView;
@@ -36,49 +32,131 @@ import za.co.yellowfire.threesixty.ui.view.security.ChangePasswordView;
 @SuppressWarnings("serial")
 @Theme("dashboard")
 @SpringUI
-@PreserveOnRefresh 
-public class MainUI extends UI {
+@PreserveOnRefresh
+public class MainUI extends ApplicationUI {
 	private static final long serialVersionUID = 1L;
 
-	@Autowired
-	private ConverterFactory converterFactory;
+	//@Autowired
+	//private ConverterFactory converterFactory;
     @Autowired
-    private SpringViewProvider viewProvider;   
+    private SpringViewProvider viewProvider;
     @Autowired
-    private DashboardEventBus dashboardEventbus;
-    
+    private EventBus.SessionEventBus eventBus;
+    @Autowired
+    private ValoSideBar sideBar;
+    @Autowired
+    private Logo logo;
+    @Autowired
+    private VaadinSecurity vaadinSecurity;
+    @Autowired
+    private ApplicationContext applicationContext;
+
     private static final String TRACKER_ID = "UA-81670605-1";
-    private GoogleAnalyticsTracker tracker;
-    
+    //private GoogleAnalyticsTracker tracker;
+
+    @Override
+    protected Component getSideBar() {
+        sideBar.setLogo(logo);
+        return sideBar;
+    }
+
+    @Override
+    protected ViewProvider getViewProvider() {
+        return viewProvider;
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+        eventBus.subscribe(this);
+    }
+
+    @Override
+    public void detach() {
+        eventBus.unsubscribe(this);
+        super.detach();
+    }
+
     @Override
     protected void init(VaadinRequest request) {
-    	Navigator navigator = new Navigator(this, this);
-    	navigator.addProvider(viewProvider);
-    	setNavigator(navigator);
-    	
-    	getSession().setConverterFactory(converterFactory);
-    	DashboardEventBus.register(this);
-    	
-    	Responsive.makeResponsive(this);
-        addStyleName(ValoTheme.UI_WITH_MENU);
+        super.init(request);
 
-        if (TRACKER_ID != null) {
-            initGATracker(TRACKER_ID, getUI().getPage().getLocation().getHost());
+        // Let's register a custom error handler to make the 'access denied' messages a bit friendlier.
+        setErrorHandler(new DefaultErrorHandler() {
+            @Override
+            public void error(com.vaadin.server.ErrorEvent event) {
+                if (SecurityExceptionUtils.isAccessDeniedException(event.getThrowable())) {
+                    NotificationBuilder.showNotification(
+                            "Authentication",
+                            "Sorry, you don't have access to do that.");
+                } else {
+                    super.error(event);
+                }
+            }
+        });
+        if (vaadinSecurity.isAuthenticated()) {
+            showMainScreen();
+        } else {
+            showLoginScreen(request.getParameter("goodbye") != null);
         }
-        
-        updateContent();
-
-        // Some views need to be aware of browser resize events so a
-        // BrowserResizeEvent gets fired to the event bus on every occasion.
-        Page.getCurrent().addBrowserWindowResizeListener(
-                new BrowserWindowResizeListener() {
-                    @Override
-                    public void browserWindowResized(
-                            final BrowserWindowResizeEvent event) {
-                        DashboardEventBus.post(new BrowserResizeEvent());
-                    }
-                });
     }
+
+    private void showMainScreen() {
+        setContent(applicationContext.getBean(MainView.class));
+    }
+
+    private void showLoginScreen(boolean loggedOut) {
+        LoginView loginScreen = applicationContext.getBean(LoginView.class);
+        //loginScreen.setLoggedOut(loggedOut);
+        setContent(loginScreen);
+    }
+
+    @EventBusListenerMethod
+    void onLogin(SuccessfulLoginEvent loginEvent) {
+        if (loginEvent.getSource().equals(this)) {
+            access(new Runnable() {
+                @Override
+                public void run() {
+                    showMainScreen();
+                }
+            });
+        } else {
+            // We cannot inject the Main Screen if the event was fired from another UI, since that UI's scope would be active
+            // and the main screen for that UI would be injected. Instead, we just reload the page and let the init(...) method
+            // do the work for us.
+            getPage().reload();
+        }
+    }
+
+//    @Override
+//    protected void init(VaadinRequest request) {
+//    	Navigator navigator = new Navigator(this, this);
+//    	navigator.addProvider(viewProvider);
+//    	setNavigator(navigator);
+//
+//    	//getSession().setConverterFactory(converterFactory);
+//    	DashboardEventBus.register(this);
+//
+//    	Responsive.makeResponsive(this);
+//        addStyleName(ValoTheme.UI_WITH_MENU);
+//
+//        //if (TRACKER_ID != null) {
+//        //    initGATracker(TRACKER_ID, getUI().getPage().getLocation().getHost());
+//        //}
+//
+//        updateContent();
+//
+//        // Some views need to be aware of browser resize events so a
+//        // BrowserResizeEvent gets fired to the event bus on every occasion.
+//        Page.getCurrent().addBrowserWindowResizeListener(
+//                new BrowserWindowResizeListener() {
+//                    @Override
+//                    public void browserWindowResized(
+//                            final BrowserWindowResizeEvent event) {
+//                        DashboardEventBus.post(new BrowserResizeEvent());
+//                    }
+//                });
+//    }
 
     /**
      * Updates the correct content for this UI based on the current user status.
@@ -98,12 +176,12 @@ public class MainUI extends UI {
     }
     
     private void initGATracker(final String trackerId, final String hostName) {
-        tracker = new GoogleAnalyticsTracker(trackerId, hostName);
-        tracker.extend(UI.getCurrent());
-        getNavigator().addViewChangeListener(tracker);
-        System.out.println("Tracking " + trackerId + " : " + hostName);
-        
+        //tracker = new GoogleAnalyticsTracker(trackerId, hostName);
+        //tracker.extend(UI.getCurrent());
+        //getNavigator().addViewChangeListener(tracker);
+        //System.out.println("Tracking " + trackerId + " : " + hostName);
     }
+
     @Subscribe
     public void userLogin(final UserLoginEvent event) {
         VaadinSession.getCurrent().setAttribute(User.class, event.getUser());
@@ -140,16 +218,8 @@ public class MainUI extends UI {
     public User getCurrentUser() {
     	return (User) VaadinSession.getCurrent().getAttribute(User.class);
     }
-    
-    public static DashboardEventBus getDashboardEventbus() { 
-    	return ((MainUI) getCurrent()).dashboardEventbus; 
-    } 
-    
-    public static ViewProvider getViewProvider() { 
-    	return ((MainUI) getCurrent()).viewProvider; 
-    }
-    
-    public static GoogleAnalyticsTracker getTracker() { 
-    	return ((MainUI) getCurrent()).tracker; 
-    }
+
+    //public static GoogleAnalyticsTracker getTracker() {
+    //	return ((MainUI) getCurrent()).tracker;
+    //}
 }

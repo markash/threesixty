@@ -1,25 +1,14 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.threesixty.ui.component.card.CounterStatisticModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
-
-import com.google.common.base.Optional;
-
-import za.co.yellowfire.threesixty.domain.statistics.CounterStatistic;
-import za.co.yellowfire.threesixty.domain.statistics.CounterStatistic.CounterFormat;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserRepository;
+
+import java.util.*;
 
 @Service
 public class AssessmentService implements za.co.yellowfire.threesixty.domain.question.Service<Assessment> {
@@ -116,16 +105,16 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 		return 0L;
 	}
 	
-	public CounterStatistic getAssessmentsCounterStatistic() {
-		return new CounterStatistic("AssessmentsCounter", assessmentRepository.countActive());
+	public CounterStatisticModel getAssessmentsCounterStatistic() {
+		return new CounterStatisticModel("AssessmentsCounter", assessmentRepository.countActive());
 	}
 	
-	public CounterStatistic getAssessmentsDueCounterStatistic(final String userName) {
-		return new CounterStatistic("AssessmentsDueCounter", assessmentRepository.countActiveDue(userName));
+	public CounterStatisticModel getAssessmentsDueCounterStatistic(final String userName) {
+		return new CounterStatisticModel("AssessmentsDueCounter", assessmentRepository.countActiveDue(userName));
 	}
 	
-	public CounterStatistic getPerformanceAreasCounterStatistic() {
-		return new CounterStatistic("PerformanceAreasCounter", performanceAreaRepository.countActive());
+	public CounterStatisticModel getPerformanceAreasCounterStatistic() {
+		return new CounterStatisticModel("PerformanceAreasCounter", performanceAreaRepository.countActive());
 	}
 	
 	public Map<AssessmentStatus, AssessmentStatusCount> countAssessmentsStatusFor(final Period period) {

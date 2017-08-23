@@ -1,79 +1,88 @@
 package za.co.yellowfire.threesixty.ui.view;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Responsive;
-import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
+import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-
-import za.co.yellowfire.threesixty.Response;
-import za.co.yellowfire.threesixty.domain.user.User;
+import io.threesixty.ui.component.notification.NotificationBuilder;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.vaadin.spring.annotation.PrototypeScope;
+import org.vaadin.spring.events.EventBus;
+import org.vaadin.spring.security.VaadinSecurity;
+import org.vaadin.spring.security.util.SuccessfulLoginEvent;
+import org.vaadin.viritin.button.MButton;
+import org.vaadin.viritin.fields.MTextField;
+import org.vaadin.viritin.layouts.MHorizontalLayout;
+import org.vaadin.viritin.layouts.MVerticalLayout;
 import za.co.yellowfire.threesixty.domain.user.UserService;
-import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLoginEvent;
-import za.co.yellowfire.threesixty.ui.DashboardEventBus;
-import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
 
-@SpringView(name = LoginView.VIEW_NAME)
+@PrototypeScope
+@SpringComponent
 public class LoginView extends VerticalLayout implements View {
 	private static final long serialVersionUID = 1L;
 	
 	public static final String VIEW_NAME = "login";
-	
-	private UserService userService;
+
+    private final MTextField username =
+            new MTextField("Username")
+                    .withIcon(VaadinIcons.USER)
+                    .withStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
+
+    private final PasswordField password =
+            new PasswordField("Password");
+
+    private final MButton signIn = new MButton("Sign In")
+            .withStyleName(ValoTheme.BUTTON_PRIMARY)
+            .withClickShortcut(KeyCode.ENTER);
+
+    private final VaadinSecurity vaadinSecurity;
+    private final EventBus.SessionEventBus eventBus;
+	private final UserService userService;
 	
 	@Autowired
-    public LoginView(final UserService userService) {
-        setSizeFull();
+    public LoginView(
+            final UserService userService,
+            final VaadinSecurity vaadinSecurity,
+            final EventBus.SessionEventBus eventBus) {
+
+	    setSizeFull();
         this.userService = userService;
-        
+        this.vaadinSecurity = vaadinSecurity;
+        this.eventBus = eventBus;
+
         Component loginForm = buildLoginForm();
         addComponent(loginForm);
         setComponentAlignment(loginForm, Alignment.MIDDLE_CENTER);
         NotificationBuilder.showNotification("Welcome to Three<strong>Sixty</strong>",
-        		"<span>The seamless employee recognition and evaluation system.</span><br />", 
-        		20000, 
+        		"<span>The seamless employee recognition and evaluation system.</span><br />",
+        		20000,
         		true);
     }
 
     private Component buildLoginForm() {
-        final VerticalLayout loginPanel = new VerticalLayout();
-        loginPanel.setSizeUndefined();
-        loginPanel.setSpacing(true);
-        Responsive.makeResponsive(loginPanel);
-        loginPanel.addStyleName("login-panel");
+        final MVerticalLayout loginPanel =
+                new MVerticalLayout()
+                        .withSizeUndefined()
+                        .withSpacing(true)
+                        .withStyleName("login-panel")
+                        .with(buildLabels(), buildFields()/*, new CheckBox("Remember me", true)*/);
 
-        loginPanel.addComponent(buildLabels());
-        loginPanel.addComponent(buildFields());
-        //loginPanel.addComponent(new CheckBox("Remember me", true));
+        Responsive.makeResponsive(loginPanel);
         return loginPanel;
     }
 
     @SuppressWarnings("serial")
 	private Component buildFields() {
-        HorizontalLayout fields = new HorizontalLayout();
-        fields.setSpacing(true);
-        fields.addStyleName("fields");
-
-        final TextField username = new TextField("Username");
-        username.setIcon(FontAwesome.USER);
-        username.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
-        username.setDescription("The users are <br />"
+        this.username.setDescription("The users are <br />"
         		+ "<ul>"
         		+ "<li><strong>admin</strong> with password <strong>password</strong>"
         		+ "<li><strong>katie</strong> with password <strong>password</strong>"
@@ -83,34 +92,17 @@ public class LoginView extends VerticalLayout implements View {
         		+ "<li><strong>lucy</strong> with password <strong>password</strong>"
         		+ "</ul>");
         
-        final PasswordField password = new PasswordField("Password");
-        password.setIcon(FontAwesome.LOCK);
-        password.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
+        this.password.setIcon(VaadinIcons.LOCK);
+        this.password.setStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
 
-        final Button signin = new Button("Sign In");
-        signin.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        signin.setClickShortcut(KeyCode.ENTER);
-        signin.focus();
+        this.signIn.focus();
+        signIn.addClickListener(this::onSignIn);
 
-        fields.addComponents(username, password, signin);
-        fields.setComponentAlignment(signin, Alignment.BOTTOM_LEFT);
-
-        signin.addClickListener(new ClickListener() {
-            @Override
-            public void buttonClick(final ClickEvent event) {
-            	
-            	Response<User> response = userService.authenticate(username.getValue(), password.getValue());
-            	switch (response.getResult()) {
-	            	case OK: 
-	            		DashboardEventBus.post(new UserLoginEvent(response.getValue()));
-	            		break;
-	            	case UNAUTHORIZED: 
-	            		NotificationBuilder.showNotification("Unable to authenticate", "The user name and password provided is incorrect.", 20000); 
-	            		break;
-            	}
-            }
-        });
-        return fields;
+        return new MHorizontalLayout()
+                        .withSpacing(true)
+                        .withStyleName("fields")
+                        .with(username, password, signIn)
+                        .withComponentAlignment(signIn, Alignment.BOTTOM_LEFT);
     }
 
     private Component buildLabels() {
@@ -134,5 +126,40 @@ public class LoginView extends VerticalLayout implements View {
     @Override
     public void enter(ViewChangeEvent event) {
         // This view is constructed in the init() method()
+    }
+
+    @SuppressWarnings("unused")
+    private void onSignIn(final ClickEvent event) {
+	    try {
+            final Authentication authentication = vaadinSecurity.login(username.getValue(), password.getValue());
+            eventBus.publish(this, new SuccessfulLoginEvent(getUI(), authentication));
+        } catch (AuthenticationException ex) {
+            NotificationBuilder.showNotification(
+                    "Unable to authenticate",
+                    "The user name and password provided is incorrect.",
+                    20000);
+        } catch (Exception ex) {
+            NotificationBuilder.showNotification(
+                    "Unable to authenticate",
+                    "Unexpected exception occurred.",
+                    20000);
+            LoggerFactory.getLogger(getClass()).error("Unexpected error while logging in", ex);
+        } finally {
+            //login.setEnabled(true);
+        }
+
+
+//        Response<User> response = userService.authenticate(username.getValue(), password.getValue());
+//        switch (response.getResult()) {
+//            case OK:
+//                DashboardEventBus.post(new UserLoginEvent(response.getValue()));
+//                break;
+//            case UNAUTHORIZED:
+//                NotificationBuilder.showNotification(
+//                        "Unable to authenticate",
+//                        "The user name and password provided is incorrect.",
+//                        20000);
+//                break;
+//        }
     }
 }

@@ -75,7 +75,7 @@ public class Questionaire implements Auditable<User, String> {
 	
 	public int getNoOfQuestions() { return getQuestions().size(); }
 	
-	public Date getStartDate() { return period != null ? period.getStart() : null; }
+	public LocalDate getStartDate() { return period != null ? period.getStart() : null; }
 	public void setStartDate(final LocalDate start) { 
 		if (period == null) {
 			period = Period.starts(start);
@@ -84,7 +84,7 @@ public class Questionaire implements Auditable<User, String> {
 		}	
 	}
 	
-	public Date getEndDate() { return period != null ? period.getEnd() : null; }
+	public LocalDate getEndDate() { return period != null ? period.getEnd() : null; }
 	
 	public void setEndDate(final LocalDate end) { 
 		if (period == null) {
@@ -139,11 +139,11 @@ public class Questionaire implements Auditable<User, String> {
 		return new Questionaire(name);
 	}
 	
-	public Questionaire startingOn(final LocalDate date) {
-		return startingOn(new Date(date.toEpochDay()));
-	}
+//	public Questionaire startingOn(final LocalDate date) {
+//		return startingOn(new Date(date.toEpochDay()));
+//	}
 	
-	public Questionaire startingOn(final Date date) {
+	public Questionaire startingOn(final LocalDate date) {
 		if (this.getPeriod() == null) {
 			this.setPeriod(Period.starts(date));
 		} else {
@@ -152,11 +152,11 @@ public class Questionaire implements Auditable<User, String> {
 		return this;
 	}
 	
-	public Questionaire closingOn(final LocalDate date) {
-		return closingOn(new Date(date.toEpochDay()));
-	}
+//	public Questionaire closingOn(final LocalDate date) {
+//		return closingOn(new Date(date.toEpochDay()));
+//	}
 	
-	public Questionaire closingOn(final Date date) {
+	public Questionaire closingOn(final LocalDate date) {
 		if (this.getPeriod() == null) {
 			this.setPeriod(Period.starts((Date) null).ends(date));
 		} else {

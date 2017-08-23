@@ -1,6 +1,6 @@
 package za.co.yellowfire.threesixty.ui;
 
-import com.vaadin.server.FontAwesome;
+import com.vaadin.icons.VaadinIcons;
 
 public class I8n {
 	
@@ -60,7 +60,11 @@ public class I8n {
 			}
 		}
 	}
-	
+
+	public interface Dashboard {
+		String SINGULAR = "Dashboard";
+	}
+
 	public interface Ideal {	
 		String SINGULAR = "Ideal";
 		String PLURAL = "Ideals";
@@ -128,7 +132,7 @@ public class I8n {
 	}
 	
 	public interface Assessment {
-		FontAwesome ICON = FontAwesome.BRIEFCASE;
+		VaadinIcons ICON = VaadinIcons.BRIEFCASE;
 		String SINGULAR = "Assessment";
 		String PLURAL = "Assessments";
 		
@@ -165,13 +169,13 @@ public class I8n {
 	}
 	
 	public interface User {
-		FontAwesome ICON = FontAwesome.USERS;
+		VaadinIcons ICON = VaadinIcons.USERS;
 		String SINGULAR = "User";
 		String PLURAL = "Users";
 	}
 	
 	public interface Organization {
-		FontAwesome ICON = FontAwesome.SITEMAP;
+		VaadinIcons ICON = VaadinIcons.SITEMAP;
 		String SINGULAR = "Organization";
 		String PLURAL = "Organization";
 		
@@ -182,13 +186,13 @@ public class I8n {
 			String USERS = "Users";
 		}
 		public interface Level {
-			FontAwesome ORGANIZATION = Organization.ICON;
-			FontAwesome GROUP = FontAwesome.INSTITUTION;
-			FontAwesome REGION = FontAwesome.LANGUAGE;
-			FontAwesome DIVISION = FontAwesome.INDUSTRY;
-			FontAwesome DEPARTMENT = FontAwesome.CUBES;
-			FontAwesome TEAM = FontAwesome.CUBE;
-			FontAwesome OTHER = FontAwesome.FOLDER;
+			VaadinIcons ORGANIZATION = Organization.ICON;
+			VaadinIcons GROUP = VaadinIcons.INSTITUTION;
+			VaadinIcons REGION = VaadinIcons.FLAG;
+			VaadinIcons DIVISION = VaadinIcons.BUILDING;
+			VaadinIcons DEPARTMENT = VaadinIcons.CUBES;
+			VaadinIcons TEAM = VaadinIcons.CUBE;
+			VaadinIcons OTHER = VaadinIcons.FOLDER;
 		}
 	}
 }

@@ -2,20 +2,20 @@ package za.co.yellowfire.threesixty.ui;
 
 public interface Style {
 
-	public interface Percentage {
+	interface Percentage {
 		String _100 = "100%";
 	}
 	
-	public interface Button {
+	interface Button {
 		String ICON_EDIT = "icon-edit";
 	}
 	
-	public interface Text {
+	interface Text {
 		String BOLDED = "bolded";
 		String ITALICIZED = "italicized";
 	}
 	
-	public interface Notification {
+	interface Notification {
 		String ICON = "notification-icon";
 		String HEADER = "notification-header";
 		String ITEM = "notification-item";
@@ -25,28 +25,28 @@ public interface Style {
 		String STYLE_UNREAD = "unread";
 	}
 	
-	public interface Kudos {
+	interface Kudos {
 	
-		public interface Received {
+		interface Received {
 			String HEADER = "kudos-received-header";
 			String ITEM = "kudos-received-item";
 			String IMAGE = "kudos-received-image";
 		}
 	}
 	
-	public interface Rating {
+	interface Rating {
 		String PANEL = "rating-panel";
 		String FIELDS = "fields";
 		String BUTTONS = "buttons";
 	}
 	
-	public interface AssessmentRating {
+	interface AssessmentRating {
 		String HEADER = "assessment-rating-header";
 		String ROW = "assessment-rating-row";
 		String ROW_ODD = "assessment-rating-row-odd";
 	}
 	
-	public interface Organization {
+	interface Organization {
 		String HEADER = "organization-header";
 	}
 }

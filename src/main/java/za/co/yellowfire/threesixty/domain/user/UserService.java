@@ -1,14 +1,9 @@
 package za.co.yellowfire.threesixty.domain.user;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
-
+import com.mongodb.DBRef;
+import com.vaadin.server.VaadinSession;
+import io.threesixty.ui.component.card.CounterStatisticModel;
+import io.threesixty.ui.security.DefaultUserPrincipal;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +13,10 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import com.mongodb.DBRef;
-import com.vaadin.server.VaadinSession;
-
 import za.co.yellowfire.threesixty.RequestResult;
 import za.co.yellowfire.threesixty.Response;
 import za.co.yellowfire.threesixty.domain.GridFsClient;
@@ -30,14 +24,21 @@ import za.co.yellowfire.threesixty.domain.InvalidUserException;
 import za.co.yellowfire.threesixty.domain.organization.Organization;
 import za.co.yellowfire.threesixty.domain.organization.OrganizationService;
 import za.co.yellowfire.threesixty.domain.organization.OrganizationType;
-import za.co.yellowfire.threesixty.domain.statistics.CounterStatistic;
 import za.co.yellowfire.threesixty.domain.user.notification.NotificationCategory;
 import za.co.yellowfire.threesixty.domain.user.notification.NotificationSummary;
 import za.co.yellowfire.threesixty.domain.user.notification.UserNotification;
 import za.co.yellowfire.threesixty.domain.user.notification.UserNotificationRepository;
+
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 	
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 	private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 	
 	private UserRepository userRepository;
@@ -199,22 +200,46 @@ public class UserService {
 		user = userRepository.save(user);
 	}
 	
-	public User findUser(final String id) throws IOException {
+	public User findUser(final String id) {
 		User user =  userRepository.findOne(id);
 		if (user != null) {
-			user.retrievePicture(client);
+			try {
+				user.retrievePicture(client);
+			} catch (IOException e) {
+				LOG.warn("Unable to load the profile picture for user " + id, e);
+			}
 		}
 		return user;
 	}
-	
+
+	@Override
+	public UserDetails loadUserByUsername(final String userName) throws UsernameNotFoundException {
+		return Optional.ofNullable(findUser(userName))
+                .map(UserPrincipal::wrap)
+				.orElseThrow(() -> new UsernameNotFoundException("Unable to find user " + userName));
+	}
+
 	public List<User> findUsers() {
 		return userRepository.findByActive(true);
 	}
-	
+
+    /**
+     * Finds all the users except the user
+     * @param user The user to exclude from the list
+     * @return The list of users
+     */
 	public List<User> findUsersExcept(final User user) {
 		return userRepository.findByIdNot(user.getId());
 	}
-	
+
+    /**
+     * Finds all the users except the current session user
+     * @return The list of users
+     */
+	public List<User> findUsersExceptCurrent() {
+		return userRepository.findByIdNot(getCurrentUser().getId());
+	}
+
 	public User save(final User user, final User changedBy) throws IOException {
 		user.storePicture(client);
 		user.auditChangedBy(changedBy);
@@ -305,8 +330,8 @@ public class UserService {
 						NotificationSummary.class).getMappedResults();
 	}
 	
-	public CounterStatistic getUsersCounterStatistic() {
-		return new CounterStatistic("UsersCounter", Optional.of(userRepository.countActive()));
+	public CounterStatisticModel getUsersCounterStatistic() {
+		return new CounterStatisticModel("UsersCounter", Optional.of(userRepository.countActive()));
 	}
 	
 	public void notify(final User to, final String message) {

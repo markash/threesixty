@@ -1,28 +1,25 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.util.Date;
-
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.AccessType;
 import org.springframework.data.annotation.AccessType.Type;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Auditable;
 import org.springframework.data.mongodb.core.mapping.DBRef;
-
 import za.co.yellowfire.threesixty.domain.user.User;
-import za.co.yellowfire.threesixty.ui.component.field.MStatsModel;
+
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 
 /**
  * An assessment period
  * @author Mark P Ashworth
  */
 @AccessType(Type.FIELD)
-public class Period implements Auditable<User, String> {
+public class Period implements Auditable<User, Serializable> {
 	private static final long serialVersionUID = 1L;
 	
 	public static final String FIELD_ID = "id";
@@ -41,8 +38,8 @@ public class Period implements Auditable<User, String> {
 	@Id
 	private String id;
 	
-	private Date start;
-	private Date end;
+	private LocalDate start;
+	private LocalDate end;
 	private PeriodDeadline deadline = new PeriodDeadline();
 	private boolean active = true;
 	@DBRef
@@ -52,14 +49,14 @@ public class Period implements Auditable<User, String> {
 	private DateTime createdDate;
 	private DateTime modifiedDate;
 	
-	@Transient
-	private MStatsModel registeredAssessments = new MStatsModel();
-	@Transient
-	private MStatsModel publishedAssessments = new MStatsModel();
-	@Transient
-	private MStatsModel employeeAssessments = new MStatsModel();
-	@Transient
-	private MStatsModel completedAssessments = new MStatsModel();
+//	@Transient
+//	private MStatsModel registeredAssessments = new MStatsModel();
+//	@Transient
+//	private MStatsModel publishedAssessments = new MStatsModel();
+//	@Transient
+//	private MStatsModel employeeAssessments = new MStatsModel();
+//	@Transient
+//	private MStatsModel completedAssessments = new MStatsModel();
 	
 	public static Period EMPTY() {
 		return new Period();
@@ -83,13 +80,13 @@ public class Period implements Auditable<User, String> {
 	public String getId() { return this.id; }
     public void setId(String id) { this.id = id; }
     
-	public Date getStart() { return start; }
-	public void setStart(LocalDate start) { this.start = Date.from(start.atStartOfDay().atOffset(ZoneOffset.UTC).toInstant()); }
-	public void setStart(Date start) { this.start = start; }
+	public LocalDate getStart() { return start; }
+	//public void setStart(LocalDate start) { this.start = Date.from(start.atStartOfDay().atOffset(ZoneOffset.UTC).toInstant()); }
+	public void setStart(final LocalDate start) { this.start = start; }
 	
-	public Date getEnd() { return end; }
-	public void setEnd(LocalDate end) { this.end = Date.from(end.atStartOfDay().atOffset(ZoneOffset.UTC).toInstant()); }
-	public void setEnd(Date end) { this.end = end; }
+	public LocalDate getEnd() { return end; }
+	//public void setEnd(LocalDate end) { this.end = Date.from(end.atStartOfDay().atOffset(ZoneOffset.UTC).toInstant()); }
+	public void setEnd(final LocalDate end) { this.end = end; }
 	
 	public PeriodDeadline getDeadline() { if (deadline == null) { this.deadline = new PeriodDeadline(); } return deadline; }
 	public void setDeadline(PeriodDeadline deadline) { this.deadline = deadline; }
@@ -124,15 +121,15 @@ public class Period implements Auditable<User, String> {
 	@Override
 	public void setLastModifiedDate(DateTime lastModifiedDate) { this.modifiedDate = lastModifiedDate; }
 	
-	public MStatsModel getRegisteredAssessments() { return registeredAssessments; }
-	public MStatsModel getPublishedAssessments() { return publishedAssessments; }
-	public MStatsModel getEmployeeAssessments() { return employeeAssessments; }
-	public MStatsModel getCompletedAssessments() { return completedAssessments; }
-	
-	public void setRegisteredAssessments(MStatsModel registeredAssessments) { this.registeredAssessments = registeredAssessments; }
-	public void setPublishedAssessments(MStatsModel publishedAssessments) { this.publishedAssessments = publishedAssessments; }
-	public void setEmployeeAssessments(MStatsModel employeeAssessments) { this.employeeAssessments = employeeAssessments; }
-	public void setCompletedAssessments(MStatsModel completedAssessments) { this.completedAssessments = completedAssessments; }
+//	public MStatsModel getRegisteredAssessments() { return registeredAssessments; }
+//	public MStatsModel getPublishedAssessments() { return publishedAssessments; }
+//	public MStatsModel getEmployeeAssessments() { return employeeAssessments; }
+//	public MStatsModel getCompletedAssessments() { return completedAssessments; }
+//
+//	public void setRegisteredAssessments(MStatsModel registeredAssessments) { this.registeredAssessments = registeredAssessments; }
+//	public void setPublishedAssessments(MStatsModel publishedAssessments) { this.publishedAssessments = publishedAssessments; }
+//	public void setEmployeeAssessments(MStatsModel employeeAssessments) { this.employeeAssessments = employeeAssessments; }
+//	public void setCompletedAssessments(MStatsModel completedAssessments) { this.completedAssessments = completedAssessments; }
 	
 	public void auditChangedBy(final User user) {
 		if (isNew()) {

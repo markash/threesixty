@@ -1,44 +1,42 @@
 package za.co.yellowfire.threesixty.ui;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.server.FontAwesome;
 import za.co.yellowfire.threesixty.domain.user.Role;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.view.DashboardView;
-import za.co.yellowfire.threesixty.ui.view.kudos.BadgeSearchView;
-import za.co.yellowfire.threesixty.ui.view.kudos.IdealSearchView;
-import za.co.yellowfire.threesixty.ui.view.kudos.KudosEditView;
-import za.co.yellowfire.threesixty.ui.view.org.OrganizationView;
-import za.co.yellowfire.threesixty.ui.view.rating.AssessmentSearchView;
-import za.co.yellowfire.threesixty.ui.view.rating.PerformanceAreaSearchView;
-import za.co.yellowfire.threesixty.ui.view.rating.PeriodSearchView;
-import za.co.yellowfire.threesixty.ui.view.user.UserSearchView;
-import za.co.yellowfire.threesixty.ui.view.user.notification.UserNotificationSearchView;
+//import za.co.yellowfire.threesixty.ui.view.kudos.BadgeSearchView;
+//import za.co.yellowfire.threesixty.ui.view.kudos.IdealSearchView;
+//import za.co.yellowfire.threesixty.ui.view.kudos.KudosEditView;
+//import za.co.yellowfire.threesixty.ui.view.org.OrganizationView;
+//import za.co.yellowfire.threesixty.ui.view.rating.AssessmentSearchView;
+//import za.co.yellowfire.threesixty.ui.view.rating.PerformanceAreaSearchView;
+//import za.co.yellowfire.threesixty.ui.view.rating.PeriodSearchView;
+//import za.co.yellowfire.threesixty.ui.view.user.UserSearchView;
+//import za.co.yellowfire.threesixty.ui.view.user.notification.UserNotificationSearchView;
 
 public enum DashboardViewType {
-    DASHBOARD("dashboard", DashboardView.class, FontAwesome.HOME, true, null), 
-    ORGANIZATION(OrganizationView.VIEW_NAME, OrganizationView.class, I8n.Organization.ICON, true, null),
-    USER_SEARCH(UserSearchView.VIEW_NAME, UserSearchView.class, FontAwesome.USERS, true, Role.ADMIN),
-    //RATING(RatingView.VIEW_NAME, RatingView.class, FontAwesome.QUESTION_CIRCLE, true, Role.ADMIN),
-    //QUESTIONAIRE_SEARCH(QuestionaireSearchView.VIEW_NAME, QuestionaireSearchView.class, FontAwesome.BRIEFCASE, true, Role.ADMIN),
-    //OUTCOME_SEARCH(OutcomesSearchView.VIEW_NAME, OutcomesSearchView.class, FontAwesome.BUILDING_O, true, Role.ADMIN),
-    PERIOD_SEARCH(PeriodSearchView.VIEW_NAME, PeriodSearchView.class, FontAwesome.CALENDAR_TIMES_O, true, Role.ADMIN),
-    PERFORMANCE_AREA_SEARCH(PerformanceAreaSearchView.VIEW_NAME, PerformanceAreaSearchView.class, FontAwesome.BUILDING_O, true, Role.ADMIN),
-    ASSESSMENT_SEARCH(AssessmentSearchView.VIEW_NAME, AssessmentSearchView.class, FontAwesome.BRIEFCASE, true, null),
-    BADGE_SEARCH(BadgeSearchView.VIEW_NAME, BadgeSearchView.class, FontAwesome.STAR_O, true, Role.ADMIN),
-    IDEAL_SEARCH(IdealSearchView.VIEW_NAME, IdealSearchView.class, FontAwesome.DIAMOND, true, Role.ADMIN),
-    NOTIFICATION_SEARCH(UserNotificationSearchView.VIEW_NAME, UserNotificationSearchView.class, FontAwesome.ENVELOPE_O, true, null),
-    KUDOS(KudosEditView.VIEW_NAME, KudosEditView.class, FontAwesome.HEART_O, true, null)
+    DASHBOARD("dashboard", DashboardView.class, VaadinIcons.HOME, true, null),
+//    ORGANIZATION(OrganizationView.VIEW_NAME, OrganizationView.class, I8n.Organization.ICON, true, null),
+//    USER_SEARCH(UserSearchView.VIEW_NAME, UserSearchView.class, FontAwesome.USERS, true, Role.ADMIN),
+//    PERIOD_SEARCH(PeriodSearchView.VIEW_NAME, PeriodSearchView.class, FontAwesome.CALENDAR_TIMES_O, true, Role.ADMIN),
+//    PERFORMANCE_AREA_SEARCH(PerformanceAreaSearchView.VIEW_NAME, PerformanceAreaSearchView.class, FontAwesome.BUILDING_O, true, Role.ADMIN),
+//    ASSESSMENT_SEARCH(AssessmentSearchView.VIEW_NAME, AssessmentSearchView.class, FontAwesome.BRIEFCASE, true, null),
+//    BADGE_SEARCH(BadgeSearchView.VIEW_NAME, BadgeSearchView.class, FontAwesome.STAR_O, true, Role.ADMIN),
+//    IDEAL_SEARCH(IdealSearchView.VIEW_NAME, IdealSearchView.class, FontAwesome.DIAMOND, true, Role.ADMIN),
+//    NOTIFICATION_SEARCH(UserNotificationSearchView.VIEW_NAME, UserNotificationSearchView.class, FontAwesome.ENVELOPE_O, true, null),
+//    KUDOS(KudosEditView.VIEW_NAME, KudosEditView.class, FontAwesome.HEART_O, true, null)
     ;
 
     private final String viewName;
     private final Class<? extends View> viewClass;
-    private final FontAwesome icon;
+    private final VaadinIcons icon;
     private final boolean stateful;
     private final Role role;
     
     private DashboardViewType(final String viewName,
-            final Class<? extends View> viewClass, final FontAwesome icon,
+            final Class<? extends View> viewClass, final VaadinIcons icon,
             final boolean stateful,
             final Role role) {
         this.viewName = viewName;
@@ -51,7 +49,7 @@ public enum DashboardViewType {
     public boolean isStateful() { return stateful; }
     public String getViewName() { return viewName; }
     public Class<? extends View> getViewClass() { return viewClass; }
-    public FontAwesome getIcon() { return icon; }
+    public VaadinIcons getIcon() { return icon; }
     
     public boolean isAccessibleBy(final User user) {
     	if (this.role == null) { return true; }
