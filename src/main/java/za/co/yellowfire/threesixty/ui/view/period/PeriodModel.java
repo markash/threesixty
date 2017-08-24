@@ -6,6 +6,7 @@ import za.co.yellowfire.threesixty.domain.rating.PeriodDeadline;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Optional;
 
 public class PeriodModel implements Persistable<Serializable> {
     public static final long serialVersionUID = 1L;
@@ -26,7 +27,7 @@ public class PeriodModel implements Persistable<Serializable> {
     }
 
     PeriodModel(Period period) {
-        this.period = period;
+        this.period = Optional.ofNullable(period).orElse(new Period());
     }
 
     @Override

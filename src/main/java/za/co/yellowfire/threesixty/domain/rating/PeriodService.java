@@ -1,13 +1,19 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
+import com.google.common.collect.Range;
 import io.threesixty.ui.component.card.CounterStatisticModel;
 import io.threesixty.ui.security.CurrentUserProvider;
 import io.threesixty.ui.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import za.co.yellowfire.threesixty.domain.PersistenceException;
 import za.co.yellowfire.threesixty.domain.user.User;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PeriodService implements za.co.yellowfire.threesixty.domain.question.Service<Period> {
@@ -30,10 +36,17 @@ public class PeriodService implements za.co.yellowfire.threesixty.domain.questio
 	}
 
 	@Override
-	public Period save(Period period, User changedBy) {
+	public Period save(Period period, User changedBy) throws PersistenceException {
+        Objects.requireNonNull(period, "The period to save is required");
+
+        List<Range<LocalDate>> overlapping = retrieveOverlappingPeriodDates(period);
+        if (overlapping.size() > 0) {
+            StringBuilder b = new StringBuilder();
+            overlapping.forEach(range -> b.append(range.toString()).append(" "));
+            throw new PersistenceException("The period overlaps the following: " + b.toString());
+        }
 		UserPrincipal<User> principal = this.currentUserProvider.get();
-		User user = principal.getUser();
-		period.auditChangedBy(changedBy);
+		period.auditChangedBy(principal.getUser());
 		return periodRepository.save(period);
 	}
 
@@ -42,6 +55,24 @@ public class PeriodService implements za.co.yellowfire.threesixty.domain.questio
 		period.setActive(false);
 		period.auditChangedBy(changedBy);
 		periodRepository.save(period);
+	}
+
+	/**
+	 * Counts the number of stored period ranges [getStart(), getEnd()] that are connected to the period range and
+	 * if this is greater that zero then the period is overlapping.
+	 * <a href="https://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html#isConnected(com.google.common.collect.Range)">isConnected</a>
+	 * @param period The period to test whether it overlaps any of the stored periods
+	 * @return The range of [start, end] dates that overlap
+	 */
+	public List<Range<LocalDate>> retrieveOverlappingPeriodDates(final Period period) {
+		Range<LocalDate> o = Range.closed(period.getStart(), period.getEnd());
+		return periodRepository
+				.findByActive(true).stream()
+				.map(p -> Range.closed(p.getStart(), p.getEnd()))
+				.filter(range -> range.isConnected(o))
+				.collect(Collectors.toList());
+
+
 	}
 
 	public PeriodRepository getPeriodRepository() {

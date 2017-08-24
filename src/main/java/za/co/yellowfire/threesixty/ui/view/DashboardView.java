@@ -2,19 +2,21 @@ package za.co.yellowfire.threesixty.ui.view;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Responsive;
 import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 import io.threesixty.ui.component.card.CounterStatisticModel;
 import io.threesixty.ui.component.card.CounterStatisticsCard;
 import io.threesixty.ui.view.AbstractDashboardView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-import org.vaadin.spring.sidebar.annotation.FontAwesomeIcon;
 import org.vaadin.spring.sidebar.annotation.SideBarItem;
+import org.vaadin.spring.sidebar.annotation.VaadinFontIcon;
 import za.co.yellowfire.threesixty.MainUI;
 import za.co.yellowfire.threesixty.Sections;
 import za.co.yellowfire.threesixty.domain.kudos.KudosRepository;
@@ -23,16 +25,18 @@ import za.co.yellowfire.threesixty.domain.rating.PeriodService;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.I8n;
+import za.co.yellowfire.threesixty.ui.view.period.PeriodSearchView;
 
 @Secured("ROLE_ADMIN")
 @SideBarItem(sectionId = Sections.DASHBOARD, caption = DashboardView.TITLE)
-@FontAwesomeIcon(FontAwesome.HOME)
+@VaadinFontIcon(VaadinIcons.HOME)
 @SpringView(name = DashboardView.VIEW_NAME)
 public class DashboardView extends AbstractDashboardView {
 	private static final long serialVersionUID = 1L;
 
     static final String TITLE = I8n.Dashboard.SINGULAR;
     static final String VIEW_NAME = "dashboard";
+    static final VaadinIcons ICON = VaadinIcons.CALENDAR_O;
 
 //    private NotificationsButton notificationsButton;
     private CssLayout dashboardPanels;
@@ -108,10 +112,10 @@ public class DashboardView extends AbstractDashboardView {
 //    	DashboardViewType type = DashboardViewType.PERIOD_SEARCH;
     	return new CounterStatisticsCard(
     			"Periods",
-                VaadinIcons.USERS, //type.getIcon(),
+                PeriodSearchView.ICON,
     			"The number of assessment period.",
     			periodService.getPeriodCounterStatistic(),
-                "" //type.getViewName()
+                PeriodSearchView.VIEW_NAME
         );
     }
 

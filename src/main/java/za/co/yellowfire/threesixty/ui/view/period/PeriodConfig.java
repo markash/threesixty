@@ -6,12 +6,12 @@ import com.vaadin.ui.renderers.DateRenderer;
 import io.threesixty.ui.component.BlankSupplier;
 import io.threesixty.ui.component.EntityPersistFunction;
 import io.threesixty.ui.component.EntitySupplier;
+import io.threesixty.ui.component.notification.NotificationBuilder;
 import io.threesixty.ui.view.TableDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.vaadin.spring.annotation.PrototypeScope;
+import za.co.yellowfire.threesixty.domain.PersistenceException;
 import za.co.yellowfire.threesixty.domain.rating.PeriodService;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.I8n;
@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Configuration
+@SuppressWarnings("unused")
 public class PeriodConfig {
 
     @Bean
@@ -39,7 +40,12 @@ public class PeriodConfig {
         return new EntityPersistFunction<PeriodModel>() {
             @Override
             public PeriodModel apply(final PeriodModel period) {
-                return new PeriodModel(periodService.save(period.getWrapped(), userService.getCurrentUser()));
+                try {
+                    return new PeriodModel(periodService.save(period.getWrapped(), userService.getCurrentUser()));
+                } catch (PersistenceException e) {
+                    NotificationBuilder.showNotification("Persist", e.getMessage());
+                }
+                return period;
             }
         };
     }
