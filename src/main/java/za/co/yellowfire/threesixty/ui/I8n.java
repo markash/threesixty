@@ -109,7 +109,7 @@ public class I8n {
 		String SINGULAR = "Period";
 		String PLURAL = "Periods";
 		
-		public interface Columns {
+		interface Columns {
 			String ID = "#";
 			String START = "Start Date";
 			String END = "End Date";
@@ -119,8 +119,13 @@ public class I8n {
 			String DEADLINE_ASSESSOR_ASSESSMENT = "Manager Assessment Deadline";
 			String ACTIVE = "Active";
 		}
-		
-		public interface Fields {
+
+		interface Validation {
+			String START_REQUIRED = Columns.START + " is required.";
+			String END_REQUIRED = Columns.END + " is required.";
+		}
+
+		interface Fields {
 			String START = I8n.Period.Columns.START;
 			String END = I8n.Period.Columns.END;
 			String DEADLINE_PUBLISH = I8n.Period.Columns.DEADLINE_PUBLISH;

@@ -1,8 +1,6 @@
 package za.co.yellowfire.threesixty.ui.view.period;
 
 import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.UI;
 import io.threesixty.ui.component.BlankSupplier;
 import io.threesixty.ui.component.EntityPersistFunction;
 import io.threesixty.ui.component.EntitySupplier;
@@ -27,7 +25,7 @@ public class PeriodEditView extends AbstractEntityEditView<PeriodModel> {
 	private EventBus.SessionEventBus eventBus;
 
 	public static final String TITLE = I8n.Period.SINGULAR;
-	public static final String VIEW_NAME = "Period";
+	public static final String VIEW_NAME = "period";
 
     public static String VIEW(final String id) { return VIEW_NAME + (StringUtils.isBlank(id) ? "" : "/" + id); }
 
@@ -45,11 +43,6 @@ public class PeriodEditView extends AbstractEntityEditView<PeriodModel> {
                 blankPeriodSupplier,
                 periodPersistFunction);
     }
-
-	@Override
-	protected void onCreate(ClickEvent event) {
-		UI.getCurrent().getNavigator().navigateTo(PeriodEditView.VIEW("new-period"));
-	}
 
 	@Override
     protected void publishOnEventBus(final ApplicationEvent event) {

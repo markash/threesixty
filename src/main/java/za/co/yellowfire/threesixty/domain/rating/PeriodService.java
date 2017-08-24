@@ -39,12 +39,12 @@ public class PeriodService implements za.co.yellowfire.threesixty.domain.questio
 	public Period save(Period period, User changedBy) throws PersistenceException {
         Objects.requireNonNull(period, "The period to save is required");
 
-        List<Range<LocalDate>> overlapping = retrieveOverlappingPeriodDates(period);
-        if (overlapping.size() > 0) {
-            StringBuilder b = new StringBuilder();
-            overlapping.forEach(range -> b.append(range.toString()).append(" "));
-            throw new PersistenceException("The period overlaps the following: " + b.toString());
-        }
+//        List<Range<LocalDate>> overlapping = retrieveOverlappingPeriodDates(period);
+//        if (overlapping.size() > 0) {
+//            StringBuilder b = new StringBuilder();
+//            overlapping.forEach(range -> b.append(range.toString()).append(" "));
+//            throw new PersistenceException("The period overlaps the following: " + b.toString());
+//        }
 		UserPrincipal<User> principal = this.currentUserProvider.get();
 		period.auditChangedBy(principal.getUser());
 		return periodRepository.save(period);

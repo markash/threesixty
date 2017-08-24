@@ -55,13 +55,16 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> {
 		this.selfDeadlineField.setDateFormat(I8n.Format.DATE);
 		this.assessorDeadlineField.setDateFormat(I8n.Format.DATE);
 
-        getBinder().forField(startField).bind(PeriodModel.FIELD_START);
-        getBinder().forField(endField).bind(PeriodModel.FIELD_END);
+        getBinder().forField(startField).asRequired(I8n.Period.Validation.START_REQUIRED).bind(PeriodModel.FIELD_START);
+        getBinder().forField(endField).asRequired(I8n.Period.Validation.END_REQUIRED).bind(PeriodModel.FIELD_END);
         getBinder().forField(publishDeadlineField).bind(PeriodModel.FIELD_DEADLINE_PUBLISHED);
         getBinder().forField(completeDeadlineField).bind(PeriodModel.FIELD_DEADLINE_COMPLETED);
         getBinder().forField(selfDeadlineField).bind(PeriodModel.FIELD_DEADLINE_SELF);
         getBinder().forField(assessorDeadlineField).bind(PeriodModel.FIELD_DEADLINE_MANAGER);
         getBinder().forField(activeField).bind(PeriodModel.FIELD_ACTIVE);
+
+        startField.setRequiredIndicatorVisible(true);
+        endField.setRequiredIndicatorVisible(true);
 	}
 	
 	/**
@@ -91,10 +94,7 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> {
 		//setExpandRatio(fieldsPanel, 2);
 		//setExpandRatio(statsPanel, 3);
 	}
-	
-	@Override
-	protected PeriodModel buildEmpty() { return null; //PeriodModel.EMPTY();
-        }
+
 	
 //	@Override
 //	protected Period buildEntity(Period period) {
