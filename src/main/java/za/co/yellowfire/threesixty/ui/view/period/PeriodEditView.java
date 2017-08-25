@@ -34,14 +34,15 @@ public class PeriodEditView extends AbstractEntityEditView<PeriodModel> {
 			final EntitySupplier<PeriodModel, Serializable> periodSupplier,
     		final BlankSupplier<PeriodModel> blankPeriodSupplier,
 			final EntityPersistFunction<PeriodModel> periodPersistFunction,
-    		final PeriodService periodService,
-    		final AssessmentService assessmentService) {
+    		final PeriodEntityEditForm periodEntityEditForm,
+			final EventBus.SessionEventBus eventBus) {
     	
-    	super(VIEW_NAME,
-                new PeriodEntityEditForm(periodService, assessmentService),
+    	super(TITLE,
+                periodEntityEditForm,
                 periodSupplier,
                 blankPeriodSupplier,
                 periodPersistFunction);
+    	this.eventBus = eventBus;
     }
 
 	@Override

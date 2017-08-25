@@ -1,17 +1,21 @@
 package za.co.yellowfire.threesixty.ui.view.period;
 
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.renderers.DateRenderer;
 import io.threesixty.ui.component.BlankSupplier;
 import io.threesixty.ui.component.EntityPersistFunction;
 import io.threesixty.ui.component.EntitySupplier;
+import io.threesixty.ui.component.card.CounterStatisticsCard;
 import io.threesixty.ui.component.notification.NotificationBuilder;
 import io.threesixty.ui.view.TableDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.vaadin.spring.annotation.PrototypeScope;
+import org.vaadin.spring.events.EventBus;
 import za.co.yellowfire.threesixty.domain.PersistenceException;
+import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
 import za.co.yellowfire.threesixty.domain.rating.PeriodService;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.I8n;
@@ -24,6 +28,14 @@ import java.util.stream.Collectors;
 @Configuration
 @SuppressWarnings("unused")
 public class PeriodConfig {
+
+    @Bean @PrototypeScope
+    PeriodEntityEditForm periodEntityEditForm(
+            final PeriodService periodService,
+            final AssessmentService assessmentService,
+            final EventBus.SessionEventBus eventBus) {
+        return new PeriodEntityEditForm(periodService, assessmentService, eventBus);
+    }
 
     @Bean
     EntitySupplier<PeriodModel, Serializable> periodSupplier(final PeriodService periodService) {

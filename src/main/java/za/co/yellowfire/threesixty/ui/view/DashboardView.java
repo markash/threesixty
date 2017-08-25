@@ -103,7 +103,7 @@ public class DashboardView extends AbstractDashboardView {
     			"Users",
     			VaadinIcons.USERS,
     			"The number of active users registered within the system.",
-    			userService.getUsersCounterStatistic(),
+                () -> userService.getUsersCounterStatistic(),
     			"" //UserSearchView.VIEW_NAME
         );
     }
@@ -114,7 +114,7 @@ public class DashboardView extends AbstractDashboardView {
     			"Periods",
                 PeriodSearchView.ICON,
     			"The number of assessment period.",
-    			periodService.getPeriodCounterStatistic(),
+                () -> periodService.getPeriodCounterStatistic(),
                 PeriodSearchView.VIEW_NAME
         );
     }
@@ -125,7 +125,7 @@ public class DashboardView extends AbstractDashboardView {
     			"Assessments",
                 VaadinIcons.USERS, //type.getIcon(),
     			"The number of assessment.",
-    			assessmentService.getAssessmentsCounterStatistic(),
+                () -> assessmentService.getAssessmentsCounterStatistic(),
                 "" //type.getViewName()
         );
     }
@@ -136,7 +136,7 @@ public class DashboardView extends AbstractDashboardView {
     			"KPAs",
     			VaadinIcons.USERS, //type.getIcon(),
     			"The number of key performance areas tracked by the application.",
-    			assessmentService.getPerformanceAreasCounterStatistic(),
+                () -> assessmentService.getPerformanceAreasCounterStatistic(),
                 "" //type.getViewName()
         );
     }
@@ -153,7 +153,7 @@ public class DashboardView extends AbstractDashboardView {
     			"",
     			VaadinIcons.BRIEFCASE, //type.getIcon(),
     			"Kudos Wallet balance.",
-    			walletBalanceStatistic,
+                () -> walletBalanceStatistic,
     			"" //type.getViewName()
         );
     }
@@ -165,7 +165,7 @@ public class DashboardView extends AbstractDashboardView {
     			"Assessments Due",
                 VaadinIcons.BRIEFCASE, // type.getIcon(),
     			"The number of assessments that are due which includes self and subordinate assessments.",
-    			assessmentService.getAssessmentsDueCounterStatistic(userService.getCurrentUser().getId()),
+                () -> assessmentService.getAssessmentsDueCounterStatistic(userService.getCurrentUser().getId()),
     			"" //type.getViewName()
         );
     }
