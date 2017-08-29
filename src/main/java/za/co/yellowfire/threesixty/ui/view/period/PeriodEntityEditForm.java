@@ -8,21 +8,21 @@ import com.vaadin.ui.VerticalLayout;
 import io.threesixty.ui.component.card.CounterStatisticModel;
 import io.threesixty.ui.component.card.CounterStatisticsCard;
 import io.threesixty.ui.event.EnterEntityEditViewEvent;
+import io.threesixty.ui.event.EventUtils;
 import io.threesixty.ui.view.AbstractEntityEditForm;
-import org.springframework.context.ApplicationListener;
-import org.vaadin.spring.events.Event;
 import org.vaadin.spring.events.EventBus;
 import org.vaadin.spring.events.EventBusListener;
 import org.vaadin.viritin.layouts.MFormLayout;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
-import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
-import za.co.yellowfire.threesixty.domain.rating.Period;
-import za.co.yellowfire.threesixty.domain.rating.PeriodService;
+import za.co.yellowfire.threesixty.domain.rating.*;
 import za.co.yellowfire.threesixty.ui.I8n;
 
 import javax.annotation.PreDestroy;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @SuppressWarnings("serial")
 public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> implements EventBusListener<EnterEntityEditViewEvent<PeriodModel>> {
@@ -35,23 +35,16 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> im
 	private DateField assessorDeadlineField = new DateField(I8n.Period.Fields.DEADLINE_ASSESSOR_ASSESSMENT);
 	private CheckBox activeField = new CheckBox(I8n.Period.Fields.ACTIVE);
 
-//	@PropertyId(Period.FIELD_REGISTERED_ASSESSMENTS)
-//	private MStatsField registeredUsers = new MStatsField("0", "Registered users", "0% up from the previous week", I8n.User.ICON, MStatsField.STYLE_ERROR);
-//	@PropertyId(Period.FIELD_PUBLISHED_ASSESSMENTS)
-//	private MStatsField publishedAssessments = new MStatsField("0", "Published assessments", "0% up from the previous week", I8n.Assessment.ICON, MStatsField.STYLE_INFO);
-//	@PropertyId(Period.FIELD_EMPLOYEE_ASSESSMENTS)
-//	private MStatsField employeeAssessments = new MStatsField("0", "Self-rating assessments completed", "0% up from the previous week", I8n.Assessment.ICON, MStatsField.STYLE_WARNING);
-//	@PropertyId(Period.FIELD_COMPLETED_ASSESSMENTS)
-//	private MStatsField completedAssessments = new MStatsField("0", "Completed assessments", "0% up from the previous week", I8n.Assessment.ICON, MStatsField.STYLE_SUCCESS);
-
 	private CounterStatisticsCard registeredAssessmentsCard;
+	private CounterStatisticsCard publishedAssessmentsCard;
+	private CounterStatisticsCard submittedAssessmentsCard;
+	private CounterStatisticsCard reviewedAssessmentsCard;
 
 	@SuppressWarnings("unused")
 	private final PeriodService service;
 	private final AssessmentService assessmentService;
 	private final EventBus.SessionEventBus eventBus;
-//	private final MStatsConverter<AssessmentStatusCount> assessmentCountConverter = new AssessmentStatusCountStatusConverter();
-	
+
 	private String[] nestedProperties = new String[] {
 			Period.FIELD_DEADLINE_PUBLISH, 
 			Period.FIELD_DEADLINE_COMPLETE, 
@@ -90,16 +83,33 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> im
         endField.setRequiredIndicatorVisible(true);
 
 		registeredAssessmentsCard = new CounterStatisticsCard(
-				"Registered users",
+				"Registered",
 				VaadinIcons.USERS,
 				"The number of registered assessments for the review period.",
 				"");
 
+        publishedAssessmentsCard = new CounterStatisticsCard(
+                "Published",
+                VaadinIcons.USERS,
+                "The number of published assessments for the review period.",
+                "");
+
+        submittedAssessmentsCard = new CounterStatisticsCard(
+                "Submitted",
+                VaadinIcons.USERS,
+                "The number of submitted assessments for the review period.",
+                "");
+
+        reviewedAssessmentsCard = new CounterStatisticsCard(
+                "Reviewed",
+                VaadinIcons.USERS,
+                "The number of completed assessments for the review period.",
+                "");
 	}
 	
 	/**
 	 * Returns the list of nested properties that the form group should bind to
-	 * @returns An array of nested properties in Java object notation
+	 * @return An array of nested properties in Java object notation
 	 */
 	@Override
 	protected String[] getNestedProperties() { return nestedProperties; }
@@ -107,14 +117,18 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> im
 	@Override
 	protected void internalLayout() {
 
-        MHorizontalLayout statsLine01 = new MHorizontalLayout(registeredAssessmentsCard).withSpacing(true);
+        MHorizontalLayout statsLine01 =
+                new MHorizontalLayout(registeredAssessmentsCard, publishedAssessmentsCard)
+                        .withSpacing(true);
 
-//		HorizontalLayout statsLine01 = PanelBuilder.HORIZONTAL(registeredUsers, publishedAssessments);
-//		statsLine01.setSpacing(true);
-//		HorizontalLayout statsLine02 = PanelBuilder.HORIZONTAL(employeeAssessments, completedAssessments);
-//		statsLine02.setSpacing(true);
-//
-		VerticalLayout statsPanel = new MVerticalLayout(statsLine01/*, statsLine02*/);
+        MHorizontalLayout statsLine02 =
+                new MHorizontalLayout(submittedAssessmentsCard, reviewedAssessmentsCard)
+                        .withSpacing(true);
+
+		VerticalLayout statsPanel =
+                new MVerticalLayout(
+                        statsLine01,
+                        statsLine02);
 
 		Layout fieldsPanel = 
 				new MHorizontalLayout(
@@ -123,91 +137,43 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> im
 				);
 
 		addComponents(fieldsPanel, statsPanel);
-		setExpandRatio(fieldsPanel, 2);
-		setExpandRatio(statsPanel, 3);
 	}
 
 
     @Override
-    public void onEvent(org.vaadin.spring.events.Event<EnterEntityEditViewEvent<PeriodModel>> event) {
+    public void onEvent(final org.vaadin.spring.events.Event<EnterEntityEditViewEvent<PeriodModel>> event) {
 
-        if (PeriodEditView.class.equals(event.getSource().getClass())) {
+        Consumer<Period> refreshStatisticsCards = (p) -> {
+            Map<AssessmentStatus, AssessmentStatusCount> statusCounts = assessmentService.countAssessmentsStatusFor(p);
+            statusCounts.entrySet().forEach(e -> {
+
+                Supplier<CounterStatisticModel> suppler = () -> new CounterStatisticModel("assessments", e.getValue().getCount());
+                switch (e.getKey()) {
+                    case All:
+                        this.registeredAssessmentsCard.setStatisticSupplier(suppler);
+                        break;
+                    case Created:
+                        this.publishedAssessmentsCard.setStatisticSupplier(suppler);
+                        break;
+                    case EmployeeCompleted:
+                        this.submittedAssessmentsCard.setStatisticSupplier(suppler);
+                        break;
+                    case Reviewed:
+                        this.reviewedAssessmentsCard.setStatisticSupplier(suppler);
+                        break;
+                }
+            });
+        };
+
+        if (EventUtils.eventFor(event, PeriodEditView.class)) {
             final Optional<Period> period = Optional.ofNullable(event.getPayload().getEntity().getWrapped());
-            period.ifPresent(period1 -> this.registeredAssessmentsCard
-                    .setStatisticSupplier(() -> new CounterStatisticModel("assessments", assessmentService.countAssessmentsFor(period1))));
+            period.ifPresent(refreshStatisticsCards);
         }
     }
 
-//    @Override
-//    public void onApplicationEvent(final EnterEntityEditViewEvent<PeriodModel> enterEntityEditViewEvent) {
-//	    final Optional<Period> period = Optional.ofNullable(enterEntityEditViewEvent.getEntity().getWrapped());
-//        period.ifPresent(period1 -> this.registeredAssessmentsCard
-//                .setStatisticSupplier(() -> new CounterStatisticModel("assessments", assessmentService.countAssessmentsFor(period1))));
-//    }
-
-
-    //	@Override
-//	protected Period buildEntity(Period period) {
-//
-//		if (period != null) {
-//			Map<AssessmentStatus, AssessmentStatusCount> statusCounts = assessmentService.countAssessmentsStatusFor(period);
-//			period.getRegisteredAssessments().updateWith(assessmentCountConverter, statusCounts.get(AssessmentStatus.All));
-//			period.getPublishedAssessments().updateWith(assessmentCountConverter, statusCounts.get(AssessmentStatus.Created));
-//			period.getEmployeeAssessments().updateWith(assessmentCountConverter, statusCounts.get(AssessmentStatus.EmployeeCompleted));
-//			period.getCompletedAssessments().updateWith(assessmentCountConverter, statusCounts.get(AssessmentStatus.Reviewed));
-//		}
-//		return period;
-//	}
-
-//	private static class AssessmentStatusCountStatusConverter implements MStatsConverter<AssessmentStatusCount> {
-//		@Override
-//		public MStatsModel convert(final AssessmentStatusCount object) {
-//			MStatsModel model = new MStatsModel();
-//
-//			if (object != null) {
-//				model.setStatistic(String.valueOf(object.getCount()));
-//
-//				switch(object.getStatus()) {
-//				case Creating:
-//					break;
-//				case All:
-//					model.setStatisticLabel("Registered users");
-//					model.setStatisticInfo("0% up from the previous week");
-//					model.setStatisticIcon(I8n.User.ICON);
-//					model.setStyleName(MStatsField.STYLE_ERROR);
-//					break;
-//				case Created:
-//					model.setStatisticLabel("Published assessments");
-//					model.setStatisticInfo("0% up from the previous week");
-//					model.setStatisticIcon(FontAwesome.FILE_O);
-//					model.setStyleName(MStatsField.STYLE_INFO);
-//					break;
-//				case EmployeeCompleted:
-//					model.setStatisticLabel("Self-rating assessments completed");
-//					model.setStatisticInfo("0% up from the previous week");
-//					model.setStatisticIcon(FontAwesome.FILE);
-//					model.setStyleName(MStatsField.STYLE_WARNING);
-//					break;
-//				case ManagerCompleted:
-//					model.setStatisticIcon(FontAwesome.FILE_TEXT_O);
-//					break;
-//				case Reviewed:
-//					model.setStatisticLabel("Completed assessments");
-//					model.setStatisticInfo("0% up from the previous week");
-//					model.setStatisticIcon(FontAwesome.FILE_TEXT);
-//					model.setStyleName(MStatsField.STYLE_SUCCESS);
-//					break;
-//				}
-//			} else {
-//				model.setStatistic("0");
-//			}
-//
-//			return model;
-//		}
-//	}
-
     @PreDestroy
+	@SuppressWarnings("unused")
     void destroy() {
-        eventBus.unsubscribe(this); // It's good manners to do this, even though we should be automatically unsubscribed when the UI is garbage collected
+        eventBus.unsubscribe(this);
     }
 }
