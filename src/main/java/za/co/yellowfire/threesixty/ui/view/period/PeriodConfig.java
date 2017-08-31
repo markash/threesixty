@@ -48,12 +48,12 @@ public class PeriodConfig {
     }
 
     @Bean
-    EntityPersistFunction<PeriodModel> periodPersistFunction(final PeriodService periodService, final UserService userService) {
+    EntityPersistFunction<PeriodModel> periodPersistFunction(final PeriodService periodService) {
         return new EntityPersistFunction<PeriodModel>() {
             @Override
             public PeriodModel apply(final PeriodModel period) {
                 try {
-                    return new PeriodModel(periodService.save(period.getWrapped(), userService.getCurrentUser()));
+                    return new PeriodModel(periodService.save(period.getWrapped()));
                 } catch (PersistenceException e) {
                     NotificationBuilder.showNotification("Persist", e.getMessage());
                 }

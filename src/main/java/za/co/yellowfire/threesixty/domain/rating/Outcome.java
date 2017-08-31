@@ -5,12 +5,16 @@ import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.domain.Auditable;
 import org.springframework.data.mongodb.core.mapping.DBRef;
-
 import za.co.yellowfire.threesixty.domain.user.User;
 
-public class Outcome implements Auditable<User, String> {
+import java.io.Serializable;
+
+public class Outcome implements Auditable<User, Serializable> {
 	private static final long serialVersionUID = 1L;
-	
+
+	public static final String FIELD_ID = "id";
+	public static final String FIELD_ACTIVE = "active";
+
 	@Id
 	private String id;
 	

@@ -1,46 +1,50 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
-import java.util.List;
-
+import io.threesixty.ui.security.CurrentUserProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import za.co.yellowfire.threesixty.domain.PersistenceException;
 import za.co.yellowfire.threesixty.domain.user.User;
+
+import java.util.Objects;
 
 @Service
 public class OutcomeService implements za.co.yellowfire.threesixty.domain.question.Service<Outcome> {
-	
 	private static final Logger LOG = LoggerFactory.getLogger(OutcomeService.class);
+
 	private OutcomeRepository outcomeRepository;
-	
+    private CurrentUserProvider<User> currentUserProvider;
+
 	@Autowired
 	public OutcomeService(
-			final OutcomeRepository outcomeRepository) {
+			final OutcomeRepository outcomeRepository,
+            final CurrentUserProvider<User> currentUserProvider) {
 		this.outcomeRepository = outcomeRepository;
+        this.currentUserProvider = currentUserProvider;
 	}
-	
-	public List<Outcome> getOutcomes() {
-		return outcomeRepository.findAll();
-	}
+
+    public OutcomeRepository getRepository() {
+        return outcomeRepository;
+    }
 	
 	public Outcome findById(final String id) {
 		return outcomeRepository.findOne(id);
 	}
 	
-	public Outcome save(final Outcome outcome, final User changedBy) {
-		LOG.info("Outcome {} changed by {}", outcome != null ? outcome : "null", changedBy != null ? changedBy.getId() : "null");
-		
-		outcome.auditChangedBy(changedBy);
-		return outcomeRepository.save(outcome);
+	public Outcome save(final Outcome objective) throws PersistenceException {
+        Objects.requireNonNull(objective, "The outcome is required");
+
+        objective.auditChangedBy(this.currentUserProvider.get().getUser());
+		return outcomeRepository.save(objective);
 	}
 	
-	public void delete(final Outcome outcome, final User changedBy) {
-		LOG.info("Outcome {} deleted by {}", outcome != null ? outcome : "null", changedBy != null ? changedBy.getId() : "null");
-		
-		outcome.setActive(false);
-		outcome.auditChangedBy(changedBy);
-		outcomeRepository.save(outcome);
+	public void delete(final Outcome objective) {
+        Objects.requireNonNull(objective, "The objective is required");
+
+        objective.setActive(false);
+        objective.auditChangedBy(this.currentUserProvider.get().getUser());
+		outcomeRepository.save(objective);
 	}
 }

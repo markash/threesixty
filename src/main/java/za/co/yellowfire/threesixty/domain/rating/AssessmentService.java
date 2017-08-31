@@ -1,6 +1,8 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
 import io.threesixty.ui.component.card.CounterStatisticModel;
+import io.threesixty.ui.security.CurrentUserProvider;
+import io.threesixty.ui.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -21,19 +23,22 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 	private final PeriodRepository periodRepository;
 	private final ArrayList<Double> possibleRatings;
 	private final ArrayList<Double> possibleWeightings;
-	
+    private CurrentUserProvider<User> currentUserProvider;
+
 	@Autowired
 	public AssessmentService(
 			final AssessmentRepository assessmentRepository,
 			final PerformanceAreaRepository performanceAreaRepository,
 			final PeriodRepository periodRepository,
-			final UserRepository userRepository) {
+			final UserRepository userRepository,
+            final CurrentUserProvider<User> currentUserProvider) {
 		
 		this.assessmentRepository = assessmentRepository;
 		this.userRepository = userRepository;
 		this.periodRepository = periodRepository;
 		this.performanceAreaRepository = performanceAreaRepository;
-		
+		this.currentUserProvider = currentUserProvider;
+
 		this.possibleRatings = new ArrayList<>(Arrays.asList(new Double[] {1.0, 2.0, 3.0, 4.0, 5.0}));
 		this.possibleWeightings = new ArrayList<>(Arrays.asList(new Double[] {0.0, 10.0, 20.0, 25.0, 30.0, 40.0, 50.0, 60.0, 70.0, 75.0, 80.0, 90.0, 100.0}));
 	}
@@ -87,14 +92,18 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 		return assessmentRepository.findOne(id);
 	}
 	
-	public Assessment save(final Assessment assessment, final User changedBy) {
-		assessment.auditChangedBy(changedBy);
+	public Assessment save(final Assessment assessment) {
+		Objects.requireNonNull(assessment, "The assessment is required");
+		UserPrincipal<User> principal = this.currentUserProvider.get();
+		assessment.auditChangedBy(principal.getUser());
 		return assessmentRepository.save(assessment);
 	}
 	
-	public void delete(final Assessment assessment, final User changedBy) {
+	public void delete(final Assessment assessment) {
+        Objects.requireNonNull(assessment, "The assessment is required");
+
 		assessment.setActive(false);
-		assessment.auditChangedBy(changedBy);
+		assessment.auditChangedBy(this.currentUserProvider.get().getUser());
 		assessmentRepository.save(assessment);
 	}
 	

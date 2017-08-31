@@ -135,7 +135,17 @@ public class I8n {
 			String ACTIVE = I8n.Period.Columns.ACTIVE;
 		}
 	}
-	
+
+	public interface Objective {
+		String SINGULAR = "Objective";
+		String PLURAL = "Objectives";
+
+        interface Columns {
+            String ID = "Name";
+            String ACTIVE = "Active";
+        }
+	}
+
 	public interface Assessment {
 		VaadinIcons ICON = VaadinIcons.BRIEFCASE;
 		String SINGULAR = "Assessment";
