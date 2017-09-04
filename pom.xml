@@ -34,12 +34,12 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>io.threesixty</groupId>
+			<groupId>io.threesixty.components</groupId>
 			<artifactId>components</artifactId>
 			<version>${threesixty-components.version}</version>
 		</dependency>
         <dependency>
-            <groupId>io.threesixty</groupId>
+            <groupId>io.threesixty.components</groupId>
             <artifactId>theme</artifactId>
             <version>${threesixty-theme.version}</version>
         </dependency>
