@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import za.co.yellowfire.threesixty.domain.PersistenceException;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserRepository;
 
@@ -92,7 +93,7 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 		return assessmentRepository.findOne(id);
 	}
 	
-	public Assessment save(final Assessment assessment) {
+	public Assessment save(final Assessment assessment) throws PersistenceException {
 		Objects.requireNonNull(assessment, "The assessment is required");
 		UserPrincipal<User> principal = this.currentUserProvider.get();
 		assessment.auditChangedBy(principal.getUser());

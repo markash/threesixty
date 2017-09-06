@@ -12,7 +12,9 @@ import za.co.yellowfire.threesixty.domain.user.User;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * An assessment period
@@ -178,8 +180,8 @@ public class Period implements Auditable<User, Serializable> {
 
 	@Override
 	public String toString() {
-		final String startDate = start != null ? new SimpleDateFormat("yyyy-MM-dd").format(start) : "";
-		final String endDate = end != null ? new SimpleDateFormat("yyyy-MM-dd").format(end) : "";
-		return startDate + " - " + endDate;
+		return Optional.ofNullable(start).map(start -> start.format(DateTimeFormatter.ISO_DATE)).orElse("")  +
+				" - " +
+				Optional.ofNullable(end).map(end -> end.format(DateTimeFormatter.ISO_DATE)).orElse("");
 	}
 }

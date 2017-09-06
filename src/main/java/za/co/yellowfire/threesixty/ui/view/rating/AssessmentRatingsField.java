@@ -1,38 +1,37 @@
 package za.co.yellowfire.threesixty.ui.view.rating;
 
-import com.vaadin.data.Validator.InvalidValueException;
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.data.fieldgroup.PropertyId;
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Responsive;
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.TabSheet.Tab;
 import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.v7.data.Buffered;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup;
+import com.vaadin.v7.data.util.BeanItem;
+import io.threesixty.ui.component.BeanBinder;
+import io.threesixty.ui.component.panel.PanelBuilder;
+import io.threesixty.ui.view.DirtyListener;
 import org.apache.commons.lang3.ArrayUtils;
 import org.vaadin.viritin.button.MButton;
-import org.vaadin.viritin.fields.MTextArea;
 import org.vaadin.viritin.fields.MTextField;
+import org.vaadin.viritin.label.MLabel;
+import org.vaadin.viritin.v7.fields.MTextArea;
 import za.co.yellowfire.threesixty.domain.rating.Assessment;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentRating;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentStatus;
 import za.co.yellowfire.threesixty.domain.rating.PerformanceArea;
 import za.co.yellowfire.threesixty.domain.user.User;
+import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.Style;
-import za.co.yellowfire.threesixty.ui.component.BeanBinder;
-import za.co.yellowfire.threesixty.ui.component.LabelBuilder;
-import za.co.yellowfire.threesixty.ui.component.PanelBuilder;
-import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm.DirtyEvent;
-import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm.DirtyListener;
-import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm.FormDirtyEvent;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Set;
 
 @SuppressWarnings("serial")
 public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {	
@@ -56,7 +55,8 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 	private User currentUser;
 	private Assessment assessment;
 	private AssessmentStatus assessmentStatus = AssessmentStatus.Creating;
-	
+	private Set<AssessmentRating> ratings;
+
 	public AssessmentRatingsField(
 			final Collection<Double> possibleRatings, 
 			final Collection<Double> possibleWeightings,
@@ -121,13 +121,11 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 		}
 		
 		/* Create the header with the header buttons */
-		Label headerCaption = 
-				LabelBuilder.build(FontAwesome.BARCODE.getHtml() +  " Assessent ratings", 
-						ContentMode.HTML, 
-						ValoTheme.LABEL_H3, 
-						ValoTheme.LABEL_NO_MARGIN);
-		
-		HorizontalLayout header = PanelBuilder.HORIZONTAL(Style.AssessmentRating.HEADER, 
+		Label headerCaption = new MLabel(VaadinIcons.BARCODE.getHtml() + I8n.Assessment.Rating.PLURAL)
+				.withContentMode(ContentMode.HTML)
+				.withStyleName(ValoTheme.LABEL_H3, ValoTheme.LABEL_NO_MARGIN);
+
+		HorizontalLayout header = PanelBuilder.HORIZONTAL(Style.AssessmentRating.HEADER,
 				headerCaption,
 				this.summary);
 		header.setExpandRatio(headerCaption, 1.0f);
@@ -137,45 +135,66 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 		return PanelBuilder.VERTICAL(header, tabSheet);
 	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public Class<Set<AssessmentRating>> getType() {
-		Set<AssessmentRating> test = new HashSet<AssessmentRating>();
-		return (Class<Set<AssessmentRating>>) test.getClass();
-	}
+//	@Override
+//	@SuppressWarnings("unchecked")
+//	public Class<Set<AssessmentRating>> get() {
+//		Set<AssessmentRating> test = new HashSet<AssessmentRating>();
+//		return (Class<Set<AssessmentRating>>) test.getClass();
+//	}
 
-	@Override
-	public void commit() throws Buffered.SourceException, InvalidValueException {
-		
-		for(AssessmentRatingPanel panel : this.panels) {
-			panel.commit();
-		}
-		
-		super.commit();
-	}
+//	@Override
+//	public void commit() throws Buffered.SourceException, InvalidValueException {
+//
+//		for(AssessmentRatingPanel panel : this.panels) {
+//			panel.commit();
+//		}
+//
+//		super.commit();
+//	}
 
-	@Override
-	protected void setInternalValue(final Set<AssessmentRating> newValue) {
-		super.setInternalValue(newValue);
-		
-		/* Maintain the tab sheet and panels */
-		if (this.tabSheet != null) {
-			for (AssessmentRatingPanel panel : this.panels) {
-				this.tabSheet.removeTab(this.tabSheet.getTab(panel));
-			}
-			panels.clear();
-			
-			if (getValue() != null) {
-				for(AssessmentRating rating : getValue()) {
-					addAssessmentRatingPanel(rating, currentUser);
-				}
-			} else {
-				addAssessmentRating();
-			}
-		}
-	}
+    /**
+     * Sets the value of this field. May do sanitization or throw
+     * {@code IllegalArgumentException} if the value is invalid. Typically saves
+     * the value to shared state.
+     *
+     * @param value the new value of the field
+     * @throws IllegalArgumentException if the value is invalid
+     */
+    @Override
+    protected void doSetValue(Set<AssessmentRating> value) {
+        /* Maintain the tab sheet and panels */
+        this.ratings = value;
 
-	protected boolean isAddButtonEnabled() {
+        if (this.tabSheet != null) {
+            for (AssessmentRatingPanel panel : this.panels) {
+                this.tabSheet.removeTab(this.tabSheet.getTab(panel));
+            }
+            panels.clear();
+
+            if (getValue() != null) {
+                for(AssessmentRating rating : getValue()) {
+                    addAssessmentRatingPanel(rating, currentUser);
+                }
+            } else {
+                addAssessmentRating();
+            }
+        }
+    }
+
+    /**
+     * Returns the current value of this object.
+     * <p>
+     * <i>Implementation note:</i> the implementing class should document
+     * whether null values may be returned or not.
+     *
+     * @return the current value
+     */
+    @Override
+    public Set<AssessmentRating> getValue() {
+        return this.ratings;
+    }
+
+    protected boolean isAddButtonEnabled() {
 		return this.assessmentStatus.isEditingAllowed() && this.assessment != null && this.assessment.hasParticipants();
 	}
 	
@@ -239,7 +258,7 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 		tab.setCaption("Rating #" + (tabSheet.getTabPosition(tab) + 1));
 		panels.add(panel);
 						
-		panel.addDirtyListener(this::onFormDirty);
+//		panel.addDirtyListener(this::onFormDirty);
 		
 		return panel;
 	}
@@ -253,59 +272,52 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 	protected void fireRecalculationRequired() {
 	
 		/* Recalculate the summary values */
-		this.summary.recalculate();
+		//this.summary.recalculate();
 		
 		/* Fire the recalculation event */
-		if (this.recalculationListener != null) {	
-			this.recalculationListener.onRecalc(
-					new RecalculationEvent(
-						this.summary.getNoOfRatings(), 
-						this.summary.getWeightingTotal(), 
-						this.summary.getScoreTotal()));
-		}
+//		if (this.recalculationListener != null) {
+//			this.recalculationListener.onRecalc(
+//					new RecalculationEvent(
+//						this.summary.getNoOfRatings(),
+//						this.summary.getWeightingTotal(),
+//						this.summary.getScoreTotal()));
+//		}
 	}
 
-	protected void onFormDirty(final DirtyEvent event) {
-		getState().modified = true;
-		fireValueChange(false);
-		
-		if (event.isRecalculationRequired()) {
-			fireRecalculationRequired();
-		}
-	}
+//	protected void onFormDirty(final DirtyEvent event) {
+//		getState().modified = true;
+//		fireValueChange(false);
+//
+//		if (event.isRecalculationRequired()) {
+//			fireRecalculationRequired();
+//		}
+//	}
 	
 	public void onAdd(final ClickEvent event) {
 		this.addAssessmentRating();
 	}
 	
 	private static class AssessmentRatingPanel extends GridLayout {
-		@PropertyId("id")
+
 		private MTextField idField = new MTextField("Id").withReadOnly(true);
-		@PropertyId("performanceArea")
-		private ComboBox areaField;
-		
-		@PropertyId("measurement")
-		private MTextArea measurementField = 
+
+        private ComboBox areaField;
+		private MTextArea measurementField =
 			new MTextArea("Measurement")
 				.withRows(15);
-		@PropertyId("managerComment")
 		private MTextArea managerCommentField = 
 			new MTextArea("Manager Comment")
 				.withRows(5);
-		@PropertyId("employeeComment")
 		private MTextArea employeeCommentField = 
 			new MTextArea("Employee Comment")
 				.withRows(5);
-		@PropertyId("weight")
 		private ComboBox weightField =
-			new ComboBox("Weight")
-				.withWidth(100.0f, Unit.PERCENTAGE);
-		@PropertyId("rating")
+			new ComboBox("Weight");
+
 		private ComboBox ratingField =
-			new ComboBox("Rating")
-				.withWidth(100.0f, Unit.PERCENTAGE);
+			new ComboBox("Rating");
 		
-		@PropertyId("score")
+
 		private MTextField scoreField = 
 			new MTextField("Score")
 				.withWidth(100.0f, Unit.PERCENTAGE)
@@ -332,24 +344,38 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 				final Collection<Double> possibleWeightings,
 				final Collection<PerformanceArea> performanceAreas) {
 			super(3, 3);
-						
+
+			/*
+			@PropertyId("id")
+		@PropertyId("performanceArea")
+        @PropertyId("measurement")
+        @PropertyId("managerComment")
+        @PropertyId("employeeComment")
+        @PropertyId("weight")
+        @PropertyId("rating")
+        @PropertyId("score")
+			 */
 			setWidth(100.0f, Unit.PERCENTAGE);
 			setSpacing(true);
 			
-			 this.areaField = 
-						new ComboBox("Performance Area", new IndexedContainer(performanceAreas))
-							.withWidth(100.0f, Unit.PERCENTAGE);
-			 
+//			 this.areaField =
+//						new ComboBox("Performance Area", new IndexedContainer(performanceAreas))
+//							.withWidth(100.0f, Unit.PERCENTAGE);
+//
 			/* Set buffered to false so that the assessment score can be calculated on property change*/
 			this.fieldGroup = BeanBinder.bind(rating, this, false);
-			this.ratingField.addItems(possibleRatings);
-			this.weightField.addItems(possibleWeightings);
+			//this.ratingField.addItems(possibleRatings);
+			this.ratingField.setWidth(100.0f, Unit.PERCENTAGE);
+
+			//this.weightField.addItems(possibleWeightings);
+			this.weightField.setWidth(100.0f, Unit.PERCENTAGE);
+
 			this.currentUser = currentUser;
 			/* Setup read only ratings panel */
 			this.readOnlyFieldGroup = new BeanItem<>(rating);
-			this.employeeRatingField = new Label(this.readOnlyFieldGroup.getItemProperty("employeeRating"));
-			this.managerRatingField = new Label(this.readOnlyFieldGroup.getItemProperty("managerRating"));
-			this.reviewRatingField = new Label(this.readOnlyFieldGroup.getItemProperty("reviewRating"));
+//			this.employeeRatingField = new Label(this.readOnlyFieldGroup.getItemProperty("employeeRating"));
+//			this.managerRatingField = new Label(this.readOnlyFieldGroup.getItemProperty("managerRating"));
+//			this.reviewRatingField = new Label(this.readOnlyFieldGroup.getItemProperty("reviewRating"));
 			
 			/* Column 0 */
 			addComponent(areaField, 0, 0);
@@ -360,7 +386,7 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 			addComponent(measurementField, 1, 0, 1, 2);
 			
 			/* Column 2 */
-			Label ratingLabel = LabelBuilder.build("Self-rating: ", Style.Text.BOLDED);
+			Label ratingLabel = new MLabel("Self-rating: ").withStyleName(Style.Text.BOLDED);
 			this.employeeRatingPanel = 
 					PanelBuilder.HORIZONTAL(
 							"rating-summary-item", 
@@ -370,7 +396,7 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 			this.employeeRatingPanel.setExpandRatio(this.employeeRatingField, 1);
 			this.employeeRatingPanel.setSpacing(true);
 			
-			ratingLabel = LabelBuilder.build("Manager rating: ", Style.Text.BOLDED);
+			ratingLabel =  new MLabel("Manager rating: ").withStyleName(Style.Text.BOLDED);
 			this.managerRatingPanel = 
 					PanelBuilder.HORIZONTAL(
 							"rating-summary-item", 
@@ -380,7 +406,7 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 			this.managerRatingPanel.setExpandRatio(this.managerRatingField, 1);
 			this.managerRatingPanel.setSpacing(true);
 			
-			ratingLabel = LabelBuilder.build("Review rating: ", Style.Text.BOLDED);
+			ratingLabel = new MLabel("Review rating: ").withStyleName(Style.Text.BOLDED);
 			this.reviewRatingPanel = 
 					PanelBuilder.HORIZONTAL(
 							"rating-summary-item", 
@@ -496,19 +522,19 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 		}
 		
 		public void setPossibleWeightings(final Collection<?> weightings) {
-			this.weightField.removeAllItems();
-			this.weightField.addItems(weightings);
+			//this.weightField.removeAllItems();
+			//this.weightField.addItems(weightings);
 		}
 		
 		public void setPossibleRatings(final Collection<?> ratings) {
-			this.ratingField.removeAllItems();
-			this.ratingField.addItems(ratings);
+			//this.ratingField.removeAllItems();
+			//this.ratingField.addItems(ratings);
 		}
 
 		public void commit() {
 			try {
 				this.fieldGroup.commit();
-			} catch (CommitException e) {
+			} catch (FieldGroup.CommitException e) {
 				throw new RuntimeException("Unable to commit assessment rating", e);
 			}
 		}
@@ -527,29 +553,29 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 		}
 		
 		protected void registerDirtyListener() {
-			for(Field<?> field : this.fieldGroup.getFields()) {
-				field.removeValueChangeListener(this::onValueChange);
-				field.addValueChangeListener(this::onValueChange);
-			}
+			//for(Field<?> field : this.fieldGroup.getFields()) {
+			//	field.removeValueChangeListener(this::onValueChange);
+			//	field.addValueChangeListener(this::onValueChange);
+			//}
 		}
 		
-		protected void onValueChange(final com.vaadin.data.Property.ValueChangeEvent event) {
-			
-			boolean ratingChanged = ratingField.equals(event.getProperty());
-			boolean recalculationRequired = weightField.equals(event.getProperty()) || ratingChanged;
-			
-			if (recalculationRequired) {
-				this.scoreField.markAsDirty();
-			}
-			
-			if (ratingChanged) {
-				onRatingChange((Double) ratingField.getValue());
-			}
-			
-			for (DirtyListener listener : dirtyListeners) {
-				listener.onDirty(new FormDirtyEvent(event.getProperty(), recalculationRequired));
-			}
-		}
+//		protected void onValueChange(final com.vaadin.data.Property.ValueChangeEvent event) {
+//
+//			boolean ratingChanged = ratingField.equals(event.getProperty());
+//			boolean recalculationRequired = weightField.equals(event.getProperty()) || ratingChanged;
+//
+//			if (recalculationRequired) {
+//				this.scoreField.markAsDirty();
+//			}
+//
+//			if (ratingChanged) {
+//				onRatingChange((Double) ratingField.getValue());
+//			}
+//
+//			for (DirtyListener listener : dirtyListeners) {
+//				listener.onDirty(new FormDirtyEvent(event.getProperty(), recalculationRequired));
+//			}
+//		}
 		
 		protected void onRatingChange(Double rating) {
 			switch(getValue().getAssessment().getStatus()) {

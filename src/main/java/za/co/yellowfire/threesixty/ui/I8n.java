@@ -151,18 +151,23 @@ public class I8n {
 		String SINGULAR = "Assessment";
 		String PLURAL = "Assessments";
 		
-		public interface Columns {
+		interface Columns {
 			String ID = "#";
 			String EMPLOYEE = "Employee";
 			String PERIOD = "Period";
 			String SCORE = "Overall Score";
 			String STATUS = "Status";
 		}
-		public interface Fields {
+		interface Fields {
 			String MANAGER = "Manager";
 			String EMPLOYEE = "Employee";
 			String PERIOD = "Period";
 		}
+		interface Rating {
+			String SINGULAR = "Assessment Rating";
+			String PLURAL = "Assessment Ratings";
+		}
+
 	}
 	
 	public interface UserNotification {

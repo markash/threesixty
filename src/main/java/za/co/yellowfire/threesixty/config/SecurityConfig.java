@@ -1,5 +1,6 @@
 package za.co.yellowfire.threesixty.config;
 
+import com.vaadin.data.provider.ListDataProvider;
 import io.threesixty.ui.component.notification.NotificationBuilder;
 import io.threesixty.ui.security.SpringSecurityCurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +15,19 @@ import org.vaadin.spring.annotation.PrototypeScope;
 import org.vaadin.spring.events.EventBus;
 import org.vaadin.spring.security.config.AuthenticationManagerConfigurer;
 import za.co.yellowfire.threesixty.Response;
+import za.co.yellowfire.threesixty.domain.rating.PeriodService;
 import za.co.yellowfire.threesixty.domain.user.User;
+import za.co.yellowfire.threesixty.domain.user.UserRepository;
 import za.co.yellowfire.threesixty.domain.user.UserService;
+import za.co.yellowfire.threesixty.ui.view.period.PeriodModel;
 import za.co.yellowfire.threesixty.ui.view.security.ChangePasswordForm;
 import za.co.yellowfire.threesixty.ui.view.security.ChangePasswordHandler;
 import za.co.yellowfire.threesixty.ui.view.security.ChangePasswordModel;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Configuration
 public class SecurityConfig implements AuthenticationManagerConfigurer {
@@ -67,5 +73,12 @@ public class SecurityConfig implements AuthenticationManagerConfigurer {
     @PrototypeScope
     public ChangePasswordForm changePasswordForm(final ChangePasswordHandler changePasswordHandler) {
         return new ChangePasswordForm(changePasswordHandler);
+    }
+
+    @Bean
+    @PrototypeScope
+    ListDataProvider<User> activeUserListDataProvider(final UserRepository userRepository) {
+        List<User> list = userRepository.findByActive(true);
+        return new ListDataProvider<>(list);
     }
 }

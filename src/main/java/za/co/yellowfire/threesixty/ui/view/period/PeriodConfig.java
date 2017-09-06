@@ -70,6 +70,13 @@ public class PeriodConfig {
     }
 
     @Bean
+    @PrototypeScope
+    ListDataProvider<PeriodModel> activePeriodListDataProvider(final PeriodService periodService) {
+        List<PeriodModel> list = periodService.getPeriodRepository().findByActive(true).stream().map(PeriodModel::new).collect(Collectors.toList());
+        return new ListDataProvider<>(list);
+    }
+
+    @Bean
     TableDefinition<PeriodModel> periodTableDefinition() {
         DateRenderer dateRenderer = new DateRenderer("yyyy-MM-dd", "");
         TableDefinition<PeriodModel> tableDefinition = new TableDefinition<>(PeriodEditView.VIEW_NAME);

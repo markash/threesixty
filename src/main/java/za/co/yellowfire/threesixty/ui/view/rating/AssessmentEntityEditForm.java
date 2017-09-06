@@ -1,13 +1,21 @@
 package za.co.yellowfire.threesixty.ui.view.rating;
 
 import com.vaadin.data.HasValue;
-import com.vaadin.data.fieldgroup.PropertyId;
+import com.vaadin.data.ValidationException;
+import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.SerializablePredicate;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
+import io.threesixty.ui.component.notification.NotificationBuilder;
+import io.threesixty.ui.component.panel.PanelBuilder;
+import io.threesixty.ui.security.CurrentUserProvider;
+import io.threesixty.ui.view.AbstractEntityEditForm;
 import org.vaadin.dialogs.ConfirmDialog;
 import org.vaadin.viritin.button.MButton;
+import za.co.yellowfire.threesixty.domain.PersistenceException;
 import za.co.yellowfire.threesixty.domain.mail.MailingException;
 import za.co.yellowfire.threesixty.domain.mail.SendGridMailingService;
 import za.co.yellowfire.threesixty.domain.rating.Assessment;
@@ -16,26 +24,23 @@ import za.co.yellowfire.threesixty.domain.rating.AssessmentStatus;
 import za.co.yellowfire.threesixty.domain.rating.Period;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.I8n;
-import za.co.yellowfire.threesixty.ui.component.PanelBuilder;
-import za.co.yellowfire.threesixty.ui.component.notification.NotificationBuilder;
-import za.co.yellowfire.threesixty.ui.view.AbstractEntityEditForm;
+import za.co.yellowfire.threesixty.ui.view.period.PeriodModel;
 import za.co.yellowfire.threesixty.ui.view.rating.AssessmentRatingsField.ChangeEvent;
 import za.co.yellowfire.threesixty.ui.view.rating.AssessmentRatingsField.RecalculationEvent;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @SuppressWarnings("serial")
 public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment> {
 
-	@PropertyId(Assessment.FIELD_MANAGER)
 	private ComboBox<User> managerField;
-	@PropertyId(Assessment.FIELD_EMPLOYEE)
 	private ComboBox<User> employeeField;
-	@PropertyId(Assessment.FIELD_PERIOD)
-	private ComboBox periodField;
-	@PropertyId(Assessment.FIELD_RATINGS)
+	private ComboBox<za.co.yellowfire.threesixty.ui.view.period.PeriodModel> periodField;
 	private AssessmentRatingsField ratingsField;
-	
+
+	private final ListDataProvider<PeriodModel> periodListDataProvider;
+
 	private final SendGridMailingService mailingService;
 	private AssessmentService service;
 	private User currentUser;
@@ -46,27 +51,33 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	private MButton concludeButton = new MButton("Conclude").withIcon(VaadinIcons.STEP_FORWARD).withListener(this::onConclude);
 	
 	AssessmentEntityEditForm(
-	        final AssessmentService service,
+            final ListDataProvider<PeriodModel> periodListDataProvider,
+            final ListDataProvider<User> userListDataProvider,
+            final AssessmentService service,
             final SendGridMailingService mailingService,
-            final User currentUser) {
+            final CurrentUserProvider<User> currentUserProvider) {
+
+	    super(Assessment.class);
 
 	    this.service = service;
 		this.mailingService = mailingService;
 		this.currentUser = currentUser;
-		
-		List<User> users = service.findActiveUsers();
-		
-		this.managerField = new ComboBox<>(I8n.Assessment.Fields.MANAGER, users);
+
+		this.periodListDataProvider = periodListDataProvider;
+		this.managerField = new ComboBox<>(I8n.Assessment.Fields.MANAGER);
         this.managerField.setWidth(100.0f, Unit.PERCENTAGE);
+        this.managerField.setDataProvider(userListDataProvider);
         this.managerField.setEnabled(false);
 		
-		this.employeeField = new ComboBox<>(I8n.Assessment.Fields.EMPLOYEE, users);
+		this.employeeField = new ComboBox<>(I8n.Assessment.Fields.EMPLOYEE);
 		this.employeeField.setWidth(100.0f, Unit.PERCENTAGE);
+		this.employeeField.setDataProvider(userListDataProvider);
 		this.employeeField.addValueChangeListener(this::onEmployeeSelected);
 		
-		this.periodField = new ComboBox<>(I8n.Assessment.Fields.PERIOD, service.findActivePeriods());
+		this.periodField = new ComboBox<>(I8n.Assessment.Fields.PERIOD);
 		this.periodField.setWidth(100.0f, Unit.PERCENTAGE);
-		
+		this.periodField.setDataProvider(this.periodListDataProvider);
+
 		this.ratingsField = 
 				new AssessmentRatingsField(
 						service.findPossibleRatings(), 
@@ -82,35 +93,29 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	@Override
 	protected void internalLayout() {
 		this.ratingsField.setAssessment(getValue());
-		this.ratingsField.setAssessmentStatus(getValue().getStatus());
-		this.ratingsField.setPossibleRatings(service.findPossibleRatings());
-		this.ratingsField.setPossibleWeightings(service.findPossibleWeightings());
+//		this.ratingsField.setAssessmentStatus(getValue().getStatus());
+//		this.ratingsField.setPossibleRatings(service.findPossibleRatings());
+//		this.ratingsField.setPossibleWeightings(service.findPossibleWeightings());
 		
 		addComponent(PanelBuilder.FORM(
-        		PanelBuilder.HORIZONTAL(idField, employeeField, managerField, periodField),
+        		PanelBuilder.HORIZONTAL(getIdField(), employeeField, managerField, periodField),
         		ratingsField
         		));
 		
-		maintainAssessment();
+//		maintainAssessment();
 		restrictAvailablePeriodsForEmployee();
 	}
-	
-	@Override
-	protected Assessment buildEmpty() {
-		return Assessment.EMPTY();
-	}
-	
-	protected void onValueChange(final HasValue.ValueChangeEvent event) {
-		super.onValueChange(event);
-		
-		if (isModified()) {
-			showButtons();
-			enableButtons();
-		}
-	}
+
+//	protected void onValueChange(final HasValue.ValueChangeEvent event) {
+//		super.onValueChange(event);
+//
+//		if (isModified()) {
+//			showButtons();
+//			enableButtons();
+//		}
+//	}
 	
 	private void onAssessmentRatingChange(final ChangeEvent event) {
-		
 	}
 	
 	private void onRecalculation(final RecalculationEvent event) {
@@ -192,30 +197,28 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	}
 
 	private void progressAssessment() {
-//		try {
-			//Commit the assessment and progress the status
-	        //commit();
+		try {
+			/* Commit the assessment and progress the status */
+	        commit();
 	        getValue().calculate();
 	        getValue().progressStatus();
-	        //Persist the assessment
-	        service.save(getValue(), currentUser);
-	        //Notify the user of the outcome
+	        /* Persist the assessment */
+	        service.save(getValue());
+	        /* Notify the user of the outcome */
 	        String successNotification;
 			switch (getValue().getStatus()) {
 				case Created: successNotification = "Assessment published for employee self assessment"; break;
 				case EmployeeCompleted: successNotification = "Employee self assessment completed"; break;
 				case ManagerCompleted: successNotification = "Management assessment of employee completed"; break;
 				case Reviewed: successNotification = "Assessment review concluded"; break;
-				default: successNotification = "The assessment has been successsfully saved";
+				default: successNotification = "The assessment has been successfully saved";
 			}
 			NotificationBuilder.showNotification("Assessment progression", successNotification);
 	        //Update the user interface
 	        maintainAssessment();
-	        //Inform the view that the form is clean
-	        fireFormClean();
-//		} catch (CommitException exception) {
-//            Notification.show("Error while updating : " + exception.getMessage(), Type.ERROR_MESSAGE);
-//        }
+		} catch (PersistenceException | ValidationException exception) {
+            Notification.show("Error while updating : " + exception.getMessage(), Notification.Type.ERROR_MESSAGE);
+        }
 	}
 	
 	private void maintainAssessment() {
@@ -345,17 +348,15 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	
 	private void restrictAvailablePeriodsForEmployee() {
 		if (getValue() != null) {
-			List<Period> assessedPeriods = service.findAssessmentPeriodsForEmployee(getValue().getEmployee(), getValue());
-			for (Period period : assessedPeriods) {
-				this.periodField.getDataProvider().removeItem(period);
-			}
+			final Set<Period> assessedPeriods = new HashSet<>(service.findAssessmentPeriodsForEmployee(getValue().getEmployee(), getValue()));
+            SerializablePredicate<PeriodModel> unassessedPeriodsFunction = periodModel -> assessedPeriods.contains(periodModel.getWrapped());
+            this.periodListDataProvider.setFilter(unassessedPeriodsFunction);
 		}
 	}
 	
 	private void refreshAvailablePeriodsForEmployee() {
 		if (getValue() != null) {
-			this.periodField.removeAllItems();
-			this.periodField.addItems(service.findAvailablePeriodsForEmployee(getValue().getEmployee(), getValue()));
+			this.periodField.getDataProvider().refreshAll();
 		}
 	}
 }

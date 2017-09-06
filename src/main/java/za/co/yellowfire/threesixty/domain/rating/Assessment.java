@@ -1,5 +1,6 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,7 +17,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import za.co.yellowfire.threesixty.domain.user.User;
 
 @AccessType(Type.FIELD)
-public class Assessment implements Auditable<User, String> {
+public class Assessment implements Auditable<User, Serializable> {
 	private static final long serialVersionUID = 1L;
 	public static final String FIELD_ID = "id";
 	public static final String FIELD_EMPLOYEE = "employee";
