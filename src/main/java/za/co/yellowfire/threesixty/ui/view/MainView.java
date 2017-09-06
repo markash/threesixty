@@ -52,7 +52,7 @@ public class MainView extends HorizontalLayout implements View {
 
 
         // By adding a security item filter, only views that are accessible to the user will show up in the side bar.
-        sideBar.setItemFilter(new VaadinSecurityItemFilter(vaadinSecurity));
+        //sideBar.setItemFilter(new VaadinSecurityItemFilter(vaadinSecurity));
         addComponent(sideBar);
 
         CssLayout viewContainer = new CssLayout();

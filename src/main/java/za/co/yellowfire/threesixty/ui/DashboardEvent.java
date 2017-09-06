@@ -22,11 +22,7 @@ public abstract class DashboardEvent {
         }
     }
 
-    public static final class UserChangePasswordEvent extends AbstractUserEvent {
-        public UserChangePasswordEvent(final User user) {
-            super(user);
-        }
-    }
+
     
     public static class BrowserResizeEvent {
 

@@ -12,13 +12,13 @@ public class FormHeader extends CssLayout {
 		addStyleName("labels");
 		
 		MLabel welcomeLabel = new MLabel(welcome)
-        		.withWidthUndefined()
+        		.withUndefinedWidth()
         		.withStyleName(ValoTheme.LABEL_H4, ValoTheme.LABEL_COLORED);
         addComponent(welcomeLabel);
 
         MLabel titleLabel = new MLabel(title)
         		.withContentMode(ContentMode.HTML)
-        		.withWidthUndefined()
+        		.withUndefinedWidth()
         		.withStyleName(ValoTheme.LABEL_H3, ValoTheme.LABEL_LIGHT);
 
         addComponent(titleLabel);

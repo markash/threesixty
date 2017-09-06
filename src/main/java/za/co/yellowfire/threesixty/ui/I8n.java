@@ -166,19 +166,22 @@ public class I8n {
 	}
 	
 	public interface UserNotification {
-		public interface Fields {
+		interface Fields {
 			String CREATED_BY = "Created By";
 			String MODIFIED_BY = "Modified By";
 		}
 	}
 	public interface ChangePassword {
-		public interface Fields {
+		String SINGULAR = "Change Password";
+		String PLURAL = "Change Passwords";
+
+		interface Fields {
 			String OLD_PASSWORD = "Old Password";
 			String NEW_PASSWORD = "New Password";
 			String CONFIRM_PASSWORD = "Confirm Password";
 		}
 		
-		public interface Errors {
+		interface Errors {
 			String PASSWORDS_DO_NOT_MATCH = "The new and confirm passwords do not match";
 		}
 	}
@@ -194,13 +197,13 @@ public class I8n {
 		String SINGULAR = "Organization";
 		String PLURAL = "Organization";
 		
-		public interface Fields {
+		interface Fields {
 			String NAME = "Name";
 			String TYPE = "Type";
 			String LEVELS = "Levels";
 			String USERS = "Users";
 		}
-		public interface Level {
+		interface Level {
 			VaadinIcons ORGANIZATION = Organization.ICON;
 			VaadinIcons GROUP = VaadinIcons.INSTITUTION;
 			VaadinIcons REGION = VaadinIcons.FLAG;

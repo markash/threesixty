@@ -73,8 +73,7 @@ public class PeriodConfig {
     TableDefinition<PeriodModel> periodTableDefinition() {
         DateRenderer dateRenderer = new DateRenderer("yyyy-MM-dd", "");
         TableDefinition<PeriodModel> tableDefinition = new TableDefinition<>(PeriodEditView.VIEW_NAME);
-        tableDefinition.column(DateField.class).withHeading(I8n.Period.Columns.ID).forProperty(PeriodModel.FIELD_ID).identity();
-        tableDefinition.column(DateField.class).withHeading(I8n.Period.Columns.START).forProperty(PeriodModel.FIELD_START).renderer(dateRenderer);
+        tableDefinition.column(DateField.class).withHeading(I8n.Period.Columns.START).forProperty(PeriodModel.FIELD_ID).identity().display(PeriodModel.FIELD_START);
         tableDefinition.column(DateField.class).withHeading(I8n.Period.Columns.END).forProperty(PeriodModel.FIELD_END).renderer(dateRenderer);
         tableDefinition.column(DateField.class).withHeading(I8n.Period.Columns.DEADLINE_PUBLISH).forProperty(PeriodModel.FIELD_DEADLINE_PUBLISHED).renderer(dateRenderer);
         tableDefinition.column(DateField.class).withHeading(I8n.Period.Columns.DEADLINE_COMPLETE).forProperty(PeriodModel.FIELD_DEADLINE_COMPLETED).renderer(dateRenderer);

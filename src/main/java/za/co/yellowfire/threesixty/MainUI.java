@@ -15,6 +15,7 @@ import com.vaadin.ui.Window;
 import io.threesixty.ui.ApplicationUI;
 import io.threesixty.ui.component.logo.Logo;
 import io.threesixty.ui.component.notification.NotificationBuilder;
+import io.threesixty.ui.event.UserPasswordChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.vaadin.spring.events.EventBus;
@@ -23,6 +24,7 @@ import org.vaadin.spring.security.VaadinSecurity;
 import org.vaadin.spring.security.util.SecurityExceptionUtils;
 import org.vaadin.spring.security.util.SuccessfulLoginEvent;
 import org.vaadin.spring.sidebar.components.ValoSideBar;
+import org.vaadin.spring.sidebar.security.VaadinSecurityItemFilter;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.*;
 import za.co.yellowfire.threesixty.ui.view.LoginView;
@@ -57,6 +59,7 @@ public class MainUI extends ApplicationUI {
     @Override
     protected Component getSideBar() {
         sideBar.setLogo(logo);
+        sideBar.setItemFilter(new VaadinSecurityItemFilter(vaadinSecurity));
         return sideBar;
     }
 
@@ -189,8 +192,8 @@ public class MainUI extends ApplicationUI {
     }
 
     @Subscribe
-    public void userPasswordChanged(final UserChangePasswordEvent event) {
-        VaadinSession.getCurrent().setAttribute(User.class, event.getUser());
+    public void userPasswordChanged(final UserPasswordChangeEvent event) {
+        VaadinSession.getCurrent().setAttribute(User.class, (User) event.getEntity());
         updateContent();
     }
     
