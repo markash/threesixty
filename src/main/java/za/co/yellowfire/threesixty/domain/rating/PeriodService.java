@@ -45,8 +45,7 @@ public class PeriodService implements za.co.yellowfire.threesixty.domain.questio
             overlapping.forEach(range -> b.append(range.toString()).append(" "));
             throw new PersistenceException("The period overlaps the following: " + b.toString());
         }
-		UserPrincipal<User> principal = this.currentUserProvider.get();
-		period.auditChangedBy(principal.getUser());
+		this.currentUserProvider.get().ifPresent(p -> period.auditChangedBy(p.getUser()));
 		return periodRepository.save(period);
 	}
 
@@ -55,7 +54,7 @@ public class PeriodService implements za.co.yellowfire.threesixty.domain.questio
 		Objects.requireNonNull(period, "The period to save is required");
 
 		period.setActive(false);
-		period.auditChangedBy(this.currentUserProvider.get().getUser());
+		this.currentUserProvider.get().ifPresent(p -> period.auditChangedBy(p.getUser()));
 		periodRepository.save(period);
 	}
 

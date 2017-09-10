@@ -1,8 +1,6 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
 import io.threesixty.ui.security.CurrentUserProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import za.co.yellowfire.threesixty.domain.PersistenceException;
@@ -12,8 +10,6 @@ import java.util.Objects;
 
 @Service
 public class OutcomeService implements za.co.yellowfire.threesixty.domain.question.Service<Outcome> {
-	private static final Logger LOG = LoggerFactory.getLogger(OutcomeService.class);
-
 	private OutcomeRepository outcomeRepository;
     private CurrentUserProvider<User> currentUserProvider;
 
@@ -36,7 +32,7 @@ public class OutcomeService implements za.co.yellowfire.threesixty.domain.questi
 	public Outcome save(final Outcome objective) throws PersistenceException {
         Objects.requireNonNull(objective, "The outcome is required");
 
-        objective.auditChangedBy(this.currentUserProvider.get().getUser());
+		this.currentUserProvider.get().ifPresent(p -> objective.auditChangedBy(p.getUser()));
 		return outcomeRepository.save(objective);
 	}
 	
@@ -44,7 +40,7 @@ public class OutcomeService implements za.co.yellowfire.threesixty.domain.questi
         Objects.requireNonNull(objective, "The objective is required");
 
         objective.setActive(false);
-        objective.auditChangedBy(this.currentUserProvider.get().getUser());
+        this.currentUserProvider.get().ifPresent(p -> objective.auditChangedBy(p.getUser()));
 		outcomeRepository.save(objective);
 	}
 }

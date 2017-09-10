@@ -32,10 +32,9 @@ public class AssessmentConfig {
             final ListDataProvider<PeriodModel> activePeriodListDataProvider,
             final ListDataProvider<User> activeUserListDataProvider,
             final AssessmentService assessmentService,
-            final SendGridMailingService mailingService,
             final CurrentUserProvider<User> currentUserProvider,
             final EventBus.SessionEventBus eventBus) {
-        return new AssessmentEntityEditForm(activePeriodListDataProvider, activeUserListDataProvider, assessmentService, mailingService, currentUserProvider);
+        return new AssessmentEntityEditForm(activePeriodListDataProvider, activeUserListDataProvider, assessmentService, currentUserProvider, eventBus);
     }
 
     @Bean

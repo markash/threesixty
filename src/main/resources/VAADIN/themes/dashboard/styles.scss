@@ -14,7 +14,11 @@ $v-font-size:14px;
 }
 
 @import "../../themes/threesixty/_threesixty.scss";
+@import "assessment-rating-header.scss";
+@import "assessment-toolbar.scss";
 
 .dashboard {
   @include threesixty;
+  @include assessment-rating-header;
+  @include assessment-toolbar;
 }

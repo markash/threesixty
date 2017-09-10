@@ -1,0 +1,326 @@
+package za.co.yellowfire.threesixty.ui.view.rating;
+
+import com.vaadin.data.Binder;
+import com.vaadin.data.HasValue;
+import com.vaadin.data.converter.StringToDoubleConverter;
+import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.event.EventRouter;
+import com.vaadin.shared.Registration;
+import com.vaadin.ui.*;
+import io.threesixty.ui.component.panel.PanelBuilder;
+import io.threesixty.ui.view.FormDirtyEvent;
+import org.vaadin.viritin.fields.MTextField;
+import org.vaadin.viritin.label.MLabel;
+import za.co.yellowfire.threesixty.domain.rating.AssessmentRating;
+import za.co.yellowfire.threesixty.domain.rating.AssessmentStatus;
+import za.co.yellowfire.threesixty.domain.rating.PerformanceArea;
+import za.co.yellowfire.threesixty.domain.user.User;
+import za.co.yellowfire.threesixty.ui.Style;
+import za.co.yellowfire.threesixty.ui.component.field.MDoubleLabel;
+
+import java.util.Collection;
+
+public class AssessmentRatingPanel extends GridLayout {
+
+    private MTextField idField = new MTextField("Id").withReadOnly(true);
+    private TextArea measurementField = new TextArea("Measurement");
+    private TextArea managerCommentField = new TextArea("Manager Comment");
+    private TextArea employeeCommentField = new TextArea("Employee Comment");
+    private ComboBox<PerformanceArea> areaField;
+    private ComboBox<Double> weightField = new ComboBox<>("Weight");
+    private ComboBox<Double> ratingField = new ComboBox<>("Rating");
+    private MTextField scoreField = new MTextField("Score").withWidth(100.0f, Unit.PERCENTAGE).withReadOnly(true);
+
+    /* Read only rating panel */
+    private MDoubleLabel employeeRatingField;
+    private MDoubleLabel managerRatingField;
+    private MDoubleLabel reviewRatingField;
+
+    private User currentUser;
+    private AssessmentRating rating;
+    private Binder<AssessmentRating> binder = new Binder<>(AssessmentRating.class);
+
+    private Registration valueChangeRegistration;
+
+    private EventRouter eventRouter;
+
+    public AssessmentRatingPanel(
+            final AssessmentRating rating,
+            final User currentUser,
+            final Collection<Double> possibleRatings,
+            final Collection<Double> possibleWeightings,
+            final Collection<PerformanceArea> performanceAreas) {
+        super(3, 3);
+
+        setWidth(100.0f, Unit.PERCENTAGE);
+        setMargin(false);
+        setSpacing(true);
+
+        this.rating = rating;
+        this.currentUser = currentUser;
+
+        this.areaField = new ComboBox<>("Performance Area", performanceAreas);
+        this.areaField.setWidth(100.0f, Unit.PERCENTAGE);
+
+        ListDataProvider<Double> ratingsProvider = new ListDataProvider<>(possibleRatings);
+        this.ratingField.setDataProvider(ratingsProvider);
+        this.ratingField.setWidth(100.0f, Unit.PERCENTAGE);
+
+        ListDataProvider<Double> weightingsProvider = new ListDataProvider<>(possibleWeightings);
+        this.weightField.setDataProvider(weightingsProvider);
+        this.weightField.setWidth(100.0f, Unit.PERCENTAGE);
+
+        /* Setup read only ratings panel */
+        this.employeeRatingField = new MDoubleLabel(rating.getEmployeeRating());
+		this.managerRatingField = new MDoubleLabel(rating.getManagerRating());
+		this.reviewRatingField = new MDoubleLabel(rating.getReviewRating());
+
+        measurementField.setRows(15);
+        measurementField.setWidth(100.0f, Unit.PERCENTAGE);
+        managerCommentField.setRows(5);
+        managerCommentField.setWidth(100.0f, Unit.PERCENTAGE);
+        employeeCommentField.setRows(5);
+        employeeCommentField.setWidth(100.0f, Unit.PERCENTAGE);
+
+		/* Bind */
+        this.binder.forField(idField).bind("id");
+        this.binder.forField(areaField).bind("performanceArea");
+        this.binder.forField(measurementField).bind("measurement");
+        this.binder.forField(managerCommentField).bind("managerComment");
+        this.binder.forField(employeeCommentField).bind("employeeComment");
+        this.binder.forField(weightField).bind("weight");
+        this.binder.forField(ratingField).bind("rating");
+        this.binder.forField(scoreField).withConverter(new StringToDoubleConverter(0.0, "Unable to convert weighting")).bind("score");
+        this.binder.setBean(this.rating);
+
+        /* Column 0 */
+        addComponent(areaField, 0, 0);
+        addComponent(managerCommentField, 0, 1);
+        addComponent(employeeCommentField, 0, 2);
+
+		/* Column 1 */
+        addComponent(measurementField, 1, 0, 1, 2);
+
+		/* Column 2 */
+        Label ratingLabel = new MLabel("Self-rating: ").withStyleName(Style.Text.BOLDED);
+        HorizontalLayout employeeRatingPanel =
+                PanelBuilder.HORIZONTAL(
+                        "rating-summary-item",
+                        ratingLabel,
+                        this.employeeRatingField);
+        employeeRatingPanel.setExpandRatio(ratingLabel, 3);
+        employeeRatingPanel.setExpandRatio(this.employeeRatingField, 1);
+        employeeRatingPanel.setSpacing(true);
+
+        ratingLabel =  new MLabel("Manager rating: ").withStyleName(Style.Text.BOLDED);
+        HorizontalLayout managerRatingPanel =
+                PanelBuilder.HORIZONTAL(
+                        "rating-summary-item",
+                        ratingLabel,
+                        this.managerRatingField);
+        managerRatingPanel.setExpandRatio(ratingLabel, 3);
+        managerRatingPanel.setExpandRatio(this.managerRatingField, 1);
+        managerRatingPanel.setSpacing(true);
+
+        ratingLabel = new MLabel("Review rating: ").withStyleName(Style.Text.BOLDED);
+        HorizontalLayout reviewRatingPanel =
+                PanelBuilder.HORIZONTAL(
+                        "rating-summary-item",
+                        ratingLabel,
+                        this.reviewRatingField);
+        reviewRatingPanel.setExpandRatio(ratingLabel, 3);
+        reviewRatingPanel.setExpandRatio(this.reviewRatingField, 1);
+        reviewRatingPanel.setSpacing(true);
+
+        VerticalLayout ratingPanel;
+        switch (rating.getAssessment().getStatus()) {
+            case Created:
+                ratingPanel = PanelBuilder.VERTICAL(weightField, ratingField, scoreField, employeeRatingPanel);
+                break;
+            case EmployeeCompleted:
+                ratingPanel = PanelBuilder.VERTICAL(weightField, ratingField, scoreField, employeeRatingPanel, managerRatingPanel);
+                break;
+            case ManagerCompleted:
+            case Reviewed:
+                ratingPanel = PanelBuilder.VERTICAL(weightField, ratingField, scoreField, employeeRatingPanel, managerRatingPanel, reviewRatingPanel);
+                break;
+            default:
+                ratingPanel = PanelBuilder.VERTICAL(weightField, ratingField, scoreField);
+        }
+        addComponent(ratingPanel, 2, 0, 2, 2);
+
+        setColumnExpandRatio(0, 3f);
+        setColumnExpandRatio(1, 3f);
+        setColumnExpandRatio(2, 1f);
+
+        updateFieldAccess();
+        registerValueChangeListener();
+    }
+
+    public void setCurrentUser(final User currentUser) {
+        this.currentUser = currentUser;
+    }
+
+    protected void updateFieldAccess() {
+
+        this.areaField.setReadOnly(isAreaReadOnly());
+        this.measurementField.setReadOnly(isMeasurementReadOnly());
+        this.managerCommentField.setReadOnly(isManagerCommentReadOnly());
+        this.employeeCommentField.setReadOnly(isEmployeeCommentReadOnly());
+        this.weightField.setReadOnly(isWeightReadOnly());
+        this.ratingField.setReadOnly(isRatingReadOnly());
+    }
+
+    public AssessmentRating getValue() {
+        return this.rating;
+    }
+
+    private boolean isCurrentUserAdmin() {
+        return this.currentUser != null && this.currentUser.isAdmin();
+    }
+
+    private boolean isCurrentUserManager() {
+        return getValue().getAssessment().getManager().equals(currentUser);
+    }
+
+    private boolean isCurrentUserEmployee() {
+        return getValue().getAssessment().getEmployee().equals(currentUser);
+    }
+
+    @SuppressWarnings("unused")
+    public boolean isCreatingStatus() {
+        return getValue().getAssessment().getStatus() == AssessmentStatus.Creating;
+    }
+
+    private boolean isCreatedStatus() {
+        return getValue().getAssessment().getStatus() == AssessmentStatus.Created;
+    }
+
+    private boolean isEmployeeCompletedStatus() {
+        return getValue().getAssessment().getStatus() == AssessmentStatus.EmployeeCompleted;
+    }
+
+    private boolean isManagerCompletedStatus() {
+        return getValue().getAssessment().getStatus() == AssessmentStatus.ManagerCompleted;
+    }
+
+    private boolean isReviewedStatus() {
+        return getValue().getAssessment().getStatus() == AssessmentStatus.Reviewed;
+    }
+
+    private boolean isAreaReadOnly() {
+        return !((isCurrentUserAdmin() || isCurrentUserManager()) && !isReviewedStatus());
+    }
+
+    private boolean isMeasurementReadOnly() {
+        return !((isCurrentUserAdmin() || isCurrentUserManager()) && !isReviewedStatus());
+    }
+
+    private boolean isEmployeeCommentReadOnly() {
+        return !(isCurrentUserEmployee() && (isCreatedStatus()));
+    }
+
+    private boolean isManagerCommentReadOnly() {
+        return !(isCurrentUserManager() && (isEmployeeCompletedStatus() || isManagerCompletedStatus()));
+    }
+
+    private boolean isWeightReadOnly() {
+        return !((isCurrentUserAdmin() || isCurrentUserManager()) && !isReviewedStatus());
+    }
+
+    private boolean isRatingReadOnly() {
+        switch(getValue().getAssessment().getStatus()) {
+            case Creating:
+                return true;
+            case Created:
+                return !isCurrentUserEmployee();
+            case EmployeeCompleted:
+                return !isCurrentUserManager();
+            case ManagerCompleted:
+                return !isCurrentUserManager();
+            case Reviewed:
+                return true;
+            default:
+                return true;
+        }
+    }
+
+    public void commit() {
+//        try {
+//            this.fieldGroup.commit();
+//        } catch (FieldGroup.CommitException e) {
+//            throw new RuntimeException("Unable to commit assessment rating", e);
+//        }
+    }
+
+//    public void addDirtyListener(final AssessmentDirtyListener listener) {
+//        if (listener != null) {
+//            this.dirtyListeners.add(listener);
+//        }
+//    }
+
+    protected EventRouter getEventRouter() {
+        if (eventRouter == null) {
+            eventRouter = new EventRouter();
+        }
+        return eventRouter;
+    }
+
+    public Registration addAssessmentDirtyListener(final AssessmentDirtyListener listener) {
+        return getEventRouter().addListener(AssessmentDirtyEvent.class, listener, AssessmentDirtyListener.class.getDeclaredMethods()[0]);
+    }
+
+    @SuppressWarnings("unused")
+    private void removeValueChangeListener() {
+        if (this.valueChangeRegistration != null) {
+            this.valueChangeRegistration.remove();
+            this.valueChangeRegistration = null;
+        }
+    }
+
+    private void registerValueChangeListener() {
+        removeValueChangeListener();
+        this.valueChangeRegistration = this.binder.addValueChangeListener(this::onValueChange);
+    }
+
+    private void onValueChange(final HasValue.ValueChangeEvent event) {
+
+        boolean ratingChanged = ratingField.equals(event.getSource());
+        boolean recalculationRequired = weightField.equals(event.getSource()) || ratingChanged;
+
+        if (recalculationRequired) {
+            this.scoreField.markAsDirty();
+        }
+
+        if (ratingChanged) {
+            onRatingChange(ratingField.getValue());
+        }
+
+        getEventRouter().fireEvent(new AssessmentDirtyEvent(this, recalculationRequired));
+    }
+
+    private void onRatingChange(Double rating) {
+        switch(getValue().getAssessment().getStatus()) {
+            case Created:
+				/* Set the employee self rating */
+                getValue().setEmployeeRating(rating);
+                this.employeeRatingField.setValue(rating);
+                //this.employeeRatingField.markAsDirty();
+                break;
+            case EmployeeCompleted:
+				/* Set the manager rating */
+                getValue().setManagerRating(rating);
+                this.managerRatingField.setValue(rating);
+                //this.managerRatingField.markAsDirty();
+                break;
+            case ManagerCompleted:
+				/* Set the review rating */
+                getValue().setReviewRating(rating);
+                this.reviewRatingField.setValue(rating);
+                //this.reviewRatingField.markAsDirty();
+                break;
+            default:
+				/* Not set */
+        }
+    }
+}

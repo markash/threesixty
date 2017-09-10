@@ -37,7 +37,14 @@ public class I8n {
 		String FIELDS = "fields";
 	}
 	
-	
+
+	public interface Confirmation {
+		String TITLE = "Confirmation";
+		String YES = "Yes";
+		String NO = "No";
+		String OK = "OK";
+		String CANCEL = "Cancel";
+	}
 	public interface Notifications {
 		String HEADER = "Notifications";
 		String BUTTON_VIEW_ALL = "View All Notifications";
@@ -167,7 +174,16 @@ public class I8n {
 			String SINGULAR = "Assessment Rating";
 			String PLURAL = "Assessment Ratings";
 		}
-
+		interface Confirmation {
+			String PUBLISH = "Publishing the assessment will inform the employee that the assessment is ready for review " +
+					"and further changes are not possible.\nWould you like to publish the assessment?";
+			String EMPLOYEE_COMPLETE = "Completing the self-review will inform the manager that the assessment is ready for review " +
+					"and further changes are not possible.\nWould you like to proceed?";
+			String MANAGER_COMPLETE = "Completing the manager review will inform the employee that the assessment is ready for final review " +
+					"and further changes are not possible.\nWould you like to proceed?";
+			String REVIEW_COMPLETE = "Completing the final review will close off the assessment " +
+					"and further changes are not possible.\nWould you like to proceed?";
+		}
 	}
 	
 	public interface UserNotification {

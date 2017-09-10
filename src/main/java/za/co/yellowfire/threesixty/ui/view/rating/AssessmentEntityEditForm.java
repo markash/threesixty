@@ -10,14 +10,17 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import io.threesixty.ui.component.notification.NotificationBuilder;
-import io.threesixty.ui.component.panel.PanelBuilder;
+import io.threesixty.ui.event.EnterEntityEditViewEvent;
+import io.threesixty.ui.event.EventUtils;
 import io.threesixty.ui.security.CurrentUserProvider;
 import io.threesixty.ui.view.AbstractEntityEditForm;
 import org.vaadin.dialogs.ConfirmDialog;
+import org.vaadin.spring.events.EventBus;
+import org.vaadin.spring.events.EventBusListener;
 import org.vaadin.viritin.button.MButton;
+import org.vaadin.viritin.layouts.MHorizontalLayout;
+import org.vaadin.viritin.layouts.MVerticalLayout;
 import za.co.yellowfire.threesixty.domain.PersistenceException;
-import za.co.yellowfire.threesixty.domain.mail.MailingException;
-import za.co.yellowfire.threesixty.domain.mail.SendGridMailingService;
 import za.co.yellowfire.threesixty.domain.rating.Assessment;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentStatus;
@@ -25,14 +28,14 @@ import za.co.yellowfire.threesixty.domain.rating.Period;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.view.period.PeriodModel;
-import za.co.yellowfire.threesixty.ui.view.rating.AssessmentRatingsField.ChangeEvent;
-import za.co.yellowfire.threesixty.ui.view.rating.AssessmentRatingsField.RecalculationEvent;
 
+import javax.annotation.PreDestroy;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @SuppressWarnings("serial")
-public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment> {
+public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment> implements EventBusListener<EnterEntityEditViewEvent<Assessment>> {
 
 	private ComboBox<User> managerField;
 	private ComboBox<User> employeeField;
@@ -41,10 +44,10 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 
 	private final ListDataProvider<PeriodModel> periodListDataProvider;
 
-	private final SendGridMailingService mailingService;
 	private AssessmentService service;
 	private User currentUser;
-	
+    private final EventBus.SessionEventBus eventBus;
+
 	private MButton publishButton = new MButton("Publish").withIcon(VaadinIcons.STEP_FORWARD).withListener(this::onPublish);
 	private MButton employeeCompleteButton = new MButton("Employee Complete").withIcon(VaadinIcons.STEP_FORWARD).withListener(this::onEmployeeComplete);
 	private MButton managerCompleteButton = new MButton("Manager Complete").withIcon(VaadinIcons.STEP_FORWARD).withListener(this::onManagerComplete);
@@ -54,14 +57,15 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
             final ListDataProvider<PeriodModel> periodListDataProvider,
             final ListDataProvider<User> userListDataProvider,
             final AssessmentService service,
-            final SendGridMailingService mailingService,
-            final CurrentUserProvider<User> currentUserProvider) {
+            final CurrentUserProvider<User> currentUserProvider,
+            final EventBus.SessionEventBus eventBus) {
 
 	    super(Assessment.class);
 
 	    this.service = service;
-		this.mailingService = mailingService;
-		this.currentUser = currentUser;
+		currentUserProvider.get().ifPresent(p -> this.currentUser = p.getUser());
+        this.eventBus = eventBus;
+        this.eventBus.subscribe(this);
 
 		this.periodListDataProvider = periodListDataProvider;
 		this.managerField = new ComboBox<>(I8n.Assessment.Fields.MANAGER);
@@ -86,8 +90,12 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 						new MButton[] {publishButton, employeeCompleteButton, managerCompleteButton, concludeButton});
 			
 		this.ratingsField.setCurrentUser(currentUser);
-		this.ratingsField.setAssessmentRatingListener(this::onAssessmentRatingChange);
-		this.ratingsField.setRecalculationListener(this::onRecalculation);
+		this.ratingsField.addAssessmentRatingListener(this::onAssessmentRatingChange);
+		this.ratingsField.addRecalculationListener(this::onRecalculation);
+
+		getBinder().forField(managerField).bind(Assessment.FIELD_MANAGER);
+        getBinder().forField(employeeField).bind(Assessment.FIELD_EMPLOYEE);
+        getBinder().forField(periodField).bind(Assessment.FIELD_PERIOD);
 	}
 	
 	@Override
@@ -96,13 +104,15 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 //		this.ratingsField.setAssessmentStatus(getValue().getStatus());
 //		this.ratingsField.setPossibleRatings(service.findPossibleRatings());
 //		this.ratingsField.setPossibleWeightings(service.findPossibleWeightings());
-		
-		addComponent(PanelBuilder.FORM(
-        		PanelBuilder.HORIZONTAL(getIdField(), employeeField, managerField, periodField),
-        		ratingsField
-        		));
-		
-//		maintainAssessment();
+
+        addComponents(
+                new MVerticalLayout(
+                        new MHorizontalLayout(getIdField(), employeeField, managerField, periodField).withFullWidth(),
+                        ratingsField
+                )
+        );
+
+		//maintainAssessment();
 		restrictAvailablePeriodsForEmployee();
 	}
 
@@ -115,86 +125,54 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 //		}
 //	}
 	
-	private void onAssessmentRatingChange(final ChangeEvent event) {
+	private void onAssessmentRatingChange(final AssessmentRatingEvent event) {
 	}
 	
-	private void onRecalculation(final RecalculationEvent event) {
+	private void onRecalculation(final AssessmentRecalculationEvent event) {
 		showButtons();
 		enableButtons();
 	}
-	
-	private void onPublish(final ClickEvent event) {
-		ConfirmDialog.show(
-				UI.getCurrent(), 
-				"Confirmation", 
-				"Publishing the assessment will inform the employee that the assessment is ready for review " +
-				"and further changes are not possible.\nWould you like to publish the assessment?",
-				"Yes",
-				"No",
-		        new ConfirmDialog.Listener() {
-		            public void onClose(ConfirmDialog dialog) {
-		                if (dialog.isConfirmed()) {
-		                	progressAssessment();
-		                	try {
-		                	mailingService.send();
-		                	} catch (MailingException e) {
-		                		e.printStackTrace();
-		                	}
-		                }
-		            }
-				});
-	}
-	
-	private void onEmployeeComplete(final ClickEvent event) {
-		ConfirmDialog.show(
-				UI.getCurrent(), 
-				"Confirmation", 
-				"Completing the self-review will inform the manager that the assessment is ready for review " +
-				"and further changes are not possible.\nWould you like to proceed?",
-				"Yes",
-				"No",
-		        new ConfirmDialog.Listener() {
-		            public void onClose(ConfirmDialog dialog) {
-		                if (dialog.isConfirmed()) {
-		                	progressAssessment();
-		                }
-		            }
-				});
-	}
-	
-	private void onManagerComplete(final ClickEvent event) {
-		ConfirmDialog.show(
-				UI.getCurrent(), 
-				"Confirmation", 
-				"Completing the manager review will inform the employee that the assessment is ready for final review " +
-				"and further changes are not possible.\nWould you like to proceed?",
-				"Yes",
-				"No",
-		        new ConfirmDialog.Listener() {
-		            public void onClose(ConfirmDialog dialog) {
-		                if (dialog.isConfirmed()) {
-		                	progressAssessment();
-		                }
-		            }
-				});
+
+	@Override
+	public void onEvent(final org.vaadin.spring.events.Event<EnterEntityEditViewEvent<Assessment>> event) {
+
+		if (EventUtils.eventFor(event, AssessmentEditView.class)) {
+			final Optional<Assessment> assessment = Optional.ofNullable(event.getPayload().getEntity());
+			if (assessment.isPresent()) {
+                maintainAssessment();
+			}
+		}
 	}
 
-	private void onConclude(final ClickEvent event) {
-		ConfirmDialog.show(
-				UI.getCurrent(), 
-				"Confirmation", 
-				"Completing the final review will close off the assessment " +
-				"and further changes are not possible.\nWould you like to proceed?",
-				"Yes",
-				"No",
-		        new ConfirmDialog.Listener() {
-		            public void onClose(ConfirmDialog dialog) {
-		                if (dialog.isConfirmed()) {
-		                	progressAssessment();
-		                }
-		            }
-				});
+    @SuppressWarnings("unused")
+	private void onPublish(final ClickEvent event) {
+        progressAssessmentConfirmation(I8n.Assessment.Confirmation.PUBLISH);
 	}
+
+    @SuppressWarnings("unused")
+	private void onEmployeeComplete(final ClickEvent event) {
+        progressAssessmentConfirmation(I8n.Assessment.Confirmation.EMPLOYEE_COMPLETE);
+	}
+
+	@SuppressWarnings("unused")
+	private void onManagerComplete(final ClickEvent event) {
+        progressAssessmentConfirmation(I8n.Assessment.Confirmation.MANAGER_COMPLETE);
+	}
+
+    @SuppressWarnings("unused")
+	private void onConclude(final ClickEvent event) {
+        progressAssessmentConfirmation(I8n.Assessment.Confirmation.REVIEW_COMPLETE);
+	}
+
+	private void progressAssessmentConfirmation(final String message) {
+        ConfirmDialog.show(
+                UI.getCurrent(),
+                I8n.Confirmation.TITLE,
+                message,
+                I8n.Confirmation.YES,
+                I8n.Confirmation.NO,
+                dialog -> { if (dialog.isConfirmed()) progressAssessment(); });
+    }
 
 	private void progressAssessment() {
 		try {
@@ -207,10 +185,18 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	        /* Notify the user of the outcome */
 	        String successNotification;
 			switch (getValue().getStatus()) {
-				case Created: successNotification = "Assessment published for employee self assessment"; break;
-				case EmployeeCompleted: successNotification = "Employee self assessment completed"; break;
-				case ManagerCompleted: successNotification = "Management assessment of employee completed"; break;
-				case Reviewed: successNotification = "Assessment review concluded"; break;
+				case Created:
+				    successNotification = "Assessment published for employee self assessment";
+				    break;
+				case EmployeeCompleted:
+				    successNotification = "Employee self assessment completed";
+				    break;
+				case ManagerCompleted:
+				    successNotification = "Management assessment of employee completed";
+				    break;
+				case Reviewed:
+				    successNotification = "Assessment review concluded";
+				    break;
 				default: successNotification = "The assessment has been successfully saved";
 			}
 			NotificationBuilder.showNotification("Assessment progression", successNotification);
@@ -230,7 +216,8 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 		if (!managerField.isReadOnly()) {
 			managerField.setEnabled(false);
 		}
-		
+
+        this.ratingsField.setAssessment(getValue());
 		this.ratingsField.setAssessmentStatus(getValue().getStatus());
 		this.ratingsField.setCurrentUser(currentUser);
 		
@@ -359,4 +346,10 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 			this.periodField.getDataProvider().refreshAll();
 		}
 	}
+
+    @PreDestroy
+    @SuppressWarnings("unused")
+    void destroy() {
+        eventBus.unsubscribe(this);
+    }
 }

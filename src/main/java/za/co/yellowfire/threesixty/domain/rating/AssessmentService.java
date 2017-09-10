@@ -2,12 +2,13 @@ package za.co.yellowfire.threesixty.domain.rating;
 
 import io.threesixty.ui.component.card.CounterStatisticModel;
 import io.threesixty.ui.security.CurrentUserProvider;
-import io.threesixty.ui.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import za.co.yellowfire.threesixty.domain.PersistenceException;
+import za.co.yellowfire.threesixty.domain.mail.MailingException;
+import za.co.yellowfire.threesixty.domain.mail.SendGridMailingService;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserRepository;
 
@@ -25,6 +26,7 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 	private final ArrayList<Double> possibleRatings;
 	private final ArrayList<Double> possibleWeightings;
     private CurrentUserProvider<User> currentUserProvider;
+    private final SendGridMailingService mailingService;
 
 	@Autowired
 	public AssessmentService(
@@ -32,13 +34,15 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 			final PerformanceAreaRepository performanceAreaRepository,
 			final PeriodRepository periodRepository,
 			final UserRepository userRepository,
-            final CurrentUserProvider<User> currentUserProvider) {
+            final CurrentUserProvider<User> currentUserProvider,
+            final SendGridMailingService mailingService) {
 		
 		this.assessmentRepository = assessmentRepository;
 		this.userRepository = userRepository;
 		this.periodRepository = periodRepository;
 		this.performanceAreaRepository = performanceAreaRepository;
 		this.currentUserProvider = currentUserProvider;
+        this.mailingService = mailingService;
 
 		this.possibleRatings = new ArrayList<>(Arrays.asList(new Double[] {1.0, 2.0, 3.0, 4.0, 5.0}));
 		this.possibleWeightings = new ArrayList<>(Arrays.asList(new Double[] {0.0, 10.0, 20.0, 25.0, 30.0, 40.0, 50.0, 60.0, 70.0, 75.0, 80.0, 90.0, 100.0}));
@@ -95,8 +99,15 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 	
 	public Assessment save(final Assessment assessment) throws PersistenceException {
 		Objects.requireNonNull(assessment, "The assessment is required");
-		UserPrincipal<User> principal = this.currentUserProvider.get();
-		assessment.auditChangedBy(principal.getUser());
+
+		this.currentUserProvider.get().ifPresent(p -> assessment.auditChangedBy(p.getUser()));
+
+        try {
+            mailingService.send();
+        } catch (MailingException e) {
+            e.printStackTrace();
+        }
+
 		return assessmentRepository.save(assessment);
 	}
 	
@@ -104,7 +115,7 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
         Objects.requireNonNull(assessment, "The assessment is required");
 
 		assessment.setActive(false);
-		assessment.auditChangedBy(this.currentUserProvider.get().getUser());
+        this.currentUserProvider.get().ifPresent(p -> assessment.auditChangedBy(p.getUser()));
 		assessmentRepository.save(assessment);
 	}
 	

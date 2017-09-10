@@ -1,0 +1,31 @@
+
+@mixin assessment-rating-header {
+    .assessment-rating-header {
+        width: 100%;
+        text-align: right;
+        white-space: normal;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        background-color: rgb(4, 73, 112);
+        color: rgba(255, 255, 255, 0.87);
+    }
+
+    .assessment-rating-header .v-expand {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .assessment-rating-header .v-slot-h3 {
+        text-align: left;
+        padding-top: 8px;
+    }
+
+    .assessment-rating-header .h3 {
+        white-space: normal;
+        color: rgba(255, 255, 255, 0.87);
+    }
+
+    .assessment-rating-header .toolbar {
+        margin-right: 5px;
+    }
+}

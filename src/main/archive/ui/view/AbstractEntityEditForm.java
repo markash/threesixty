@@ -21,7 +21,7 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
 
     protected TextField idField = new TextField("Id");
 	private Binder<T> binder;
-	//private LinkedHashSet<DirtyListener> dirtyListeners = new LinkedHashSet<>();
+	//private LinkedHashSet<AssessmentDirtyListener> dirtyListeners = new LinkedHashSet<>();
 	
 	private boolean layoutCompleted = false;
 	
@@ -191,7 +191,7 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
 	
 //	private void fireFormDirty(final FormDirtyEvent event) {
 //		if (dirtyListeners != null) {
-//			for (DirtyListener listener : dirtyListeners) {
+//			for (AssessmentDirtyListener listener : dirtyListeners) {
 //				listener.onDirty(event);
 //			}
 //		}
@@ -217,7 +217,7 @@ public abstract class AbstractEntityEditForm<T extends Persistable<String>> exte
         boolean isRecalculationRequired();
     }
     
-//    public static class FormDirtyEvent<T> implements DirtyEvent {
+//    public static class FormDirtyEvent<T> implements AssessmentDirtyEvent {
 //    	private final Property<?> property;
 //    	private final DirtyStatus status;
 //    	private final boolean recalculationRequired;

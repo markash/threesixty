@@ -15560,8 +15560,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .card-container {
 	margin-left: 5px;
-	margin-left: 40px;
-	margin-right: 40px;
 	margin-bottom: 20px;
 }
 
@@ -15604,4 +15602,84 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .card-container {
 	padding: 2px 16px;
+}
+
+.dashboard .assessment-rating-header {
+	width: 100%;
+	text-align: right;
+	white-space: normal;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	background-color: #044970;
+	color: rgba(255, 255, 255, 0.87);
+}
+
+.dashboard .assessment-rating-header .v-expand {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.dashboard .assessment-rating-header .v-slot-h3 {
+	text-align: left;
+	padding-top: 8px;
+}
+
+.dashboard .assessment-rating-header .h3 {
+	white-space: normal;
+	color: rgba(255, 255, 255, 0.87);
+}
+
+.dashboard .assessment-rating-header .toolbar {
+	margin-right: 5px;
+}
+
+.dashboard .v-window-top-toolbar.v-layout {
+	padding: 6px 11px;
+	position: relative;
+	z-index: 2;
+	border-top: 0 solid #cacaca;
+	border-bottom: 0 solid #cacaca;
+	background-color: #eee;
+}
+
+.dashboard .v-window-top-toolbar.v-menubar {
+	margin: 11px 11px 5px;
+}
+
+.dashboard .v-window-top-toolbar.v-menubar-borderless {
+	padding-left: 5px;
+	padding-right: 5px;
+	margin: 5px 0;
+}
+
+.dashboard .v-window-bottom-toolbar.v-layout {
+	padding: 6px 11px;
+	background-color: #eee;
+	background-image: -webkit-linear-gradient(top, #eeeeee 0, #eee 3px);
+	background-image: linear, to bottom, #eeeeee 0, #eee 3px;
+	border-top: 0 solid #cacaca;
+	border-radius: 0 0 4px 4px;
+}
+
+.dashboard .v-margin-left.v-margin-right.v-margin-top .v-window-top-toolbar.v-layout {
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+	margin: -11px -11px 0;
+}
+
+.dashboard .v-margin-left.v-margin-right.v-margin-top .v-window-top-toolbar.v-menubar {
+	margin: 0;
+}
+
+.dashboard .v-margin-left.v-margin-right.v-margin-top .v-window-top-toolbar.v-menubar-borderless {
+	margin: -6px -6px 0;
+	padding: 0;
+}
+
+.dashboard .v-margin-left.v-margin-right.v-margin-bottom .v-window-bottom-toolbar.v-layout {
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+	margin: 0 -11px -11px;
 }
