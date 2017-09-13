@@ -39,7 +39,7 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 
 	private ComboBox<User> managerField;
 	private ComboBox<User> employeeField;
-	private ComboBox<za.co.yellowfire.threesixty.ui.view.period.PeriodModel> periodField;
+	private ComboBox<PeriodModel> periodField;
 	private AssessmentRatingsField ratingsField;
 
 	private final ListDataProvider<PeriodModel> periodListDataProvider;
@@ -90,17 +90,17 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 						new MButton[] {publishButton, employeeCompleteButton, managerCompleteButton, concludeButton});
 			
 		this.ratingsField.setCurrentUser(currentUser);
-		this.ratingsField.addAssessmentRatingListener(this::onAssessmentRatingChange);
-		this.ratingsField.addRecalculationListener(this::onRecalculation);
+		//this.ratingsField.addAssessmentRatingListener(this::onAssessmentRatingChange);
+		//this.ratingsField.addRecalculationListener(this::onRecalculation);
 
 		getBinder().forField(managerField).bind(Assessment.FIELD_MANAGER);
         getBinder().forField(employeeField).bind(Assessment.FIELD_EMPLOYEE);
-        getBinder().forField(periodField).bind(Assessment.FIELD_PERIOD);
+        getBinder().forField(periodField).withConverter(PeriodModel.converter()).bind(Assessment.FIELD_PERIOD);
 	}
 	
 	@Override
 	protected void internalLayout() {
-		this.ratingsField.setAssessment(getValue());
+		this.ratingsField.setValue(getValue());
 //		this.ratingsField.setAssessmentStatus(getValue().getStatus());
 //		this.ratingsField.setPossibleRatings(service.findPossibleRatings());
 //		this.ratingsField.setPossibleWeightings(service.findPossibleWeightings());
@@ -208,6 +208,12 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	}
 	
 	private void maintainAssessment() {
+
+	    /* If the assessment is creating and no ratings then create the first rating */
+	    if (getValue().isBlank()) {
+	        getValue().addAssessmentRating();
+        }
+
 		this.employeeField.setReadOnly(isEmployeeReadOnly());
 		this.managerField.setReadOnly(isManagerReadOnly());
 		this.periodField.setReadOnly(isPeriodReadOnly());
@@ -217,8 +223,8 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 			managerField.setEnabled(false);
 		}
 
-        this.ratingsField.setAssessment(getValue());
-		this.ratingsField.setAssessmentStatus(getValue().getStatus());
+        this.ratingsField.setValue(getValue());
+		//this.ratingsField.setAssessmentStatus(getValue().getStatus());
 		this.ratingsField.setCurrentUser(currentUser);
 		
 		showButtons();
@@ -294,7 +300,7 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	}
 	
 	private boolean canEnabledEmployee() {
-		return getValue().getStatus() == AssessmentStatus.Creating && this.currentUser.isAdmin();
+		return isStatusInCreating() && isCurrentUserAdmin();
 	}
 	
 	private boolean isEmployeeReadOnly() {
@@ -306,13 +312,21 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	}
 	
 	private boolean canEnablePeriod() {
-		return getValue().getStatus() == AssessmentStatus.Creating && this.currentUser.isAdmin();
+		return isStatusInCreating() && isCurrentUserAdmin();
 	}
 	
 	private boolean isPeriodReadOnly() {
 		return !canEnablePeriod();
 	}
-	
+
+	private boolean isStatusInCreating() {
+	    return getValue().getStatus() == AssessmentStatus.Creating;
+    }
+
+	private boolean isCurrentUserAdmin() {
+	    return Optional.ofNullable(this.currentUser).map(User::isAdmin).orElse(false);
+    }
+
 	private void onEmployeeSelected(HasValue.ValueChangeEvent<User> event) {
 		User user = event.getValue();
 		if (user != null && user.getReportsTo() != null) {
@@ -330,7 +344,7 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 		refreshAvailablePeriodsForEmployee();
 		
 		/*Fire the change */
-		this.ratingsField.fireAssessmentParticipantsChanged();
+		this.ratingsField.refresh();
 	}
 	
 	private void restrictAvailablePeriodsForEmployee() {

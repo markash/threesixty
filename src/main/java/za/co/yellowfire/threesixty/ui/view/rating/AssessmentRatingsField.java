@@ -2,9 +2,7 @@ package za.co.yellowfire.threesixty.ui.view.rating;
 
 import com.vaadin.event.EventRouter;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Responsive;
-import com.vaadin.shared.Registration;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
@@ -17,26 +15,23 @@ import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 import za.co.yellowfire.threesixty.domain.rating.Assessment;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentRating;
-import za.co.yellowfire.threesixty.domain.rating.AssessmentStatus;
 import za.co.yellowfire.threesixty.domain.rating.PerformanceArea;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.Style;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Set;
 
 @SuppressWarnings("serial")
-public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {	
+public class AssessmentRatingsField extends CustomField<Assessment> {
 	/* Tabs and panels */
 	private TabSheet tabSheet;
 	private LinkedList<AssessmentRatingPanel> panels = new LinkedList<>();
 	
 	/* Header */
 	private AssessmentSummaryHeader summary;
-	private MButton addButton = new MButton("Add").withIcon(FontAwesome.PLUS_CIRCLE).withListener(this::onAdd);
+	private MButton addButton = new MButton("Add").withIcon(VaadinIcons.PLUS_CIRCLE).withListener(this::onAdd);
 	
 	/* Fields */
 	private LinkedList<Double> possibleRatings = new LinkedList<>();
@@ -45,11 +40,10 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 
 	private User currentUser;
 	private Assessment assessment;
-	private AssessmentStatus assessmentStatus = AssessmentStatus.Creating;
-	private Set<AssessmentRating> ratings;
+	//private AssessmentStatus assessmentStatus = AssessmentStatus.Creating;
     private EventRouter eventRouter;
 
-	public AssessmentRatingsField(
+	AssessmentRatingsField(
 			final Collection<Double> possibleRatings, 
 			final Collection<Double> possibleWeightings,
 			final Collection<PerformanceArea> performanceAreas,
@@ -61,34 +55,25 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 		this.summary = new AssessmentSummaryHeader(ArrayUtils.addAll(new Button[] {addButton}, buttons));
 	}
 	
-	public Registration addAssessmentRatingListener(final AssessmentRatingListener listener) {
-        return getEventRouter().addListener(AssessmentRatingEvent.class, listener, AssessmentRatingListener.class.getMethods()[0]);
-	}
-
-	public Registration addRecalculationListener(final AssessmentRecalculationListener listener) {
-		return getEventRouter().addListener(AssessmentRecalculationEvent.class, listener, AssessmentRecalculationListener.class.getMethods()[0]);
-	}
+//	public Registration addAssessmentRatingListener(final AssessmentRatingListener listener) {
+//        return getEventRouter().addListener(AssessmentRatingEvent.class, listener, AssessmentRatingListener.class.getMethods()[0]);
+//	}
+//
+//	public Registration addRecalculationListener(final AssessmentRecalculationListener listener) {
+//		return getEventRouter().addListener(AssessmentRecalculationEvent.class, listener, AssessmentRecalculationListener.class.getMethods()[0]);
+//	}
 
 	@Override
 	protected Component initContent() {
-				
+
+        this.setWidth(100.0f, Unit.PERCENTAGE);
+
 		this.tabSheet = new TabSheet();
-		this.setWidth(100.0f, Unit.PERCENTAGE);
 		Responsive.makeResponsive(this.tabSheet);
 		
 		if (getValue() != null) {
-			
-			int i = 0;
-			for(AssessmentRating rating : getValue()) {
-				AssessmentRatingPanel panel = addAssessmentRatingPanel(rating, currentUser);
-				panel.setCurrentUser(currentUser);
-				
-				if (i++ == 0) {
-					this.summary.setAssessment(rating.getAssessment());
-				}
-			}
-		} else {
-			//addAssessmentRating();
+            this.summary.setAssessment(getValue());
+		    getValue().getAssessmentRatings().forEach(rating -> addAssessmentRatingPanel(rating, currentUser));
 		}
 		
 		/* Create the header with the header buttons */
@@ -122,19 +107,48 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 //		super.commit();
 //	}
 
-    /**
-     * Sets the value of this field. May do sanitization or throw
-     * {@code IllegalArgumentException} if the value is invalid. Typically saves
-     * the value to shared state.
-     *
-     * @param value the new value of the field
-     * @throws IllegalArgumentException if the value is invalid
-     */
     @Override
-    protected void doSetValue(Set<AssessmentRating> value) {
-        /* Maintain the tab sheet and panels */
-        this.ratings = value;
+    public Assessment getValue() {
+        return this.assessment;
+    }
 
+    @Override
+    protected void doSetValue(final Assessment value) {
+        /* Maintain the tab sheet and panels */
+        this.assessment = value;
+
+        refresh();
+    }
+
+    void refresh() {
+        maintainSummary();
+        maintainTabSheet();
+        maintainButtons();
+    }
+
+    void setCurrentUser(final User currentUser) {
+        this.currentUser = currentUser;
+        maintainButtons();
+    }
+
+    private boolean isAddButtonEnabled() {
+		return this.assessment != null && this.assessment.getStatus().isEditingAllowed() && this.assessment.hasParticipants();
+	}
+
+	private void maintainSummary() {
+        this.summary.setAssessment(getValue());
+    }
+
+	private void maintainButtons() {
+		this.addButton.setEnabled(isAddButtonEnabled());
+		
+		for(AssessmentRatingPanel panel : this.panels) {
+            panel.setCurrentUser(currentUser);
+			panel.updateFieldAccess();
+		}
+	}
+
+	private void maintainTabSheet() {
         if (this.tabSheet != null) {
             for (AssessmentRatingPanel panel : this.panels) {
                 this.tabSheet.removeTab(this.tabSheet.getTab(panel));
@@ -142,61 +156,10 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
             panels.clear();
 
             if (getValue() != null) {
-                for(AssessmentRating rating : getValue()) {
-                    addAssessmentRatingPanel(rating, currentUser);
-                }
-            } else {
-                addAssessmentRating();
+                getValue().getAssessmentRatings().forEach(rating -> addAssessmentRatingPanel(rating, currentUser));
             }
         }
     }
-
-    /**
-     * Returns the current value of this object.
-     * <p>
-     * <i>Implementation note:</i> the implementing class should document
-     * whether null values may be returned or not.
-     *
-     * @return the current value
-     */
-    @Override
-    public Set<AssessmentRating> getValue() {
-        return this.ratings;
-    }
-
-    protected boolean isAddButtonEnabled() {
-		return this.assessmentStatus.isEditingAllowed() && this.assessment != null && this.assessment.hasParticipants();
-	}
-	
-	public void setCurrentUser(final User currentUser) {
-		this.currentUser = currentUser;
-		this.addButton.setEnabled(isAddButtonEnabled());
-		
-		for(AssessmentRatingPanel panel : this.panels) {
-			panel.setCurrentUser(currentUser);
-		}
-	}
-
-	public void setAssessment(final Assessment assessment) {
-    	if (assessment != null) {
-			this.assessment = assessment;
-			this.summary.setAssessment(assessment);
-			this.setValue(assessment.getAssessmentRatings());
-		}
-	}
-
-	public void setAssessmentStatus(final AssessmentStatus status) {
-		this.assessmentStatus = status;
-		this.addButton.setEnabled(isAddButtonEnabled());
-		
-		for(AssessmentRatingPanel panel : this.panels) {
-			panel.updateFieldAccess();
-		}
-	}
-	
-	public void fireAssessmentParticipantsChanged() {
-		this.addButton.setEnabled(isAddButtonEnabled());
-	}
 
 //	REMOVE
 //	public void setPossibleWeightings(final Collection<Double> weightings) {
@@ -222,7 +185,7 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 		AssessmentRating rating = new AssessmentRating();
 		rating.setAssessment(assessment);
 		
-		getValue().add(rating);
+		getValue().addAssessmentRating(rating);
 		
 		AssessmentRatingPanel panel = addAssessmentRatingPanel(rating, currentUser);
 		this.tabSheet.setSelectedTab(panel);

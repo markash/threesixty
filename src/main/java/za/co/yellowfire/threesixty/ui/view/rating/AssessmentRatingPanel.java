@@ -44,7 +44,7 @@ public class AssessmentRatingPanel extends GridLayout {
 
     private EventRouter eventRouter;
 
-    public AssessmentRatingPanel(
+    AssessmentRatingPanel(
             final AssessmentRating rating,
             final User currentUser,
             final Collection<Double> possibleRatings,
@@ -157,11 +157,11 @@ public class AssessmentRatingPanel extends GridLayout {
         registerValueChangeListener();
     }
 
-    public void setCurrentUser(final User currentUser) {
+    void setCurrentUser(final User currentUser) {
         this.currentUser = currentUser;
     }
 
-    protected void updateFieldAccess() {
+    void updateFieldAccess() {
 
         this.areaField.setReadOnly(isAreaReadOnly());
         this.measurementField.setReadOnly(isMeasurementReadOnly());
@@ -180,11 +180,15 @@ public class AssessmentRatingPanel extends GridLayout {
     }
 
     private boolean isCurrentUserManager() {
-        return getValue().getAssessment().getManager().equals(currentUser);
+        return getValue().getAssessment() != null &&
+                getValue().getAssessment().getManager() != null &&
+                getValue().getAssessment().getManager().equals(currentUser);
     }
 
     private boolean isCurrentUserEmployee() {
-        return getValue().getAssessment().getEmployee().equals(currentUser);
+        return getValue().getAssessment() != null &&
+                getValue().getAssessment().getEmployee() != null &&
+                getValue().getAssessment().getEmployee().equals(currentUser);
     }
 
     @SuppressWarnings("unused")
@@ -259,14 +263,14 @@ public class AssessmentRatingPanel extends GridLayout {
 //        }
 //    }
 
-    protected EventRouter getEventRouter() {
+    private EventRouter getEventRouter() {
         if (eventRouter == null) {
             eventRouter = new EventRouter();
         }
         return eventRouter;
     }
 
-    public Registration addAssessmentDirtyListener(final AssessmentDirtyListener listener) {
+    Registration addAssessmentDirtyListener(final AssessmentDirtyListener listener) {
         return getEventRouter().addListener(AssessmentDirtyEvent.class, listener, AssessmentDirtyListener.class.getDeclaredMethods()[0]);
     }
 

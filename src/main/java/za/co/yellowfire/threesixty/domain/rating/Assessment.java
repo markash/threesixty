@@ -144,7 +144,15 @@ public class Assessment implements Auditable<User, Serializable> {
 	
 	@Override
 	public boolean isNew() { return StringUtils.isBlank(this.id); }
-	
+
+    /**
+     * An assessment is blank if the assessment is in the Creating status and has no ratings attached
+     * @return Whether the assessment is blank
+     */
+	public boolean isBlank() {
+	    return this.status == AssessmentStatus.Creating && (this.ratings == null || this.ratings.size() == 0);
+    }
+
 	@Override
 	public User getCreatedBy() { return this.createdBy; }
 	
