@@ -1,5 +1,8 @@
 package za.co.yellowfire.threesixty.ui.view.period;
 
+import com.vaadin.data.Converter;
+import com.vaadin.data.Result;
+import com.vaadin.data.ValueContext;
 import org.springframework.data.domain.Persistable;
 import za.co.yellowfire.threesixty.domain.rating.Period;
 import za.co.yellowfire.threesixty.domain.rating.PeriodDeadline;
@@ -26,7 +29,7 @@ public class PeriodModel implements Persistable<Serializable> {
         this.period = new Period();
     }
 
-    PeriodModel(Period period) {
+    public PeriodModel(Period period) {
         this.period = Optional.ofNullable(period).orElse(new Period());
     }
 
@@ -62,4 +65,25 @@ public class PeriodModel implements Persistable<Serializable> {
     @Override
     public boolean isNew() { return this.period.isNew(); }
     public Period getWrapped() { return this.period; }
+
+    @Override
+    public String toString() {
+        return Optional.ofNullable(getWrapped()).map(Period::toString).orElse("");
+    }
+
+    public static PeriodModelConverter converter() { return new PeriodModelConverter(); }
+
+    public static class PeriodModelConverter implements Converter<PeriodModel, Period> {
+        @Override
+        public Result<Period> convertToModel(final PeriodModel value, final ValueContext context) {
+            if (value == null) {
+                return Result.error("The period is null and cannot therefore be converted");
+            }
+            return Result.ok(value.getWrapped());
+        }
+        @Override
+        public PeriodModel convertToPresentation(final Period value, final ValueContext context) {
+            return new PeriodModel(value);
+        }
+    }
 }
