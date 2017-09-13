@@ -30,7 +30,7 @@ public class ObjectiveConfig {
 
     @Bean
     EntitySupplier<Outcome, Serializable> objectiveSupplier(final OutcomeService outcomeService) {
-        return id -> Optional.of(outcomeService.findById((String) id));
+        return id -> Optional.ofNullable(outcomeService.findById((String) id));
     }
 
     @Bean

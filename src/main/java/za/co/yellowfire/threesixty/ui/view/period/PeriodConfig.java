@@ -39,7 +39,7 @@ public class PeriodConfig {
 
     @Bean
     EntitySupplier<PeriodModel, Serializable> periodSupplier(final PeriodService periodService) {
-        return id -> Optional.of(new PeriodModel(periodService.findById((String) id)));
+        return id -> Optional.ofNullable(new PeriodModel(periodService.findById((String) id)));
     }
 
     @Bean

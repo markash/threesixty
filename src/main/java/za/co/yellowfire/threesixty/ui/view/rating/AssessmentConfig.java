@@ -39,7 +39,7 @@ public class AssessmentConfig {
 
     @Bean
     EntitySupplier<Assessment, Serializable> assessmentSupplier(final AssessmentService assessmentService) {
-        return id -> Optional.of(assessmentService.findById((String) id));
+        return id -> Optional.ofNullable(assessmentService.findById((String) id));
     }
 
     @Bean
