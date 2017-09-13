@@ -58,8 +58,7 @@ public class Assessment implements Auditable<User, Serializable> {
 	
 	@Override
 	public String getId() { return this.id; }
-    public void setId(String id) { this.id = id; }
-    
+
 	public User getEmployee() { return employee; }
 	public void setEmployee(User employee) { this.employee = employee; }
 
