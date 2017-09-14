@@ -1,60 +1,53 @@
 package za.co.yellowfire.threesixty.ui.view.rating;
 
 import com.vaadin.event.EventRouter;
-import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Responsive;
-import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.*;
-import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.shared.Registration;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.CustomField;
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.Tab;
-import com.vaadin.ui.themes.ValoTheme;
-import org.apache.commons.lang3.ArrayUtils;
-import org.vaadin.viritin.button.MButton;
-import org.vaadin.viritin.label.MLabel;
-import org.vaadin.viritin.layouts.MHorizontalLayout;
-import org.vaadin.viritin.layouts.MVerticalLayout;
-import za.co.yellowfire.threesixty.domain.rating.Assessment;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentRating;
 import za.co.yellowfire.threesixty.domain.rating.PerformanceArea;
 import za.co.yellowfire.threesixty.domain.user.User;
-import za.co.yellowfire.threesixty.ui.I8n;
-import za.co.yellowfire.threesixty.ui.Style;
 
-import java.util.Collection;
-import java.util.LinkedList;
+import java.util.*;
 
 @SuppressWarnings("serial")
-public class AssessmentRatingsField extends CustomField<Assessment> {
+public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 	/* Tabs and panels */
-	private TabSheet tabSheet;
+	private TabSheet tabSheet = new TabSheet();
 	private LinkedList<AssessmentRatingPanel> panels = new LinkedList<>();
-	
-	/* Header */
-	private AssessmentSummaryHeader summary;
-	private MButton addButton = new MButton("Add").withIcon(VaadinIcons.PLUS_CIRCLE).withListener(this::onAdd);
-	
+
 	/* Fields */
 	private LinkedList<Double> possibleRatings = new LinkedList<>();
 	private LinkedList<Double> possibleWeightings = new LinkedList<>();
 	private LinkedList<PerformanceArea> performanceAreas = new LinkedList<>();
 
 	private User currentUser;
-	private Assessment assessment;
+	private Map<AssessmentRating, Registration> ratings = new HashMap<>();
+
 	//private AssessmentStatus assessmentStatus = AssessmentStatus.Creating;
     private EventRouter eventRouter;
 
 	AssessmentRatingsField(
 			final Collection<Double> possibleRatings, 
 			final Collection<Double> possibleWeightings,
-			final Collection<PerformanceArea> performanceAreas,
-			final Button[] buttons) {
+			final Collection<PerformanceArea> performanceAreas) {
 		
 		this.possibleRatings.addAll(possibleRatings);
 		this.possibleWeightings.addAll(possibleWeightings);
 		this.performanceAreas.addAll(performanceAreas);
-		this.summary = new AssessmentSummaryHeader(ArrayUtils.addAll(new Button[] {addButton}, buttons));
 	}
-	
+
+    Registration addAssessmentDirtyListener(final AssessmentDirtyListener listener) {
+        return getEventRouter().addListener(AssessmentDirtyEvent.class, listener, AssessmentDirtyListener.class.getDeclaredMethods()[0]);
+    }
+
+    Registration addAssessmentRecalculationListener(final AssessmentRecalculationListener listener) {
+        return getEventRouter().addListener(AssessmentRecalculationEvent.class, listener, AssessmentRecalculationListener.class.getDeclaredMethods()[0]);
+    }
+
 //	public Registration addAssessmentRatingListener(final AssessmentRatingListener listener) {
 //        return getEventRouter().addListener(AssessmentRatingEvent.class, listener, AssessmentRatingListener.class.getMethods()[0]);
 //	}
@@ -65,29 +58,10 @@ public class AssessmentRatingsField extends CustomField<Assessment> {
 
 	@Override
 	protected Component initContent() {
-
-        this.setWidth(100.0f, Unit.PERCENTAGE);
-
-		this.tabSheet = new TabSheet();
+		this.tabSheet.setWidth(100.0f, Unit.PERCENTAGE);
 		Responsive.makeResponsive(this.tabSheet);
-		
-		if (getValue() != null) {
-            this.summary.setAssessment(getValue());
-		    getValue().getAssessmentRatings().forEach(rating -> addAssessmentRatingPanel(rating, currentUser));
-		}
-		
-		/* Create the header with the header buttons */
-		Label headerCaption = new MLabel(VaadinIcons.BARCODE.getHtml() + I8n.Assessment.Rating.PLURAL)
-				.withContentMode(ContentMode.HTML)
-				.withStyleName(ValoTheme.LABEL_H3, ValoTheme.LABEL_NO_MARGIN);
 
-        MHorizontalLayout header = new MHorizontalLayout(headerCaption, this.summary).withStyleName(Style.AssessmentRating.HEADER);
-		header.setExpandRatio(headerCaption, 1.0f);
-		header.setExpandRatio(this.summary, 2.0f);
-		header.withMargin(false);
-
-		/* Vertically layout the header and tab sheet */
-        return new MVerticalLayout(header, tabSheet).withMargin(false);
+        return tabSheet;
 	}
 
 //	@Override
@@ -108,21 +82,25 @@ public class AssessmentRatingsField extends CustomField<Assessment> {
 //	}
 
     @Override
-    public Assessment getValue() {
-        return this.assessment;
+    public Set<AssessmentRating> getValue() {
+        return this.ratings.keySet();
     }
 
     @Override
-    protected void doSetValue(final Assessment value) {
-        /* Maintain the tab sheet and panels */
-        this.assessment = value;
+    protected void doSetValue(final Set<AssessmentRating> newRatings) {
+        /* Unregister the previous event registrations */
+        this.ratings.forEach((key, registration) -> registration.remove());
+        this.ratings.clear();
 
-        refresh();
-    }
+        /* Remove rating tabs */
+        for (AssessmentRatingPanel panel : this.panels) {
+            this.tabSheet.removeTab(this.tabSheet.getTab(panel));
+        }
+        this.panels.clear();
 
-    void refresh() {
-        maintainSummary();
-        maintainTabSheet();
+        /* Register the ratings with event registrations */
+        newRatings.forEach(rating -> this.ratings.put(rating, addAssessmentRatingPanel(rating, currentUser)));
+
         maintainButtons();
     }
 
@@ -131,35 +109,12 @@ public class AssessmentRatingsField extends CustomField<Assessment> {
         maintainButtons();
     }
 
-    private boolean isAddButtonEnabled() {
-		return this.assessment != null && this.assessment.getStatus().isEditingAllowed() && this.assessment.hasParticipants();
-	}
-
-	private void maintainSummary() {
-        this.summary.setAssessment(getValue());
-    }
-
 	private void maintainButtons() {
-		this.addButton.setEnabled(isAddButtonEnabled());
-		
 		for(AssessmentRatingPanel panel : this.panels) {
             panel.setCurrentUser(currentUser);
 			panel.updateFieldAccess();
 		}
 	}
-
-	private void maintainTabSheet() {
-        if (this.tabSheet != null) {
-            for (AssessmentRatingPanel panel : this.panels) {
-                this.tabSheet.removeTab(this.tabSheet.getTab(panel));
-            }
-            panels.clear();
-
-            if (getValue() != null) {
-                getValue().getAssessmentRatings().forEach(rating -> addAssessmentRatingPanel(rating, currentUser));
-            }
-        }
-    }
 
 //	REMOVE
 //	public void setPossibleWeightings(final Collection<Double> weightings) {
@@ -181,19 +136,7 @@ public class AssessmentRatingsField extends CustomField<Assessment> {
         return eventRouter;
     }
 
-	private void addAssessmentRating() {
-		AssessmentRating rating = new AssessmentRating();
-		rating.setAssessment(assessment);
-		
-		getValue().addAssessmentRating(rating);
-		
-		AssessmentRatingPanel panel = addAssessmentRatingPanel(rating, currentUser);
-		this.tabSheet.setSelectedTab(panel);
-		
-		fireAssessmentRatingAdded(rating);
-	}
-	
-	private AssessmentRatingPanel addAssessmentRatingPanel(final AssessmentRating rating, final User currentUser) {
+	private Registration addAssessmentRatingPanel(final AssessmentRating rating, final User currentUser) {
 		
 		/* Add the the new assessment panel */
 		AssessmentRatingPanel panel = new AssessmentRatingPanel(rating, currentUser, this.possibleRatings, this.possibleWeightings, this.performanceAreas);
@@ -202,35 +145,12 @@ public class AssessmentRatingsField extends CustomField<Assessment> {
 		tab.setCaption("Rating #" + (tabSheet.getTabPosition(tab) + 1));
 		panels.add(panel);
 						
-		panel.addAssessmentDirtyListener(this::onAssessmentDirty);
-		
-		return panel;
-	}
-	
-	private void fireAssessmentRatingAdded(final AssessmentRating rating) {
-		getEventRouter().fireEvent(new AssessmentRatingEvent(this, rating, AssessmentRatingEvent.Action.ADD));
+		return panel.addAssessmentRecalculationListener(this::onAssessmentRatingRecalculation);
 	}
 
-	private void onAssessmentDirty(final AssessmentDirtyEvent event) {
-		if (event.isRecalculationRequired()) {
-			/* Recalculate the assessment values */
-            this.assessment.calculate();
-
-            AssessmentRecalculationEvent recalculationEvent = new AssessmentRecalculationEvent(
-                    this,
-                    assessment.getNoOfRatings(),
-                    assessment.getWeightingTotal(),
-                    assessment.getScore());
-
-            /* Fire the assessment summary */
-            this.summary.recalculate(recalculationEvent);
-
-            /* Fire the assessment recalculation values */
-            getEventRouter().fireEvent(recalculationEvent);
-		}
-	}
-	
-	private void onAdd(final ClickEvent event) {
-		this.addAssessmentRating();
-	}
+	private void onAssessmentRatingRecalculation(AssessmentRecalculationEvent event) {
+        AssessmentSummaryModel model = new AssessmentSummaryModel();
+	    this.panels.forEach(p -> model.addRating(p.getWeighting(), p.getRating()));
+        getEventRouter().fireEvent(new AssessmentRecalculationEvent(this, model.getNoOfRatings(), model.getWeightingTotal(), model.getScoreTotal()));
+    }
 }

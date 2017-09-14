@@ -3,19 +3,20 @@ package za.co.yellowfire.threesixty.ui.view.rating;
 import java.util.EventObject;
 
 public class AssessmentDirtyEvent extends EventObject {
-    private boolean recalculationRequired;
-    /**
-     * Constructs a prototypical Event.
-     *
-     * @param source The object on which the Event initially occurred.
-     * @throws IllegalArgumentException if source is null.
-     */
-    public AssessmentDirtyEvent(final Object source, boolean recalculationRequired) {
+    private final double weighting;
+    private final double rating;
+
+    AssessmentDirtyEvent(final Object source, double weighting, double rating) {
         super(source);
-        this.recalculationRequired = recalculationRequired;
+        this.weighting = weighting;
+        this.rating = rating;
     }
 
-    public boolean isRecalculationRequired() {
-        return recalculationRequired;
+    public double getWeighting() {
+        return weighting;
+    }
+
+    public double getRating() {
+        return rating;
     }
 }

@@ -5,10 +5,13 @@ import com.vaadin.data.ValidationException;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.SerializablePredicate;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.themes.ValoTheme;
 import io.threesixty.ui.component.notification.NotificationBuilder;
 import io.threesixty.ui.event.EnterEntityEditViewEvent;
 import io.threesixty.ui.event.EventUtils;
@@ -18,15 +21,14 @@ import org.vaadin.dialogs.ConfirmDialog;
 import org.vaadin.spring.events.EventBus;
 import org.vaadin.spring.events.EventBusListener;
 import org.vaadin.viritin.button.MButton;
+import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 import za.co.yellowfire.threesixty.domain.PersistenceException;
-import za.co.yellowfire.threesixty.domain.rating.Assessment;
-import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
-import za.co.yellowfire.threesixty.domain.rating.AssessmentStatus;
-import za.co.yellowfire.threesixty.domain.rating.Period;
+import za.co.yellowfire.threesixty.domain.rating.*;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.I8n;
+import za.co.yellowfire.threesixty.ui.Style;
 import za.co.yellowfire.threesixty.ui.view.period.PeriodModel;
 
 import javax.annotation.PreDestroy;
@@ -36,11 +38,16 @@ import java.util.Set;
 
 @SuppressWarnings("serial")
 public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment> implements EventBusListener<EnterEntityEditViewEvent<Assessment>> {
-
+    /* Assessment */
 	private ComboBox<User> managerField;
 	private ComboBox<User> employeeField;
 	private ComboBox<PeriodModel> periodField;
-	private AssessmentRatingsField ratingsField;
+    /* Summary */
+    private AssessmentSummaryHeader summary;
+    private MButton addButton = new MButton("Add").withIcon(VaadinIcons.PLUS_CIRCLE).withListener(this::onAdd);
+    /* Ratings */
+    private AssessmentRatingsField ratingsField;
+
 
 	private final ListDataProvider<PeriodModel> periodListDataProvider;
 
@@ -82,33 +89,46 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 		this.periodField.setWidth(100.0f, Unit.PERCENTAGE);
 		this.periodField.setDataProvider(this.periodListDataProvider);
 
+        this.summary = new AssessmentSummaryHeader(addButton, publishButton, employeeCompleteButton, managerCompleteButton, concludeButton);
+
 		this.ratingsField = 
 				new AssessmentRatingsField(
 						service.findPossibleRatings(), 
 						service.findPossibleWeightings(),
-						service.findPerformanceAreas(),
-						new MButton[] {publishButton, employeeCompleteButton, managerCompleteButton, concludeButton});
+						service.findPerformanceAreas());
 			
 		this.ratingsField.setCurrentUser(currentUser);
+		this.ratingsField.addAssessmentRecalculationListener(this::onAssessmentRecalculation);
 		//this.ratingsField.addAssessmentRatingListener(this::onAssessmentRatingChange);
 		//this.ratingsField.addRecalculationListener(this::onRecalculation);
 
 		getBinder().forField(managerField).bind(Assessment.FIELD_MANAGER);
         getBinder().forField(employeeField).bind(Assessment.FIELD_EMPLOYEE);
         getBinder().forField(periodField).withConverter(PeriodModel.converter()).bind(Assessment.FIELD_PERIOD);
+        getBinder().forField(ratingsField).bind(Assessment.FIELD_RATINGS);
 	}
 	
 	@Override
 	protected void internalLayout() {
-		this.ratingsField.setValue(getValue());
+//		this.ratingsField.setValue(getValue());
 //		this.ratingsField.setAssessmentStatus(getValue().getStatus());
 //		this.ratingsField.setPossibleRatings(service.findPossibleRatings());
 //		this.ratingsField.setPossibleWeightings(service.findPossibleWeightings());
 
+        /* Create the header with the header buttons */
+        Label headerCaption = new MLabel(VaadinIcons.BARCODE.getHtml() + I8n.Assessment.Rating.PLURAL)
+                .withContentMode(ContentMode.HTML)
+                .withStyleName(ValoTheme.LABEL_H3, ValoTheme.LABEL_NO_MARGIN);
+
+        MHorizontalLayout header = new MHorizontalLayout(headerCaption, this.summary).withStyleName(Style.AssessmentRating.HEADER);
+        header.setExpandRatio(headerCaption, 1.0f);
+        header.setExpandRatio(this.summary, 2.0f);
+        header.withMargin(false);
+
         addComponents(
                 new MVerticalLayout(
                         new MHorizontalLayout(getIdField(), employeeField, managerField, periodField).withFullWidth(),
-                        ratingsField
+                        new MVerticalLayout(header, ratingsField).withMargin(false)
                 )
         );
 
@@ -143,6 +163,11 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 			}
 		}
 	}
+
+    private void onAssessmentRecalculation(final AssessmentRecalculationEvent event) {
+        /* Fire the assessment summary */
+        this.summary.recalculate(event);
+    }
 
     @SuppressWarnings("unused")
 	private void onPublish(final ClickEvent event) {
@@ -223,14 +248,15 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 			managerField.setEnabled(false);
 		}
 
-        this.ratingsField.setValue(getValue());
+        this.summary.setAssessment(getValue());
+        //this.ratingsField.setValue(getValue());
 		//this.ratingsField.setAssessmentStatus(getValue().getStatus());
 		this.ratingsField.setCurrentUser(currentUser);
 		
 		showButtons();
 		enableButtons();
 	}
-	
+
 	/**
 	 * Show buttons according to the status
 	 */
@@ -245,12 +271,17 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	 * Enable the buttons according to the status and the completeness
 	 */
 	private void enableButtons() {
+        this.addButton.setEnabled(isAddButtonEnabled());
 		this.publishButton.setEnabled(canEnablePublish());
 		this.employeeCompleteButton.setEnabled(canEnableEmployeeComplete());
 		this.managerCompleteButton.setEnabled(canEnableManagerComplete());
 		this.concludeButton.setEnabled(canEnableConclude());
 	}
-	
+
+    private boolean isAddButtonEnabled() {
+        return getValue() != null && getValue().getStatus().isEditingAllowed() && getValue().hasParticipants();
+    }
+
 	private boolean canEnablePublish() {
 		return isValid() && 
 				getValue().getStatus() == AssessmentStatus.Creating && 
@@ -327,6 +358,19 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	    return Optional.ofNullable(this.currentUser).map(User::isAdmin).orElse(false);
     }
 
+    private void onAdd(final ClickEvent event) {
+        getValue().addAssessmentRating(new AssessmentRating());
+
+        //AssessmentRatingPanel panel = addAssessmentRatingPanel(rating, currentUser);
+        //this.tabSheet.setSelectedTab(panel);
+
+        //fireAssessmentRatingAdded(rating);
+    }
+
+    private void fireAssessmentRatingAdded(final AssessmentRating rating) {
+        //getEventRouter().fireEvent(new AssessmentRatingEvent(this, rating, AssessmentRatingEvent.Action.ADD));
+    }
+
 	private void onEmployeeSelected(HasValue.ValueChangeEvent<User> event) {
 		User user = event.getValue();
 		if (user != null && user.getReportsTo() != null) {
@@ -344,7 +388,7 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 		refreshAvailablePeriodsForEmployee();
 		
 		/*Fire the change */
-		this.ratingsField.refresh();
+		//this.ratingsField.refresh();
 	}
 	
 	private void restrictAvailablePeriodsForEmployee() {

@@ -8,7 +8,6 @@ import com.vaadin.event.EventRouter;
 import com.vaadin.shared.Registration;
 import com.vaadin.ui.*;
 import io.threesixty.ui.component.panel.PanelBuilder;
-import io.threesixty.ui.view.FormDirtyEvent;
 import org.vaadin.viritin.fields.MTextField;
 import org.vaadin.viritin.label.MLabel;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentRating;
@@ -91,7 +90,15 @@ public class AssessmentRatingPanel extends GridLayout {
         this.binder.forField(weightField).bind("weight");
         this.binder.forField(ratingField).bind("rating");
         this.binder.forField(scoreField).withConverter(new StringToDoubleConverter(0.0, "Unable to convert weighting")).bind("score");
-        this.binder.setBean(this.rating);
+        this.binder.readBean(this.rating);
+        this.binder.addStatusChangeListener(event -> {
+            boolean isValid = event.getBinder().isValid();
+            boolean hasChanges = event.getBinder().hasChanges();
+
+            if (isValid && hasChanges) {
+                getEventRouter().fireEvent(new AssessmentRecalculationEvent(this, 0, this.weightField.getValue(), this.ratingField.getValue()));
+            }
+        });
 
         /* Column 0 */
         addComponent(areaField, 0, 0);
@@ -159,6 +166,14 @@ public class AssessmentRatingPanel extends GridLayout {
 
     void setCurrentUser(final User currentUser) {
         this.currentUser = currentUser;
+    }
+
+    double getWeighting() {
+        return this.weightField.getValue();
+    }
+
+    double getRating() {
+        return this.ratingField.getValue();
     }
 
     void updateFieldAccess() {
@@ -274,6 +289,10 @@ public class AssessmentRatingPanel extends GridLayout {
         return getEventRouter().addListener(AssessmentDirtyEvent.class, listener, AssessmentDirtyListener.class.getDeclaredMethods()[0]);
     }
 
+    Registration addAssessmentRecalculationListener(final AssessmentRecalculationListener listener) {
+        return getEventRouter().addListener(AssessmentRecalculationEvent.class, listener, AssessmentRecalculationListener.class.getDeclaredMethods()[0]);
+    }
+
     @SuppressWarnings("unused")
     private void removeValueChangeListener() {
         if (this.valueChangeRegistration != null) {
@@ -300,7 +319,7 @@ public class AssessmentRatingPanel extends GridLayout {
             onRatingChange(ratingField.getValue());
         }
 
-        getEventRouter().fireEvent(new AssessmentDirtyEvent(this, recalculationRequired));
+        getEventRouter().fireEvent(new AssessmentRecalculationEvent(this, 0, this.weightField.getValue(), this.ratingField.getValue()));
     }
 
     private void onRatingChange(Double rating) {

@@ -19,6 +19,13 @@ class AssessmentSummaryModel implements Serializable {
     double getWeightingTotal() { return this.weightingTotal; }
     double getScoreTotal() { return this.scoreTotal; }
 
+    AssessmentSummaryModel addRating(final double weighting, final double rating) {
+        this.noOfRatings++;
+        this.weightingTotal += weighting;
+        this.scoreTotal += rating;
+        return this;
+    }
+
     void refresh(final AssessmentRecalculationEvent event) {
         if (event != null) {
             this.noOfRatings = event.getNoOfRatings();
