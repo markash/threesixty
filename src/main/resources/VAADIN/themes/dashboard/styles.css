@@ -15606,7 +15606,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .dashboard .assessment-rating-header {
 	width: 100%;
-	text-align: right;
 	white-space: normal;
 	margin-top: 10px;
 	margin-bottom: 10px;
@@ -15622,6 +15621,7 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .assessment-rating-header .v-slot-h3 {
 	text-align: left;
 	padding-top: 8px;
+	padding-left: 5px;
 }
 
 .dashboard .assessment-rating-header .h3 {
@@ -15629,7 +15629,14 @@ div.v-layout.v-horizontal.v-widget {
 	color: rgba(255, 255, 255, 0.87);
 }
 
+.dashboard .assessment-rating-header .v-slot-toolbar {
+	float: right;
+	vertical-align: middle;
+}
+
 .dashboard .assessment-rating-header .toolbar {
+	margin-top: 10px;
+	margin-bottom: 10px;
 	margin-right: 5px;
 }
 

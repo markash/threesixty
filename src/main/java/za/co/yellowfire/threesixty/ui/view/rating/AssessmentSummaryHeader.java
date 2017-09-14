@@ -39,7 +39,7 @@ public class AssessmentSummaryHeader extends HorizontalLayout {
                         .withSpacing(true));
         addComponent(
                 new MHorizontalLayout(
-                        new MLabel("Weightings: : ").withStyleName(Style.Text.BOLDED), weightingTotalField)
+                        new MLabel("Weightings: ").withStyleName(Style.Text.BOLDED), weightingTotalField)
                         .withStyleName("rating-summary-item")
                         .withSpacing(true));
 
