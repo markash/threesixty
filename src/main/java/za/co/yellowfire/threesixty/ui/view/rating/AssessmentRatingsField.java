@@ -1,5 +1,8 @@
 package za.co.yellowfire.threesixty.ui.view.rating;
 
+import com.vaadin.data.StatusChangeEvent;
+import com.vaadin.data.StatusChangeListener;
+import com.vaadin.data.ValidationException;
 import com.vaadin.event.EventRouter;
 import com.vaadin.server.Responsive;
 import com.vaadin.shared.Registration;
@@ -25,7 +28,7 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 	private LinkedList<PerformanceArea> performanceAreas = new LinkedList<>();
 
 	private User currentUser;
-	private Map<AssessmentRating, Registration> ratings = new HashMap<>();
+	private Map<AssessmentRating, List<Registration>> ratings = new HashMap<>();
 
 	//private AssessmentStatus assessmentStatus = AssessmentStatus.Creating;
     private EventRouter eventRouter;
@@ -46,6 +49,10 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 
     Registration addAssessmentRecalculationListener(final AssessmentRecalculationListener listener) {
         return getEventRouter().addListener(AssessmentRecalculationEvent.class, listener, AssessmentRecalculationListener.class.getDeclaredMethods()[0]);
+    }
+
+    Registration addStatusChangeListener(final StatusChangeListener listener) {
+	    return getEventRouter().addListener(StatusChangeEvent.class, listener, StatusChangeListener.class.getDeclaredMethods()[0]);
     }
 
 //	public Registration addAssessmentRatingListener(final AssessmentRatingListener listener) {
@@ -89,7 +96,7 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
     @Override
     protected void doSetValue(final Set<AssessmentRating> newRatings) {
         /* Unregister the previous event registrations */
-        this.ratings.forEach((key, registration) -> registration.remove());
+        this.ratings.forEach((key, registration) -> registration.forEach(Registration::remove));
         this.ratings.clear();
 
         /* Remove rating tabs */
@@ -107,6 +114,31 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
     void setCurrentUser(final User currentUser) {
         this.currentUser = currentUser;
         maintainButtons();
+    }
+
+    /**
+     * Determine whether the panel is valid or has any validation warnings
+     * @return True if the panel is valid else false
+     */
+    boolean isValid() {
+        return this.panels.stream().allMatch(AssessmentRatingPanel::isValid);
+    }
+
+    /**
+     * Determine whether the panel has changes
+     * @return True if the panel has changes else false
+     */
+    boolean hasChanges() {
+        return this.panels.stream().anyMatch(AssessmentRatingPanel::hasChanges);
+    }
+
+    /**
+     * Commits the rating panel fields to the underlying bound value
+     */
+    void commit() throws ValidationException {
+        for (AssessmentRatingPanel panel : this.panels) {
+            panel.commit();
+        }
     }
 
 	private void maintainButtons() {
@@ -136,7 +168,7 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
         return eventRouter;
     }
 
-	private Registration addAssessmentRatingPanel(final AssessmentRating rating, final User currentUser) {
+	private List<Registration> addAssessmentRatingPanel(final AssessmentRating rating, final User currentUser) {
 		
 		/* Add the the new assessment panel */
 		AssessmentRatingPanel panel = new AssessmentRatingPanel(rating, currentUser, this.possibleRatings, this.possibleWeightings, this.performanceAreas);
@@ -145,8 +177,15 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 		tab.setCaption("Rating #" + (tabSheet.getTabPosition(tab) + 1));
 		panels.add(panel);
 						
-		return panel.addAssessmentRecalculationListener(this::onAssessmentRatingRecalculation);
+		Registration registration1 = panel.addAssessmentRecalculationListener(this::onAssessmentRatingRecalculation);
+		Registration registration2 = panel.addStatusChangeListener(this::onStatusChange);
+		return Arrays.asList(registration1, registration2);
 	}
+
+	private void onStatusChange(final StatusChangeEvent event) {
+        /* Bubble the individual p*/
+        getEventRouter().fireEvent(event);
+    }
 
 	private void onAssessmentRatingRecalculation(AssessmentRecalculationEvent event) {
         AssessmentSummaryModel model = new AssessmentSummaryModel();

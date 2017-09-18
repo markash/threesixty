@@ -1,6 +1,7 @@
 package za.co.yellowfire.threesixty.ui.view.rating;
 
 import com.vaadin.data.HasValue;
+import com.vaadin.data.StatusChangeEvent;
 import com.vaadin.data.ValidationException;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
@@ -13,13 +14,9 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 import io.threesixty.ui.component.notification.NotificationBuilder;
-import io.threesixty.ui.event.EnterEntityEditViewEvent;
-import io.threesixty.ui.event.EventUtils;
 import io.threesixty.ui.security.CurrentUserProvider;
 import io.threesixty.ui.view.AbstractEntityEditForm;
 import org.vaadin.dialogs.ConfirmDialog;
-import org.vaadin.spring.events.EventBus;
-import org.vaadin.spring.events.EventBusListener;
 import org.vaadin.viritin.button.MButton;
 import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
@@ -31,13 +28,12 @@ import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.Style;
 import za.co.yellowfire.threesixty.ui.view.period.PeriodModel;
 
-import javax.annotation.PreDestroy;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 @SuppressWarnings("serial")
-public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment> implements EventBusListener<EnterEntityEditViewEvent<Assessment>> {
+public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment> {
     /* Assessment */
 	private ComboBox<User> managerField;
 	private ComboBox<User> employeeField;
@@ -48,12 +44,10 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
     /* Ratings */
     private AssessmentRatingsField ratingsField;
 
-
 	private final ListDataProvider<PeriodModel> periodListDataProvider;
 
 	private AssessmentService service;
 	private User currentUser;
-    private final EventBus.SessionEventBus eventBus;
 
 	private MButton publishButton = new MButton("Publish").withIcon(VaadinIcons.STEP_FORWARD).withListener(this::onPublish);
 	private MButton employeeCompleteButton = new MButton("Employee Complete").withIcon(VaadinIcons.STEP_FORWARD).withListener(this::onEmployeeComplete);
@@ -64,15 +58,12 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
             final ListDataProvider<PeriodModel> periodListDataProvider,
             final ListDataProvider<User> userListDataProvider,
             final AssessmentService service,
-            final CurrentUserProvider<User> currentUserProvider,
-            final EventBus.SessionEventBus eventBus) {
+            final CurrentUserProvider<User> currentUserProvider) {
 
 	    super(Assessment.class);
 
 	    this.service = service;
 		currentUserProvider.get().ifPresent(p -> this.currentUser = p.getUser());
-        this.eventBus = eventBus;
-        this.eventBus.subscribe(this);
 
 		this.periodListDataProvider = periodListDataProvider;
 		this.managerField = new ComboBox<>(I8n.Assessment.Fields.MANAGER);
@@ -99,6 +90,8 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 			
 		this.ratingsField.setCurrentUser(currentUser);
 		this.ratingsField.addAssessmentRecalculationListener(this::onAssessmentRecalculation);
+		this.ratingsField.addStatusChangeListener(this::onStatusChange);
+
 		//this.ratingsField.addAssessmentRatingListener(this::onAssessmentRatingChange);
 		//this.ratingsField.addRecalculationListener(this::onRecalculation);
 
@@ -153,16 +146,49 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 		enableButtons();
 	}
 
-	@Override
-	public void onEvent(final org.vaadin.spring.events.Event<EnterEntityEditViewEvent<Assessment>> event) {
-
-		if (EventUtils.eventFor(event, AssessmentEditView.class)) {
-			final Optional<Assessment> assessment = Optional.ofNullable(event.getPayload().getEntity());
-			if (assessment.isPresent()) {
-                maintainAssessment();
-			}
-		}
+	/**
+	 * Whether the form is valid or has validation warnings. The current binder and the ratings field validation status
+	 * is taken into consideration.
+	 * @return True if valid else false
+	 */
+	public boolean isValid() {
+		return super.isValid() && this.ratingsField.isValid();
 	}
+
+	/**
+	 * Whether the form has changes. The current binder and the ratings field changes are taken into consideration.
+	 * @return True if the form has changes else false
+	 */
+	@Override
+	public boolean isModified() {
+		return super.isModified() || this.ratingsField.hasChanges();
+	}
+
+    /**
+     * Commits the binder and the underlying ratings to the bound values
+     * @throws ValidationException If there was a validation error
+     */
+    @Override
+    public void commit() throws ValidationException {
+        super.commit();
+        this.ratingsField.commit();
+    }
+
+    /**
+     * Provide a hook for subclasses to update dependant fields
+     */
+    @Override
+    protected void updateDependentFields() {
+        final Optional<Assessment> assessment = Optional.ofNullable(getValue());
+        if (assessment.isPresent()) {
+            maintainAssessment();
+        }
+    }
+
+    private void onStatusChange(final StatusChangeEvent event) {
+        /* Bubble the status change event up to the listeners of the form (i.e. edit view) */
+        getEventRouter().fireEvent(event);
+    }
 
     private void onAssessmentRecalculation(final AssessmentRecalculationEvent event) {
         /* Fire the assessment summary */
@@ -404,10 +430,4 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 			this.periodField.getDataProvider().refreshAll();
 		}
 	}
-
-    @PreDestroy
-    @SuppressWarnings("unused")
-    void destroy() {
-        eventBus.unsubscribe(this);
-    }
 }

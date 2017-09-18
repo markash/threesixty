@@ -26,7 +26,7 @@
 		<threesixty-components.version>0.2.1</threesixty-components.version>
 		<threesixty-theme.version>0.1.0</threesixty-theme.version>
 
-        <vaadin.version>8.1.1</vaadin.version>
+        <vaadin.version>8.1.4</vaadin.version>
         <vaadin-icons.version>2.0.0</vaadin-icons.version>
         <vaadin4spring.version>2.0.1-SNAPSHOT</vaadin4spring.version>
         <vaadin-springboot.version>2.0.1</vaadin-springboot.version>

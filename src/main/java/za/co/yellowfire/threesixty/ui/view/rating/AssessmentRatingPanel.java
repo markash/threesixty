@@ -1,7 +1,6 @@
 package za.co.yellowfire.threesixty.ui.view.rating;
 
-import com.vaadin.data.Binder;
-import com.vaadin.data.HasValue;
+import com.vaadin.data.*;
 import com.vaadin.data.converter.StringToDoubleConverter;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.EventRouter;
@@ -96,6 +95,9 @@ public class AssessmentRatingPanel extends GridLayout {
             boolean hasChanges = event.getBinder().hasChanges();
 
             if (isValid && hasChanges) {
+                /* Bubble up the status change event */
+                getEventRouter().fireEvent(event);
+                /* Fire the assessment recalculation event */
                 getEventRouter().fireEvent(new AssessmentRecalculationEvent(this, 0, this.weightField.getValue(), this.ratingField.getValue()));
             }
         });
@@ -186,6 +188,22 @@ public class AssessmentRatingPanel extends GridLayout {
         this.ratingField.setReadOnly(isRatingReadOnly());
     }
 
+    /**
+     * Determine whether the panel is valid or has any validation warnings
+     * @return True if the panel is valid else false
+     */
+    boolean isValid() {
+        return this.binder.isValid();
+    }
+
+    /**
+     * Determine whether the panel has changes
+     * @return True if the panel has changes else false
+     */
+    boolean hasChanges() {
+        return this.binder.hasChanges();
+    }
+
     public AssessmentRating getValue() {
         return this.rating;
     }
@@ -264,12 +282,8 @@ public class AssessmentRatingPanel extends GridLayout {
         }
     }
 
-    public void commit() {
-//        try {
-//            this.fieldGroup.commit();
-//        } catch (FieldGroup.CommitException e) {
-//            throw new RuntimeException("Unable to commit assessment rating", e);
-//        }
+    public void commit() throws ValidationException {
+        this.binder.writeBean(this.rating);
     }
 
 //    public void addDirtyListener(final AssessmentDirtyListener listener) {
@@ -291,6 +305,10 @@ public class AssessmentRatingPanel extends GridLayout {
 
     Registration addAssessmentRecalculationListener(final AssessmentRecalculationListener listener) {
         return getEventRouter().addListener(AssessmentRecalculationEvent.class, listener, AssessmentRecalculationListener.class.getDeclaredMethods()[0]);
+    }
+
+    Registration addStatusChangeListener(final StatusChangeListener listener) {
+        return getEventRouter().addListener(StatusChangeEvent.class, listener, StatusChangeListener.class.getDeclaredMethods()[0]);
     }
 
     @SuppressWarnings("unused")

@@ -1109,7 +1109,7 @@
  */
 
 .v-vaadin-version:after {
-	content: "8.1.1";
+	content: "8.1.4";
 }
 
 .v-widget {
@@ -3924,6 +3924,10 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .v-filterselect .v-icon {
 	position: absolute;
 	pointer-events: none;
+}
+
+.dashboard .v-filterselect .v-icon.FontAwesome {
+	margin-left: 0px;
 }
 
 .dashboard .v-filterselect-error .v-filterselect-input {
@@ -10529,6 +10533,19 @@ div.v-layout.v-horizontal.v-widget {
 .dashboard .v-tree8:focus .v-tree8-row-selected.v-tree8-row-focused::before {
 	border-color: transparent;
 	box-shadow: inset 0 0 0 1px #c8dbed;
+}
+
+.dashboard .v-tree8-scroller-vertical {
+	border: none;
+}
+
+.dashboard .v-tree8-scroller-horizontal {
+	border: none;
+}
+
+.dashboard .v-tree8-header-deco, .dashboard .v-tree8-footer-deco, .dashboard .v-tree8-horizontal-scrollbar-deco {
+	border: none;
+	background: transparent;
 }
 
 .dashboard .v-treegrid {

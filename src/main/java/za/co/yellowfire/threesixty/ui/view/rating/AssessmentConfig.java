@@ -34,7 +34,7 @@ public class AssessmentConfig {
             final AssessmentService assessmentService,
             final CurrentUserProvider<User> currentUserProvider,
             final EventBus.SessionEventBus eventBus) {
-        return new AssessmentEntityEditForm(activePeriodListDataProvider, activeUserListDataProvider, assessmentService, currentUserProvider, eventBus);
+        return new AssessmentEntityEditForm(activePeriodListDataProvider, activeUserListDataProvider, assessmentService, currentUserProvider);
     }
 
     @Bean

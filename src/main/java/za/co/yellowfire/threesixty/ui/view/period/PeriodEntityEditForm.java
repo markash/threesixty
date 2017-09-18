@@ -7,25 +7,23 @@ import com.vaadin.ui.Layout;
 import com.vaadin.ui.VerticalLayout;
 import io.threesixty.ui.component.card.CounterStatisticModel;
 import io.threesixty.ui.component.card.CounterStatisticsCard;
-import io.threesixty.ui.event.EnterEntityEditViewEvent;
-import io.threesixty.ui.event.EventUtils;
 import io.threesixty.ui.view.AbstractEntityEditForm;
-import org.vaadin.spring.events.EventBus;
-import org.vaadin.spring.events.EventBusListener;
 import org.vaadin.viritin.layouts.MFormLayout;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
-import za.co.yellowfire.threesixty.domain.rating.*;
+import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
+import za.co.yellowfire.threesixty.domain.rating.AssessmentStatus;
+import za.co.yellowfire.threesixty.domain.rating.AssessmentStatusCount;
+import za.co.yellowfire.threesixty.domain.rating.Period;
 import za.co.yellowfire.threesixty.ui.I8n;
 
-import javax.annotation.PreDestroy;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @SuppressWarnings("serial")
-public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> implements EventBusListener<EnterEntityEditViewEvent<PeriodModel>> {
+public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> {
 
 	private DateField startField = new DateField(I8n.Period.Fields.START);
 	private DateField endField = new DateField(I8n.Period.Fields.END);
@@ -41,28 +39,13 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> im
 	private CounterStatisticsCard reviewedAssessmentsCard;
 
 	@SuppressWarnings("unused")
-	private final PeriodService service;
 	private final AssessmentService assessmentService;
-	private final EventBus.SessionEventBus eventBus;
 
-	private String[] nestedProperties = new String[] {
-			Period.FIELD_DEADLINE_PUBLISH, 
-			Period.FIELD_DEADLINE_COMPLETE, 
-			Period.FIELD_DEADLINE_SELF_ASSESSMENT,
-			Period.FIELD_DEADLINE_ASSESSOR_ASSESSMENT};
-	
 	PeriodEntityEditForm(
-			final PeriodService periodService,
-			final AssessmentService assessmentService,
-            final EventBus.SessionEventBus eventBus) {
+			final AssessmentService assessmentService) {
 
 		super(PeriodModel.class);
-
-		this.service = periodService;
 		this.assessmentService = assessmentService;
-		this.eventBus = eventBus;
-
-		this.eventBus.subscribe(this);
 
 		this.startField.setDateFormat(I8n.Format.DATE);
 		this.endField.setDateFormat(I8n.Format.DATE);
@@ -106,13 +89,6 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> im
                 "The number of completed assessments for the review period.",
                 "");
 	}
-	
-	/**
-	 * Returns the list of nested properties that the form group should bind to
-	 * @return An array of nested properties in Java object notation
-	 */
-	@Override
-	protected String[] getNestedProperties() { return nestedProperties; }
 
 	@Override
 	protected void internalLayout() {
@@ -140,15 +116,14 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> im
 	}
 
 
-    @Override
-    public void onEvent(final org.vaadin.spring.events.Event<EnterEntityEditViewEvent<PeriodModel>> event) {
-
+	@Override
+	protected void updateDependentFields() {
         Consumer<Period> refreshStatisticsCards = (p) -> {
             Map<AssessmentStatus, AssessmentStatusCount> statusCounts = assessmentService.countAssessmentsStatusFor(p);
-            statusCounts.entrySet().forEach(e -> {
+            statusCounts.forEach((key, e) -> {
 
-                Supplier<CounterStatisticModel> suppler = () -> new CounterStatisticModel("assessments", e.getValue().getCount());
-                switch (e.getKey()) {
+                Supplier<CounterStatisticModel> suppler = () -> new CounterStatisticModel("assessments", e.getCount());
+                switch (key) {
                     case All:
                         this.registeredAssessmentsCard.setStatisticSupplier(suppler);
                         break;
@@ -165,15 +140,7 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> im
             });
         };
 
-        if (EventUtils.eventFor(event, PeriodEditView.class)) {
-            final Optional<Period> period = Optional.ofNullable(event.getPayload().getEntity().getWrapped());
-            period.ifPresent(refreshStatisticsCards);
-        }
-    }
-
-    @PreDestroy
-	@SuppressWarnings("unused")
-    void destroy() {
-        eventBus.unsubscribe(this);
-    }
+        final Optional<Period> period = Optional.ofNullable(getValue().getWrapped());
+        period.ifPresent(refreshStatisticsCards);
+	}
 }
