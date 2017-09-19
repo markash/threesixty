@@ -40,7 +40,7 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	private ComboBox<PeriodModel> periodField;
     /* Summary */
     private AssessmentSummaryHeader summary;
-    private MButton addButton = new MButton("Add").withIcon(VaadinIcons.PLUS_CIRCLE).withListener(this::onAdd);
+
     /* Ratings */
     private AssessmentRatingsField ratingsField;
 
@@ -49,6 +49,7 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	private AssessmentService service;
 	private User currentUser;
 
+	private MButton addButton = new MButton("Add").withIcon(VaadinIcons.PLUS_CIRCLE).withListener(this::onAdd);
 	private MButton publishButton = new MButton("Publish").withIcon(VaadinIcons.STEP_FORWARD).withListener(this::onPublish);
 	private MButton employeeCompleteButton = new MButton("Employee Complete").withIcon(VaadinIcons.STEP_FORWARD).withListener(this::onEmployeeComplete);
 	private MButton managerCompleteButton = new MButton("Manager Complete").withIcon(VaadinIcons.STEP_FORWARD).withListener(this::onManagerComplete);
@@ -385,12 +386,7 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
     }
 
     private void onAdd(final ClickEvent event) {
-        getValue().addAssessmentRating(new AssessmentRating());
-
-        //AssessmentRatingPanel panel = addAssessmentRatingPanel(rating, currentUser);
-        //this.tabSheet.setSelectedTab(panel);
-
-        //fireAssessmentRatingAdded(rating);
+        this.ratingsField.add(getValue().addAssessmentRating(), true);
     }
 
     private void fireAssessmentRatingAdded(final AssessmentRating rating) {

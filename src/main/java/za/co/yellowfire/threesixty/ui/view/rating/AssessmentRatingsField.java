@@ -29,8 +29,6 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 
 	private User currentUser;
 	private Map<AssessmentRating, List<Registration>> ratings = new HashMap<>();
-
-	//private AssessmentStatus assessmentStatus = AssessmentStatus.Creating;
     private EventRouter eventRouter;
 
 	AssessmentRatingsField(
@@ -106,9 +104,40 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
         this.panels.clear();
 
         /* Register the ratings with event registrations */
-        newRatings.forEach(rating -> this.ratings.put(rating, addAssessmentRatingPanel(rating, currentUser)));
+        newRatings.forEach(this::add);
 
         maintainButtons();
+    }
+
+    /**
+     * Adds the rating to the collection of ratings associated with the event registrations for the rating
+     * @param rating The assessment rating
+     */
+    private void add(final AssessmentRating rating) {
+	    add(rating, false, false);
+    }
+
+    /**
+     * Adds the rating to the collection of ratings associated with the event registrations for the rating.
+     * The tab sheet is focused on the panel for the rating.
+     * @param rating The assessment rating
+     * @param focusOnRating Whether the rating should get focus on the tab sheet
+     */
+    void add(final AssessmentRating rating, final boolean focusOnRating) {
+        add(rating, focusOnRating, true);
+    }
+
+    /**
+     * Adds the rating to the collection of ratings associated with the event registrations for the rating.
+     * The tab sheet is focused on the panel for the rating.
+     * @param rating The assessment rating
+     * @param focusOnRating Whether the rating should get focus on the tab sheet
+     */
+    private void add(final AssessmentRating rating, final boolean focusOnRating, final boolean fireRecalculationEvent) {
+        this.ratings.put(rating, addAssessmentRatingPanel(rating, currentUser, focusOnRating));
+        if (fireRecalculationEvent) {
+            fireAssessmentRatingSummaryRecalculation();
+        }
     }
 
     void setCurrentUser(final User currentUser) {
@@ -168,7 +197,14 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
         return eventRouter;
     }
 
-	private List<Registration> addAssessmentRatingPanel(final AssessmentRating rating, final User currentUser) {
+    /**
+     *
+     * @param rating The assessment rating
+     * @param currentUser The current user accessing the assessment rating
+     * @param focusOnPanel Whether the panel should have the focus
+     * @return The list of event registrations for the panel
+     */
+	private List<Registration> addAssessmentRatingPanel(final AssessmentRating rating, final User currentUser, final boolean focusOnPanel) {
 		
 		/* Add the the new assessment panel */
 		AssessmentRatingPanel panel = new AssessmentRatingPanel(rating, currentUser, this.possibleRatings, this.possibleWeightings, this.performanceAreas);
@@ -176,7 +212,11 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 		Tab tab = this.tabSheet.addTab(panel);
 		tab.setCaption("Rating #" + (tabSheet.getTabPosition(tab) + 1));
 		panels.add(panel);
-						
+
+		if (focusOnPanel) {
+		    this.tabSheet.setSelectedTab(tab);
+        }
+
 		Registration registration1 = panel.addAssessmentRecalculationListener(this::onAssessmentRatingRecalculation);
 		Registration registration2 = panel.addStatusChangeListener(this::onStatusChange);
 		return Arrays.asList(registration1, registration2);
@@ -188,8 +228,12 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
     }
 
 	private void onAssessmentRatingRecalculation(AssessmentRecalculationEvent event) {
+        fireAssessmentRatingSummaryRecalculation();
+    }
+
+    private void fireAssessmentRatingSummaryRecalculation() {
         AssessmentSummaryModel model = new AssessmentSummaryModel();
-	    this.panels.forEach(p -> model.addRating(p.getWeighting(), p.getRating()));
+        this.panels.forEach(p -> model.addRating(p.getWeighting(), p.getRating()));
         getEventRouter().fireEvent(new AssessmentRecalculationEvent(this, model.getNoOfRatings(), model.getWeightingTotal(), model.getScoreTotal()));
     }
 }

@@ -37,9 +37,7 @@ public class AssessmentRatingPanel extends GridLayout {
     private User currentUser;
     private AssessmentRating rating;
     private Binder<AssessmentRating> binder = new Binder<>(AssessmentRating.class);
-
     private Registration valueChangeRegistration;
-
     private EventRouter eventRouter;
 
     AssessmentRatingPanel(

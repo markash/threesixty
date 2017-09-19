@@ -65,8 +65,7 @@ public class AssessmentSummaryHeader extends HorizontalLayout {
 		this.weightingTotalField.setValue(assessmentSummary.getWeightingTotal());
 		this.scoreTotalField.setValue(assessmentSummary.getScoreTotal());
 	}
-	
-	
+
 	public void setAssessment(final Assessment assessment) {
         this.assessmentSummary.refresh(assessment);
         this.weightingTotalField.setValue(assessmentSummary.getWeightingTotal());
