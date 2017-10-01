@@ -1,33 +1,24 @@
 package za.co.yellowfire.threesixty.config;
 
 import com.vaadin.data.provider.ListDataProvider;
-import io.threesixty.ui.component.notification.NotificationBuilder;
 import io.threesixty.ui.security.SpringSecurityCurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.vaadin.spring.annotation.PrototypeScope;
 import org.vaadin.spring.events.EventBus;
 import org.vaadin.spring.security.config.AuthenticationManagerConfigurer;
-import za.co.yellowfire.threesixty.Response;
-import za.co.yellowfire.threesixty.domain.rating.PeriodService;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserRepository;
 import za.co.yellowfire.threesixty.domain.user.UserService;
-import za.co.yellowfire.threesixty.ui.view.period.PeriodModel;
 import za.co.yellowfire.threesixty.ui.view.security.ChangePasswordForm;
 import za.co.yellowfire.threesixty.ui.view.security.ChangePasswordHandler;
-import za.co.yellowfire.threesixty.ui.view.security.ChangePasswordModel;
 
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Configuration
 public class SecurityConfig implements AuthenticationManagerConfigurer {

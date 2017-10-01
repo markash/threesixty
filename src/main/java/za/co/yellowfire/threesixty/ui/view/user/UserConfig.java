@@ -73,9 +73,9 @@ public class UserConfig {
 
         DateRenderer dateRenderer = new DateRenderer("yyyy-MM-dd", "");
         TableDefinition<User> tableDefinition = new TableDefinition<>(UserEditView.VIEW_NAME);
-        tableDefinition.column(String.class).withHeading(I8n.User.Columns.ID).forProperty(User.FIELD_ID).identity();
-        tableDefinition.column(String.class).withHeading(I8n.User.Columns.FIRST_NAME).forProperty(User.FIELD_FIRST_NAME);
-        tableDefinition.column(String.class).withHeading(I8n.User.Columns.LAST_NAME).forProperty(User.FIELD_LAST_NAME);
+        tableDefinition.column(String.class).withHeading(I8n.User.Columns.ID).forProperty(User.FIELD_ID).identity().enableTextSearch();
+        tableDefinition.column(String.class).withHeading(I8n.User.Columns.FIRST_NAME).forProperty(User.FIELD_FIRST_NAME).enableTextSearch();
+        tableDefinition.column(String.class).withHeading(I8n.User.Columns.LAST_NAME).forProperty(User.FIELD_LAST_NAME).enableTextSearch();
         tableDefinition.column(String.class).withHeading(I8n.User.Columns.ROLE).forProperty(User.FIELD_ROLE);
         tableDefinition.column(String.class).withHeading(I8n.User.Columns.WEBSITE).forProperty(User.FIELD_WEBSITE);
         tableDefinition.column(Boolean.class).withHeading(I8n.User.Columns.ACTIVE).forProperty(User.FIELD_ACTIVE);
