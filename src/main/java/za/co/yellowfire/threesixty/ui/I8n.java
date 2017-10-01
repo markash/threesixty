@@ -206,11 +206,31 @@ public class I8n {
 			String PASSWORDS_DO_NOT_MATCH = "The new and confirm passwords do not match";
 		}
 	}
-	
+
+	public interface Profile {
+
+	    String PICTURE = "Profile picture";
+    }
+
 	public interface User {
 		VaadinIcons ICON = VaadinIcons.USERS;
 		String SINGULAR = "User";
 		String PLURAL = "Users";
+
+		interface Columns {
+			String ID = "User Name";
+			String EMAIL = "Email";
+			String FIRST_NAME = "First Name";
+			String LAST_NAME = "Last Name";
+			String WEBSITE = "Website";
+			String ROLE = "Role";
+			String ACTIVE = "Active";
+		}
+
+        interface Validation {
+            String FIRST_NAME_REQUIRED = Columns.FIRST_NAME + " is required.";
+            String LAST_NAME_REQUIRED = Columns.LAST_NAME + " is required.";
+        }
 	}
 	
 	public interface Organization {

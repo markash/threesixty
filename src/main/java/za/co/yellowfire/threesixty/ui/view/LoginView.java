@@ -55,6 +55,8 @@ public class LoginView extends VerticalLayout implements View {
             final EventBus.SessionEventBus eventBus) {
 
 	    setSizeFull();
+        Responsive.makeResponsive(this);
+
         this.userService = userService;
         this.vaadinSecurity = vaadinSecurity;
         this.eventBus = eventBus;
@@ -75,8 +77,6 @@ public class LoginView extends VerticalLayout implements View {
                         .withSpacing(true)
                         .withStyleName("login-panel")
                         .with(buildLabels(), buildFields()/*, new CheckBox("Remember me", true)*/);
-
-        Responsive.makeResponsive(loginPanel);
         return loginPanel;
     }
 

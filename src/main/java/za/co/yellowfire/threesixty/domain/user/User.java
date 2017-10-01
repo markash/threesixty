@@ -2,6 +2,7 @@ package za.co.yellowfire.threesixty.domain.user;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
 
@@ -24,10 +25,23 @@ import za.co.yellowfire.threesixty.domain.organization.Organization;
 
 
 @AccessType(Type.FIELD)
-public final class User implements Auditable<User, String> {
+public final class User implements Auditable<User, Serializable> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOG = LoggerFactory.getLogger(User.class);
-	
+
+	public static final String FIELD_ID = "id";
+	public static final String FIELD_ROLE = "role";
+	public static final String FIELD_EMAIL = "email";
+	public static final String FIELD_FIRST_NAME = "firstName";
+	public static final String FIELD_LAST_NAME = "lastName";
+	public static final String FIELD_TITLE = "title";
+	public static final String FIELD_GENDER = "gender";
+	public static final String FIELD_LOCATION = "location";
+	public static final String FIELD_PHONE = "phone";
+	public static final String FIELD_WEBSITE = "website";
+	public static final String FIELD_BIO = "bio";
+	public static final String FIELD_ACTIVE = "active";
+
 	public static final String USER_ADMIN = "admin";
 	public static final String USER_ADMIN_PASSWORD = "password";
 	public static final String PROPERTY_FULL_NAME = "fullName";

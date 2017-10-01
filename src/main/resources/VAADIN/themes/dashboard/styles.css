@@ -15707,3 +15707,10 @@ div.v-layout.v-horizontal.v-widget {
 	box-sizing: content-box;
 	margin: 0 -11px -11px;
 }
+
+.dashboard .profile-image {
+	object-fit: cover;
+	border-radius: 50%;
+	text-align: center;
+	height: 188px;
+}

@@ -3,7 +3,7 @@ package za.co.yellowfire.threesixty.domain.user;
 import com.mongodb.DBRef;
 import com.vaadin.server.VaadinSession;
 import io.threesixty.ui.component.card.CounterStatisticModel;
-import io.threesixty.ui.security.DefaultUserPrincipal;
+import io.threesixty.ui.security.CurrentUserProvider;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +32,8 @@ import za.co.yellowfire.threesixty.domain.user.notification.UserNotificationRepo
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-	
+import java.util.*;
+
 @Service
 public class UserService implements UserDetailsService {
 	private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
@@ -55,7 +52,8 @@ public class UserService implements UserDetailsService {
 	private MongoTemplate template;
 	
 	private final GridFsClient client;
-	
+    private CurrentUserProvider<User> currentUserProvider;
+
 	@Autowired
 	public UserService(
 			final UserRepository userRepository, 
@@ -66,7 +64,8 @@ public class UserService implements UserDetailsService {
 			final UserNotificationRepository userNotificationRepository,
 			final UserConfiguration userConfiguration,
 			final OrganizationService organizationService,
-			final GridFsClient client) {
+			final GridFsClient client,
+            final CurrentUserProvider<User> currentUserProvider) {
 		
 		super();
 		this.userRepository = userRepository;
@@ -77,6 +76,7 @@ public class UserService implements UserDetailsService {
 		this.userNotificationRepository = userNotificationRepository;
 		this.organizationService = organizationService;
 		this.client = client;
+		this.currentUserProvider = currentUserProvider;
 	}
 
 	@PostConstruct
@@ -167,7 +167,11 @@ public class UserService implements UserDetailsService {
 		/*Notify that the server is running */
 		notify(administrator, administrator, NotificationCategory.System,  "Server started.");
 	}
-	
+
+	public UserRepository getUserRepository() {
+		return userRepository;
+	}
+
 	public Response<User> authenticate(final String userName, final String password) {
 		User user = userRepository.findOne(userName);
 		if (user == null) { return new Response<>(RequestResult.UNAUTHORIZED.setDescription("The user is invalid")); }
@@ -237,12 +241,22 @@ public class UserService implements UserDetailsService {
      * @return The list of users
      */
 	public List<User> findUsersExceptCurrent() {
-		return userRepository.findByIdNot(getCurrentUser().getId());
+
+	    Optional<io.threesixty.ui.security.UserPrincipal<User>> principal = this.currentUserProvider.get();
+	    if (principal.isPresent()) {
+            return userRepository.findByIdNot(principal.get().getUser().getId());
+        }
+
+        LOG.warn("No current user when calling findUsersExceptCurrent which might be an error");
+		return findUsers();
 	}
 
-	public User save(final User user, final User changedBy) throws IOException {
+	public User save(final User user) throws IOException {
+        Objects.requireNonNull(user, "The user to save is required");
+
+        this.currentUserProvider.get().ifPresent(p -> user.auditChangedBy(p.getUser()));
 		user.storePicture(client);
-		user.auditChangedBy(changedBy);
+
 		return userRepository.save(user);
 	}
 	

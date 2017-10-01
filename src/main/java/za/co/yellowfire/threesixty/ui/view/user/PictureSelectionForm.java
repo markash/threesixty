@@ -1,21 +1,22 @@
-package za.co.yellowfire.threesixty.ui.component.field;
+package za.co.yellowfire.threesixty.ui.view.user;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.FileResource;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Upload.Receiver;
 import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
-import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;
+import org.vaadin.viritin.button.MButton;
+import org.vaadin.viritin.layouts.MHorizontalLayout;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial", "unused"})
 public class PictureSelectionForm extends VerticalLayout {
 
 	private static final String IMG_PREVIEW = "Image preview";
@@ -26,24 +27,29 @@ public class PictureSelectionForm extends VerticalLayout {
 	private final Embedded image = new Embedded(IMG_PREVIEW);
 	private final ImageUploader receiver = new ImageUploader(); 
 	private final Upload upload = new Upload("", receiver);
-	private final Button okButton = ButtonBuilder.build(BUTTON_OK, FontAwesome.CHECK, this::onOk);
-	private final Button cancelButton = ButtonBuilder.build(BUTTON_CANCEL, FontAwesome.TIMES_CIRCLE, this::onCancel);
-	
+
 	private final ImageListener listener;
 	
-	public PictureSelectionForm(final ImageListener listener) {
+	public PictureSelectionForm(
+			final ImageListener listener) {
 		
 		this.listener = listener;
 		
 		upload.setButtonCaption(BUTTON_UPLOAD);
 		upload.addSucceededListener(receiver);
-		upload.setImmediate(true);
-		
-		HorizontalLayout buttons = new HorizontalLayout();
-		buttons.setSpacing(true);
-		buttons.addComponents(okButton, cancelButton);
-		
-		addComponents(upload, image, buttons);
+
+        MButton okButton = new MButton(VaadinIcons.CHECK_CIRCLE_O, BUTTON_OK, this::onOk);
+        MButton cancelButton = new MButton(VaadinIcons.CLOSE_CIRCLE_O, BUTTON_CANCEL, this::onCancel);
+
+		HorizontalLayout buttons = new MHorizontalLayout()
+                .withSpacing(true)
+                .with(okButton, cancelButton);
+
+		addComponents(
+		        upload,
+                image,
+                buttons);
+
 		setComponentAlignment(buttons, Alignment.MIDDLE_RIGHT);
 	}
 	
@@ -51,7 +57,7 @@ public class PictureSelectionForm extends VerticalLayout {
 		upload.startUpload();
 	}
 
-	public void onOk(final ClickEvent event) {
+	private void onOk(final ClickEvent event) {
 		if (listener != null) {
         	listener.imageSelected(new FileEvent(receiver.getFile()));
         }
@@ -61,8 +67,9 @@ public class PictureSelectionForm extends VerticalLayout {
 			((Window) parent).close();
 		}
 	}
-	
-	public void onCancel(final ClickEvent event) {
+
+
+	private void onCancel(final ClickEvent event) {
 		HasComponents parent = getParent();
 		if (parent instanceof Window) {
 			((Window) parent).close();
@@ -70,8 +77,8 @@ public class PictureSelectionForm extends VerticalLayout {
 	}
 	
 	class ImageUploader implements Receiver, SucceededListener {
-		public File file;
-	    public String mimeType;
+		File file;
+	    String mimeType;
 	    
 		public File getFile() { 
 			return this.file;
@@ -110,7 +117,7 @@ public class PictureSelectionForm extends VerticalLayout {
 	        	image.setWidth(300.0f, Unit.PIXELS);
 	        }
 	    }
-	};
+	}
 	
 	public interface ImageListener extends Serializable {
 		void imageSelected(FileEvent event);
@@ -119,7 +126,7 @@ public class PictureSelectionForm extends VerticalLayout {
 	public static class FileEvent {
 		private File file;
 
-		public FileEvent(File file) {
+		FileEvent(File file) {
 			super();
 			this.file = file;
 		}
