@@ -2,10 +2,9 @@ package za.co.yellowfire.threesixty.ui;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
-import com.vaadin.server.FontAwesome;
 import za.co.yellowfire.threesixty.domain.user.Role;
 import za.co.yellowfire.threesixty.domain.user.User;
-import za.co.yellowfire.threesixty.ui.view.DashboardView;
+import za.co.yellowfire.threesixty.ui.view.dashboard.DashboardView;
 //import za.co.yellowfire.threesixty.ui.view.kudos.BadgeSearchView;
 //import za.co.yellowfire.threesixty.ui.view.kudos.IdealSearchView;
 //import za.co.yellowfire.threesixty.ui.view.kudos.KudosEditView;

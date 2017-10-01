@@ -1,4 +1,4 @@
-package za.co.yellowfire.threesixty.ui.view;
+package za.co.yellowfire.threesixty.ui.view.dashboard;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -8,24 +8,15 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
-import io.threesixty.ui.component.card.CounterStatisticModel;
-import io.threesixty.ui.component.card.CounterStatisticsCard;
+import io.threesixty.ui.component.notification.NotificationsButton;
 import io.threesixty.ui.view.AbstractDashboardView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.vaadin.spring.sidebar.annotation.SideBarItem;
 import org.vaadin.spring.sidebar.annotation.VaadinFontIcon;
-import za.co.yellowfire.threesixty.MainUI;
 import za.co.yellowfire.threesixty.Sections;
-import za.co.yellowfire.threesixty.domain.kudos.KudosRepository;
-import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
-import za.co.yellowfire.threesixty.domain.rating.PeriodService;
-import za.co.yellowfire.threesixty.domain.user.User;
-import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.I8n;
-import za.co.yellowfire.threesixty.ui.view.period.PeriodSearchView;
 
 @Secured("ROLE_ADMIN")
 @SideBarItem(sectionId = Sections.DASHBOARD, caption = DashboardView.TITLE)
@@ -35,29 +26,20 @@ public class DashboardView extends AbstractDashboardView {
 	private static final long serialVersionUID = 1L;
 
     static final String TITLE = I8n.Dashboard.SINGULAR;
-    static final String VIEW_NAME = "dashboard";
-    static final VaadinIcons ICON = VaadinIcons.CALENDAR_O;
+    static final String VIEW_NAME = "";
+    static final VaadinIcons ICON = VaadinIcons.HOME;
 
-//    private NotificationsButton notificationsButton;
-    private CssLayout dashboardPanels;
-    private UserService userService;
-    private AssessmentService assessmentService;
-    private PeriodService periodService;
-    private KudosRepository kudosRepository;
-    
+    private final CounterStatisticsCards dashboardStatisticCards;
+    private final NotificationsButton notificationsButton;
+
     @Autowired
     public DashboardView(
-    		final UserService userService, 
-    		final AssessmentService assessmentService, 
-    		final PeriodService periodService,
-    		final KudosRepository kudosRepository) {
+            final CounterStatisticsCards dashboardStatisticCards,
+            final DashboardNotificationsModel notificationsModel) {
         super(TITLE);
 
-        this.userService = userService;
-        this.assessmentService = assessmentService;
-        this.periodService = periodService;
-    	this.kudosRepository = kudosRepository;
-//        this.notificationsButton = NotificationsButton.BELL("dashboard-notifications", userService, this::onViewNotifications);
+    	this.dashboardStatisticCards = dashboardStatisticCards;
+        this.notificationsButton = NotificationsButton.BELL("dashboard-notifications", notificationsModel, this::onViewNotifications);
     }
 
     private Component buildEditButton() {
@@ -79,98 +61,31 @@ public class DashboardView extends AbstractDashboardView {
     }
 
     protected Component buildContent() {
-        dashboardPanels = new CssLayout();
+        CssLayout dashboardPanels = new CssLayout();
         dashboardPanels.addStyleName("dashboard-panels");
-        
         Responsive.makeResponsive(dashboardPanels);
+        this.dashboardStatisticCards.stream().forEach(dashboardPanels::addComponent);
 
-//        if (userService.getCurrentUser().isAdmin()) {
-	        dashboardPanels.addComponent(buildUserCard());
-	        dashboardPanels.addComponent(buildPeriodsCard());
-	        dashboardPanels.addComponent(buildAssessmentsCard());
-	        dashboardPanels.addComponent(buildPerformanceAreasCard());
-	        //dashboardPanels.addComponent(buildPeriodProgressChart());
+//        if (this.user.isAdmin()) {
+//	        dashboardPanels.addComponent(usersCounterStatistic);
+//	        dashboardPanels.addComponent(periodsCounterStatistic);
+//	        dashboardPanels.addComponent(buildAssessmentsCard());
+//	        dashboardPanels.addComponent(buildPerformanceAreasCard());
+//	        //dashboardPanels.addComponent(buildPeriodProgressChart());
 //        } else {
-//        	dashboardPanels.addComponent(buildKudosCard());
-//        	dashboardPanels.addComponent(buildAssessmentsDueCard());
+////        	dashboardPanels.addComponent(buildKudosCard());
+////        	dashboardPanels.addComponent(buildAssessmentsDueCard());
 //        }
 
         return dashboardPanels;
     }
 
-    private Component buildUserCard() {
-    	return new CounterStatisticsCard(
-    			"Users",
-    			VaadinIcons.USERS,
-    			"The number of active users registered within the system.",
-                () -> userService.getUsersCounterStatistic(),
-    			"" //UserSearchView.VIEW_NAME
-        );
-    }
-    
-    private Component buildPeriodsCard() {
-//    	DashboardViewType type = DashboardViewType.PERIOD_SEARCH;
-    	return new CounterStatisticsCard(
-    			"Periods",
-                PeriodSearchView.ICON,
-    			"The number of assessment period.",
-                () -> periodService.getPeriodCounterStatistic(),
-                PeriodSearchView.VIEW_NAME
-        );
+    @Override
+    protected Component getHeaderButtons() {
+        return this.notificationsButton;
     }
 
-    private Component buildAssessmentsCard() {
-//    	DashboardViewType type = DashboardViewType.ASSESSMENT_SEARCH;
-    	return new CounterStatisticsCard(
-    			"Assessments",
-                VaadinIcons.USERS, //type.getIcon(),
-    			"The number of assessment.",
-                () -> assessmentService.getAssessmentsCounterStatistic(),
-                "" //type.getViewName()
-        );
-    }
-
-    private Component buildPerformanceAreasCard() {
-//    	DashboardViewType type = DashboardViewType.PERFORMANCE_AREA_SEARCH;
-    	return new CounterStatisticsCard(
-    			"KPAs",
-    			VaadinIcons.USERS, //type.getIcon(),
-    			"The number of key performance areas tracked by the application.",
-                () -> assessmentService.getPerformanceAreasCounterStatistic(),
-                "" //type.getViewName()
-        );
-    }
-    
-    private Component buildKudosCard() {
-    	CounterStatisticModel walletBalanceStatistic =
-    			new CounterStatisticModel(
-    					"WalletBalanceStatistic",
-    					kudosRepository.getWallet(userService.getCurrentUser()).getBalance().getValue())
-    			.prefix(I8n.Kudos.Wallet.CURRENCY_SYMBOL);
-
-    	//DashboardViewType type = DashboardViewType.KUDOS;
-    	return new CounterStatisticsCard(
-    			"",
-    			VaadinIcons.BRIEFCASE, //type.getIcon(),
-    			"Kudos Wallet balance.",
-                () -> walletBalanceStatistic,
-    			"" //type.getViewName()
-        );
-    }
-
-    private Component buildAssessmentsDueCard() {
-
-    	//DashboardViewType type = DashboardViewType.ASSESSMENT_SEARCH;
-    	return new CounterStatisticsCard(
-    			"Assessments Due",
-                VaadinIcons.BRIEFCASE, // type.getIcon(),
-    			"The number of assessments that are due which includes self and subordinate assessments.",
-                () -> assessmentService.getAssessmentsDueCounterStatistic(userService.getCurrentUser().getId()),
-    			"" //type.getViewName()
-        );
-    }
-    
-//    private Component buildPeriodProgressChart() {
+    //    private Component buildPeriodProgressChart() {
 //    	LineChartConfig lineConfig = new LineChartConfig();
 //        lineConfig.data()
 //            .labels("January", "February", "March", "April", "May", "June", "July")
@@ -235,8 +150,8 @@ public class DashboardView extends AbstractDashboardView {
 //        return chart;
 //    }
 
-    
-    public void onViewNotifications(final ClickEvent event) {
+    @SuppressWarnings("unused")
+    private void onViewNotifications(final ClickEvent event) {
 //    	UI.getCurrent().getNavigator().navigateTo(UserNotificationSearchView.VIEW_NAME);
     }
     
@@ -299,9 +214,5 @@ public class DashboardView extends AbstractDashboardView {
 //            setDescription(description);
 //        }
 //    }
-    
-    protected User getCurrentUser() {
-    	return ((MainUI) UI.getCurrent()).getCurrentUser();
-    }
 }
 
