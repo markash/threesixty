@@ -9,38 +9,38 @@ import za.co.yellowfire.threesixty.domain.user.User;
 import java.util.Objects;
 
 @Service
-public class OutcomeService implements za.co.yellowfire.threesixty.domain.question.Service<Outcome> {
-	private OutcomeRepository outcomeRepository;
+public class ObjectiveService implements za.co.yellowfire.threesixty.domain.question.Service<Objective> {
+	private ObjectiveRepository objectiveRepository;
     private CurrentUserProvider<User> currentUserProvider;
 
 	@Autowired
-	public OutcomeService(
-			final OutcomeRepository outcomeRepository,
+	public ObjectiveService(
+			final ObjectiveRepository objectiveRepository,
             final CurrentUserProvider<User> currentUserProvider) {
-		this.outcomeRepository = outcomeRepository;
+		this.objectiveRepository = objectiveRepository;
         this.currentUserProvider = currentUserProvider;
 	}
 
-    public OutcomeRepository getRepository() {
-        return outcomeRepository;
+    public ObjectiveRepository getRepository() {
+        return objectiveRepository;
     }
 	
-	public Outcome findById(final String id) {
-		return outcomeRepository.findOne(id);
+	public Objective findById(final String id) {
+		return objectiveRepository.findOne(id);
 	}
 	
-	public Outcome save(final Outcome objective) throws PersistenceException {
-        Objects.requireNonNull(objective, "The outcome is required");
+	public Objective save(final Objective objective) throws PersistenceException {
+        Objects.requireNonNull(objective, "The objective is required");
 
 		this.currentUserProvider.get().ifPresent(p -> objective.auditChangedBy(p.getUser()));
-		return outcomeRepository.save(objective);
+		return objectiveRepository.save(objective);
 	}
 	
-	public void delete(final Outcome objective) {
+	public void delete(final Objective objective) {
         Objects.requireNonNull(objective, "The objective is required");
 
         objective.setActive(false);
         this.currentUserProvider.get().ifPresent(p -> objective.auditChangedBy(p.getUser()));
-		outcomeRepository.save(objective);
+		objectiveRepository.save(objective);
 	}
 }

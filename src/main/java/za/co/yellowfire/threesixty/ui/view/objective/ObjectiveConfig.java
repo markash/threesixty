@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Configuration;
 import org.vaadin.spring.annotation.PrototypeScope;
 import org.vaadin.spring.events.EventBus;
 import za.co.yellowfire.threesixty.domain.PersistenceException;
-import za.co.yellowfire.threesixty.domain.rating.Outcome;
-import za.co.yellowfire.threesixty.domain.rating.OutcomeService;
+import za.co.yellowfire.threesixty.domain.rating.Objective;
+import za.co.yellowfire.threesixty.domain.rating.ObjectiveService;
 import za.co.yellowfire.threesixty.ui.I8n;
 
 import java.io.Serializable;
@@ -29,22 +29,22 @@ public class ObjectiveConfig {
     }
 
     @Bean
-    EntitySupplier<Outcome, Serializable> objectiveSupplier(final OutcomeService outcomeService) {
-        return id -> Optional.ofNullable(outcomeService.findById((String) id));
+    EntitySupplier<Objective, Serializable> objectiveSupplier(final ObjectiveService objectiveService) {
+        return id -> Optional.ofNullable(objectiveService.findById((String) id));
     }
 
     @Bean
-    BlankSupplier<Outcome> blankObjectiveSupplier() {
-        return Outcome::new;
+    BlankSupplier<Objective> blankObjectiveSupplier() {
+        return Objective::new;
     }
 
     @Bean
-    EntityPersistFunction<Outcome> objectivePersistFunction(final OutcomeService outcomeService) {
-        return new EntityPersistFunction<Outcome>() {
+    EntityPersistFunction<Objective> objectivePersistFunction(final ObjectiveService objectiveService) {
+        return new EntityPersistFunction<Objective>() {
             @Override
-            public Outcome apply(final Outcome objective) {
+            public Objective apply(final Objective objective) {
                 try {
-                    return outcomeService.save(objective);
+                    return objectiveService.save(objective);
                 } catch (PersistenceException e) {
                     NotificationBuilder.showNotification("Persist", e.getMessage());
                 }
@@ -55,16 +55,16 @@ public class ObjectiveConfig {
 
     @Bean
     @PrototypeScope
-    ListDataProvider<Outcome> objectiveListDataProvider(final OutcomeService outcomeService) {
-        return new ListDataProvider<>(outcomeService.getRepository().findAll());
+    ListDataProvider<Objective> objectiveListDataProvider(final ObjectiveService objectiveService) {
+        return new ListDataProvider<>(objectiveService.getRepository().findAll());
     }
 
     @Bean
-    TableDefinition<Outcome> objectiveTableDefinition() {
+    TableDefinition<Objective> objectiveTableDefinition() {
 
-        TableDefinition<Outcome> tableDefinition = new TableDefinition<>(ObjectiveEditView.VIEW_NAME);
-        tableDefinition.column(DateField.class).withHeading(I8n.Objective.Columns.ID).forProperty(Outcome.FIELD_ID).identity();
-        tableDefinition.column(Boolean.class).withHeading(I8n.Objective.Columns.ACTIVE).forProperty(Outcome.FIELD_ACTIVE);
+        TableDefinition<Objective> tableDefinition = new TableDefinition<>(ObjectiveEditView.VIEW_NAME);
+        tableDefinition.column(DateField.class).withHeading(I8n.Objective.Columns.ID).forProperty(Objective.FIELD_ID).identity();
+        tableDefinition.column(Boolean.class).withHeading(I8n.Objective.Columns.ACTIVE).forProperty(Objective.FIELD_ACTIVE);
         return tableDefinition;
     }
 }

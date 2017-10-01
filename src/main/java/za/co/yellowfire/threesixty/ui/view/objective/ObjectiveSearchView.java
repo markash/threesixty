@@ -12,14 +12,14 @@ import org.springframework.security.access.annotation.Secured;
 import org.vaadin.spring.sidebar.annotation.SideBarItem;
 import org.vaadin.spring.sidebar.annotation.VaadinFontIcon;
 import za.co.yellowfire.threesixty.Sections;
-import za.co.yellowfire.threesixty.domain.rating.Outcome;
+import za.co.yellowfire.threesixty.domain.rating.Objective;
 import za.co.yellowfire.threesixty.ui.I8n;
 
 @Secured("ROLE_ADMIN")
 @SideBarItem(sectionId = Sections.DASHBOARD, caption = ObjectiveEditView.TITLE)
 @VaadinFontIcon(VaadinIcons.STAR_O)
 @SpringView(name = ObjectiveSearchView.VIEW_NAME)
-public class ObjectiveSearchView extends AbstractTableSearchView<Outcome, String> {
+public class ObjectiveSearchView extends AbstractTableSearchView<Objective, String> {
 	private static final long serialVersionUID = 1L;
 	
 	public static final String TITLE = I8n.Objective.PLURAL;
@@ -28,9 +28,9 @@ public class ObjectiveSearchView extends AbstractTableSearchView<Outcome, String
 
     @Autowired
     public ObjectiveSearchView(
-            final ListDataProvider<Outcome> objectiveListDataProvider,
-            final TableDefinition<Outcome> objectiveTableDefinition) {
-        super(Outcome.class, TITLE, objectiveListDataProvider, objectiveTableDefinition);
+            final ListDataProvider<Objective> objectiveListDataProvider,
+            final TableDefinition<Objective> objectiveTableDefinition) {
+        super(Objective.class, TITLE, objectiveListDataProvider, objectiveTableDefinition);
     }
 
     @Override

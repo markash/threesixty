@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.security.access.annotation.Secured;
 import org.vaadin.spring.events.EventBus;
-import za.co.yellowfire.threesixty.domain.rating.Outcome;
+import za.co.yellowfire.threesixty.domain.rating.Objective;
 import za.co.yellowfire.threesixty.ui.I8n;
 
 import java.io.Serializable;
@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @Secured("ROLE_ADMIN")
 @SpringView(name = ObjectiveEditView.VIEW_NAME)
-public class ObjectiveEditView extends AbstractEntityEditView<Outcome> {
+public class ObjectiveEditView extends AbstractEntityEditView<Objective> {
 	private static final long serialVersionUID = 1L;
 
     public static final String TITLE = I8n.Objective.SINGULAR;
@@ -30,9 +30,9 @@ public class ObjectiveEditView extends AbstractEntityEditView<Outcome> {
 
     @Autowired
     public ObjectiveEditView(
-            final EntitySupplier<Outcome, Serializable> objectiveSupplier,
-            final BlankSupplier<Outcome> blankObjectiveSupplier,
-            final EntityPersistFunction<Outcome> objectivePersistFunction,
+            final EntitySupplier<Objective, Serializable> objectiveSupplier,
+            final BlankSupplier<Objective> blankObjectiveSupplier,
+            final EntityPersistFunction<Objective> objectivePersistFunction,
             final ObjectiveEntityEditForm objectiveEntityEditForm,
             final EventBus.SessionEventBus eventBus) {
     	super(TITLE, objectiveEntityEditForm, objectiveSupplier, blankObjectiveSupplier, objectivePersistFunction);

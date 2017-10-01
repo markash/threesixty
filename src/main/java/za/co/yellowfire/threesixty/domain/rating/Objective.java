@@ -9,7 +9,7 @@ import za.co.yellowfire.threesixty.domain.user.User;
 
 import java.io.Serializable;
 
-public class Outcome implements Auditable<User, Serializable> {
+public class Objective implements Auditable<User, Serializable> {
 	private static final long serialVersionUID = 1L;
 
 	public static final String FIELD_ID = "id";
@@ -17,7 +17,7 @@ public class Outcome implements Auditable<User, Serializable> {
 
 	@Id
 	private String id;
-	
+	private String text;
 	private boolean active = true;
 	@DBRef
 	private User createdBy;
@@ -26,25 +26,27 @@ public class Outcome implements Auditable<User, Serializable> {
 	private DateTime createdDate;
 	private DateTime modifiedDate;
 	
-	public static Outcome EMPTY() {
-		return new Outcome();
+	public static Objective EMPTY() {
+		return new Objective();
 	}
 	
-	public Outcome() {
+	public Objective() {
 		super();
 	}
 
-	public Outcome(String id) {
+	public Objective(String id) {
 		super();
 		this.id = id;
 	}
 	
 	@Override
 	public String getId() { return this.id; }
-    public void setId(String id) { this.id = id; }
-    
+
+	public String getText() { return text; }
+	public void setText(final String text) { this.text = text; }
+
 	public boolean isActive() { return active; }
-	public void setActive(boolean active) { this.active = active; }
+	public void setActive(final boolean active) { this.active = active; }
 
 	@Override
 	public boolean isNew() { return StringUtils.isBlank(this.id); }
