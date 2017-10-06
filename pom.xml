@@ -24,7 +24,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<threesixty-components.version>0.2.1</threesixty-components.version>
-		<threesixty-theme.version>0.1.0</threesixty-theme.version>
+		<threesixty-theme.version>0.1.1</threesixty-theme.version>
 
         <vaadin.version>8.1.4</vaadin.version>
         <vaadin-icons.version>2.0.0</vaadin-icons.version>

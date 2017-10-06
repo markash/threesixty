@@ -34,6 +34,6 @@ public class ObjectiveSearchView extends AbstractTableSearchView<Objective, Stri
     }
 
     @Override
-    protected void onCreate(ClickEvent event) { UI.getCurrent().getNavigator().navigateTo(ObjectiveEditView.VIEW("/new-outcome")); }
+    public void onCreate(ClickEvent event) { UI.getCurrent().getNavigator().navigateTo(ObjectiveEditView.VIEW("/new-outcome")); }
 }
 

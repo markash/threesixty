@@ -123,7 +123,7 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
                 new MVerticalLayout(
                         new MHorizontalLayout(getIdField(), employeeField, managerField, periodField).withFullWidth(),
                         new MVerticalLayout(header, ratingsField).withMargin(false)
-                )
+                ).withMargin(false)
         );
 
 		//maintainAssessment();

@@ -15621,6 +15621,39 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 2px 16px;
 }
 
+.dashboard .active-filters-text {
+	font-weight: bold;
+	margin-top: 4px;
+}
+
+.dashboard .filter-pill {
+	background-color: #166ed5;
+	font-weight: bold;
+	color: white;
+}
+
+.dashboard .filter-pill-text {
+	color: white;
+	margin-top: 4px;
+	margin-left: 8px;
+}
+
+.dashboard .filter-close-button {
+	color: white;
+}
+
+.dashboard .toolbar {
+	border-bottom: 1px solid silver;
+}
+
+.dashboard .toolbar-caption {
+	margin-top: 4px;
+}
+
+.dashboard .toolbar-action {
+	border-left: 1px solid silver;
+}
+
 .dashboard .assessment-rating-header {
 	width: 100%;
 	white-space: normal;

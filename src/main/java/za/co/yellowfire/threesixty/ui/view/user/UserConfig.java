@@ -34,7 +34,7 @@ public class UserConfig {
     EntitySupplier<User, Serializable> userSupplier(
             final UserService userService) {
 
-        return id -> Optional.of(userService.findUser((String) id));
+        return id -> Optional.ofNullable(userService.findUser((String) id));
     }
 
     @Bean
