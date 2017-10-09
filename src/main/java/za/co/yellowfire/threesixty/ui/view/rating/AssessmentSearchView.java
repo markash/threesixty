@@ -44,7 +44,7 @@ public class AssessmentSearchView extends AbstractTableSearchView<Assessment, St
     }
 
 	@Override
-	protected void onCreate(ClickEvent event) {
+	public void onCreate(ClickEvent event) {
 		UI.getCurrent().getNavigator().navigateTo(AssessmentEditView.VIEW("/new-assessment"));
 	}
 

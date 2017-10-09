@@ -55,7 +55,7 @@ public class AssessmentSummaryHeader extends HorizontalLayout {
 		
 		setSpacing(true);
 		setMargin(false);
-        addStyleName("toolbar");	
+        addStyleName("summary-header");
 	}
 
 //	@SuppressWarnings("unchecked")

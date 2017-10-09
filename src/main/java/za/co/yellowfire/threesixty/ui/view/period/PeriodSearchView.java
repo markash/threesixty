@@ -33,6 +33,6 @@ public class PeriodSearchView extends AbstractTableSearchView<PeriodModel, Strin
     }
 
 	@Override
-	protected void onCreate(ClickEvent event) { UI.getCurrent().getNavigator().navigateTo(PeriodEditView.VIEW("/new-period")); }
+	public void onCreate(ClickEvent event) { UI.getCurrent().getNavigator().navigateTo(PeriodEditView.VIEW("/new-period")); }
 }
 

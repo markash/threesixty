@@ -9,6 +9,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import io.threesixty.ui.component.field.Toolbar;
 import io.threesixty.ui.component.notification.NotificationsButton;
 import io.threesixty.ui.view.AbstractDashboardView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,6 @@ public class DashboardView extends AbstractDashboardView {
     static final VaadinIcons ICON = VaadinIcons.HOME;
 
     private final CounterStatisticsCards dashboardStatisticCards;
-    private final NotificationsButton notificationsButton;
 
     @Autowired
     public DashboardView(
@@ -39,7 +39,9 @@ public class DashboardView extends AbstractDashboardView {
         super(TITLE);
 
     	this.dashboardStatisticCards = dashboardStatisticCards;
-        this.notificationsButton = NotificationsButton.BELL("dashboard-notifications", notificationsModel, this::onViewNotifications);
+        getToolbar().add(
+                NotificationsButton.BELL("dashboard-notifications", notificationsModel, this::onViewNotifications),
+                Toolbar.ToolbarSection.ACTION);
     }
 
     private Component buildEditButton() {
@@ -78,11 +80,6 @@ public class DashboardView extends AbstractDashboardView {
 //        }
 
         return dashboardPanels;
-    }
-
-    @Override
-    protected Component getHeaderButtons() {
-        return this.notificationsButton;
     }
 
     //    private Component buildPeriodProgressChart() {

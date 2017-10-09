@@ -15654,6 +15654,10 @@ div.v-layout.v-horizontal.v-widget {
 	border-left: 1px solid silver;
 }
 
+.dashboard .toolbar-gutter {
+	margin-bottom: 4px;
+}
+
 .dashboard .assessment-rating-header {
 	width: 100%;
 	white-space: normal;
@@ -15679,12 +15683,12 @@ div.v-layout.v-horizontal.v-widget {
 	color: rgba(255, 255, 255, 0.87);
 }
 
-.dashboard .assessment-rating-header .v-slot-toolbar {
+.dashboard .assessment-rating-header .v-slot-summary-header {
 	float: right;
 	vertical-align: middle;
 }
 
-.dashboard .assessment-rating-header .toolbar {
+.dashboard .assessment-rating-header .summary-header {
 	margin-top: 10px;
 	margin-bottom: 10px;
 	margin-right: 5px;

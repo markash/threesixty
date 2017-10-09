@@ -36,5 +36,5 @@ public class UserSearchView extends AbstractTableSearchView<User, String>  /*, D
 
 
 	@Override
-	protected void onCreate(ClickEvent event) { UI.getCurrent().getNavigator().navigateTo(UserEditView.VIEW("/new-user")); }
+	public void onCreate(ClickEvent event) { UI.getCurrent().getNavigator().navigateTo(UserEditView.VIEW("/new-user")); }
 }
