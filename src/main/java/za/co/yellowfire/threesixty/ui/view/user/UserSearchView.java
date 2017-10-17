@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.vaadin.spring.sidebar.annotation.SideBarItem;
 import org.vaadin.spring.sidebar.annotation.VaadinFontIcon;
+import org.vaadin.viritin.button.MButton;
 import za.co.yellowfire.threesixty.Sections;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.I8n;
@@ -32,9 +33,9 @@ public class UserSearchView extends AbstractTableSearchView<User, String>  /*, D
     		final ListDataProvider<User> userListDataProvider,
 			final TableDefinition<User> userTableDefinition) {
     	super(User.class, TITLE, userListDataProvider, userTableDefinition);
+
+		getToolbar().addAction(new MButton(I8n.Button.NEW, this::onCreate));
     }
 
-
-	@Override
 	public void onCreate(ClickEvent event) { UI.getCurrent().getNavigator().navigateTo(UserEditView.VIEW("/new-user")); }
 }

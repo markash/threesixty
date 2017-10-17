@@ -18,6 +18,7 @@ import za.co.yellowfire.threesixty.ui.I8n;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,7 +72,6 @@ public class UserConfig {
     @Bean
     TableDefinition<User> userTableDefinition() {
 
-        DateRenderer dateRenderer = new DateRenderer("yyyy-MM-dd", "");
         TableDefinition<User> tableDefinition = new TableDefinition<>(UserEditView.VIEW_NAME);
         tableDefinition.column(String.class).withHeading(I8n.User.Columns.ID).forProperty(User.FIELD_ID).identity().enableTextSearch();
         tableDefinition.column(String.class).withHeading(I8n.User.Columns.FIRST_NAME).forProperty(User.FIELD_FIRST_NAME).enableTextSearch();
@@ -79,6 +79,28 @@ public class UserConfig {
         tableDefinition.column(String.class).withHeading(I8n.User.Columns.ROLE).forProperty(User.FIELD_ROLE);
         tableDefinition.column(String.class).withHeading(I8n.User.Columns.WEBSITE).forProperty(User.FIELD_WEBSITE);
         tableDefinition.column(Boolean.class).withHeading(I8n.User.Columns.ACTIVE).forProperty(User.FIELD_ACTIVE);
+        return tableDefinition;
+    }
+
+    @Bean
+    @PrototypeScope
+    List<UserImportModel> userImportData() {
+
+        return new ArrayList<>();
+    }
+
+    @Bean
+    TableDefinition<UserImportModel> userImportTableDefinition() {
+
+        TableDefinition<UserImportModel> tableDefinition = new TableDefinition<>(UserEditView.VIEW_NAME);
+        tableDefinition.column(String.class).withHeading(I8n.User.Columns.ID).forProperty(User.FIELD_ID).identity().enableTextSearch();
+        tableDefinition.column(String.class).withHeading(I8n.User.Columns.FIRST_NAME).forProperty(User.FIELD_FIRST_NAME).enableTextSearch();
+        tableDefinition.column(String.class).withHeading(I8n.User.Columns.LAST_NAME).forProperty(User.FIELD_LAST_NAME).enableTextSearch();
+        tableDefinition.column(String.class).withHeading(I8n.User.Columns.ROLE).forProperty(User.FIELD_ROLE);
+        tableDefinition.column(String.class).withHeading(I8n.User.Columns.WEBSITE).forProperty(User.FIELD_WEBSITE);
+        tableDefinition.column(String.class).withHeading(I8n.User.Columns.PHONE).forProperty(User.FIELD_PHONE);
+        tableDefinition.column(String.class).withHeading(I8n.User.Columns.EMAIL).forProperty(User.FIELD_EMAIL);
+        tableDefinition.column(String.class).withHeading(I8n.User.Columns.IMPORT_STATUS).forProperty(UserImportModel.FIELD_IMPORT_STATUS);
         return tableDefinition;
     }
 }

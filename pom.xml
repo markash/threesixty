@@ -178,9 +178,20 @@
 	    	<groupId>javax.mail</groupId>
 	    	<artifactId>javax.mail-api</artifactId>
 	    </dependency>
-		<!-- **************************************************************
-		                      Testing 
-		*************************************************************** -->
+		<dependency>
+			<groupId>org.simpleflatmapper</groupId>
+			<artifactId>sfm-poi</artifactId>
+			<version>3.13.4</version>
+		</dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.16</version>
+        </dependency>
+
+        <!-- **************************************************************
+                              Testing
+        *************************************************************** -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
