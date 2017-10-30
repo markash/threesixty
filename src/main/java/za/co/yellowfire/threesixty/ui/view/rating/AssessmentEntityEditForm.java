@@ -141,11 +141,12 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	
 	private void onAssessmentRatingChange(final AssessmentRatingEvent event) {
 	}
-	
-	private void onRecalculation(final AssessmentRecalculationEvent event) {
-		showButtons();
-		enableButtons();
-	}
+
+	//DELETE
+//	private void onRecalculation(final AssessmentRecalculationEvent event) {
+//		showButtons();
+//		enableButtons();
+//	}
 
 	/**
 	 * Whether the form is valid or has validation warnings. The current binder and the ratings field validation status
@@ -194,6 +195,9 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
     private void onAssessmentRecalculation(final AssessmentRecalculationEvent event) {
         /* Fire the assessment summary */
         this.summary.recalculate(event);
+        /* Show & enable the buttons */
+		showButtons();
+		enableButtons();
     }
 
     @SuppressWarnings("unused")

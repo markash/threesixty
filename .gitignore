@@ -3,24 +3,15 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# Package Files #
+#############################################################
+# Package Files                                             #
+#############################################################
 *.jar
 *.war
 *.ear
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-
-# =========================
-# Operating System Files
-# =========================
-
-# OSX
-# =========================
-
-.DS_Store
-.AppleDouble
-.LSOverride
 
 # Thumbnails
 ._*
@@ -36,8 +27,9 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-# Windows
-# =========================
+#############################################################
+# Windows                                                   #
+#############################################################
 
 # Windows image file caches
 Thumbs.db
@@ -55,22 +47,32 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
-# Windows shortcuts
+#############################################################
+# Java
+#############################################################
 *.lnk
 *.project
-
 *.box
-
 .apt_generated/*
-.mvn/*
-.settings/*
 bin/*
-target/*
 mvnw
 mvnw.cmd
 /.apt_generated/
 /bin/
 /target/
-.idea/*
-.idea/libraries/*.xml
-.vagrant/*
+.idea/
+.mvn/
+.settings/
+.vagrant/
+src/main/archive/ui/component/chart/
+src/main/archive/ui/component/kudos/
+src/main/java/za/co/yellowfire/threesixty/domain/notification/
+src/main/java/za/co/yellowfire/threesixty/security/
+src/main/resources/templates/Copy of Upload User.xlsx
+src/main/resources/za/
+
+#############################################################
+# Includes
+#############################################################
+!/dist/threesixty-0.1.0.jar
+!/dist/threesixty-0.1.2.alpha.jar

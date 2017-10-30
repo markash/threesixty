@@ -20,6 +20,10 @@ public class I8n {
 		String CLEAR_ALL = "Clear all";
 		String CHANGE_PASSWORD = "Change Password";
 		String RESET_PASSWORD = "Reset Password";
+		String UPLOAD = "Upload";
+		String IMPORT = "Import";
+		String OK = "OK";
+		String CHOOSE_FILE = "Choose File...";
 	}
 	
 	public interface Fields {
@@ -216,15 +220,18 @@ public class I8n {
 		VaadinIcons ICON = VaadinIcons.USERS;
 		String SINGULAR = "User";
 		String PLURAL = "Users";
+		String IMPORT = "Import "+ PLURAL;
 
 		interface Columns {
 			String ID = "User Name";
 			String EMAIL = "Email";
+			String PHONE = "Phone";
 			String FIRST_NAME = "First Name";
 			String LAST_NAME = "Last Name";
 			String WEBSITE = "Website";
 			String ROLE = "Role";
 			String ACTIVE = "Active";
+			String IMPORT_STATUS = "Status";
 		}
 
         interface Validation {

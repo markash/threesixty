@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.vaadin.spring.sidebar.annotation.SideBarItem;
 import org.vaadin.spring.sidebar.annotation.VaadinFontIcon;
+import org.vaadin.viritin.button.MButton;
 import za.co.yellowfire.threesixty.Sections;
 import za.co.yellowfire.threesixty.domain.rating.Assessment;
 import za.co.yellowfire.threesixty.ui.I8n;
@@ -41,10 +42,13 @@ public class AssessmentSearchView extends AbstractTableSearchView<Assessment, St
     	super(Assessment.class, TITLE, assessmentListDataProvider, assessmentTableDefinition);
 
 //    	addHeaderComponent(new ComboBox(null, new IndexedContainer(service.findActivePeriods())).valueChangeListener(this::onPeriodFilter));
+
+		getToolbar().addAction(new MButton(I8n.Button.NEW, this::onCreate));
     }
 
-	@Override
-	public void onCreate(ClickEvent event) {
+	public void onCreate(
+	        final ClickEvent event) {
+
 		UI.getCurrent().getNavigator().navigateTo(AssessmentEditView.VIEW("/new-assessment"));
 	}
 

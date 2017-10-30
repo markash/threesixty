@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.vaadin.spring.sidebar.annotation.SideBarItem;
 import org.vaadin.spring.sidebar.annotation.VaadinFontIcon;
+import org.vaadin.viritin.button.MButton;
 import za.co.yellowfire.threesixty.Sections;
 import za.co.yellowfire.threesixty.domain.rating.Objective;
 import za.co.yellowfire.threesixty.ui.I8n;
@@ -31,9 +32,10 @@ public class ObjectiveSearchView extends AbstractTableSearchView<Objective, Stri
             final ListDataProvider<Objective> objectiveListDataProvider,
             final TableDefinition<Objective> objectiveTableDefinition) {
         super(Objective.class, TITLE, objectiveListDataProvider, objectiveTableDefinition);
+
+        getToolbar().addAction(new MButton(I8n.Button.NEW, this::onCreate));
     }
 
-    @Override
     public void onCreate(ClickEvent event) { UI.getCurrent().getNavigator().navigateTo(ObjectiveEditView.VIEW("/new-outcome")); }
 }
 
