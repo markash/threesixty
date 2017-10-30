@@ -20,6 +20,7 @@ public class FileUploadForm extends VerticalLayout {
 
 		upload.setButtonCaption(I8n.Button.CHOOSE_FILE);
 		upload.addSucceededListener(receiver);
+        upload.addSucceededListener(event -> upload.setCaption(event.getFilename()));
 
 		HorizontalLayout buttons = new MHorizontalLayout()
                 .withSpacing(true)
@@ -42,12 +43,6 @@ public class FileUploadForm extends VerticalLayout {
 						FileUploadEvent.class,
 						listener,
 						FileUploadListener.class.getDeclaredMethods()[0]);
-	}
-
-	public void onUpload(
-			final ClickEvent event) {
-
-		upload.startUpload();
 	}
 
 	private void onOk(

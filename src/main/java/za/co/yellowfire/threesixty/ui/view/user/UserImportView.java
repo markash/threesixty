@@ -61,8 +61,10 @@ public class UserImportView extends AbstractTableSearchView<UserImportModel, Str
     	super(UserImportModel.class, TITLE, new ListDataProvider<>(userImportData), userImportTableDefinition);
 
     	this.users = userImportData;
-    	this.registration = this.uploadForm.addFileUploadListener(this::onProcessUpload);
         this.userService = userService;
+        this.registration = this.uploadForm.addFileUploadListener(this::onProcessUpload);
+        this.uploadWindow.setModal(true);
+        this.uploadWindow.setWidth(300f, Unit.PIXELS);
 
         getToolbar().addAction(uploadButton);
         getToolbar().addAction(importButton);
