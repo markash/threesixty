@@ -54,6 +54,7 @@ public class Assessment implements Auditable<User, Serializable> {
 	
 	public Assessment() {
 		super();
+		this.ratings.add(new AssessmentRating());
 	}
 	
 	@Override
