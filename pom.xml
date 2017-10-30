@@ -5,7 +5,7 @@
 
 	<groupId>za.co.yellowfire.threesixty</groupId>
 	<artifactId>threesixty</artifactId>
-	<version>0.1.2</version>
+	<version>0.1.2.alpha</version>
 	<packaging>jar</packaging>
 
 	<name>threesixty</name>
