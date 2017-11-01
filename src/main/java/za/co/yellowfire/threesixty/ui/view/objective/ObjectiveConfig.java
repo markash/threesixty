@@ -2,6 +2,7 @@ package za.co.yellowfire.threesixty.ui.view.objective;
 
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.ui.DateField;
+import com.vaadin.ui.TextField;
 import io.threesixty.ui.component.BlankSupplier;
 import io.threesixty.ui.component.EntityPersistFunction;
 import io.threesixty.ui.component.EntitySupplier;
@@ -10,7 +11,6 @@ import io.threesixty.ui.view.TableDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.vaadin.spring.annotation.PrototypeScope;
-import org.vaadin.spring.events.EventBus;
 import za.co.yellowfire.threesixty.domain.PersistenceException;
 import za.co.yellowfire.threesixty.domain.rating.Objective;
 import za.co.yellowfire.threesixty.domain.rating.ObjectiveService;
@@ -24,8 +24,8 @@ import java.util.Optional;
 public class ObjectiveConfig {
 
     @Bean @PrototypeScope
-    ObjectiveEntityEditForm objectiveEntityEditForm(final EventBus.SessionEventBus eventBus) {
-        return new ObjectiveEntityEditForm(eventBus);
+    ObjectiveEntityEditForm objectiveEntityEditForm() {
+        return new ObjectiveEntityEditForm();
     }
 
     @Bean
@@ -63,7 +63,8 @@ public class ObjectiveConfig {
     TableDefinition<Objective> objectiveTableDefinition() {
 
         TableDefinition<Objective> tableDefinition = new TableDefinition<>(ObjectiveEditView.VIEW_NAME);
-        tableDefinition.column(DateField.class).withHeading(I8n.Objective.Columns.ID).forProperty(Objective.FIELD_ID).identity();
+        tableDefinition.column(DateField.class).withHeading(I8n.Objective.Columns.NAME).forProperty(Objective.FIELD_ID).identity().display(Objective.FIELD_NAME);
+        tableDefinition.column(TextField.class).withHeading(I8n.Objective.Columns.TEXT).forProperty(Objective.FIELD_TEXT).enableTextSearch();
         tableDefinition.column(Boolean.class).withHeading(I8n.Objective.Columns.ACTIVE).forProperty(Objective.FIELD_ACTIVE);
         return tableDefinition;
     }

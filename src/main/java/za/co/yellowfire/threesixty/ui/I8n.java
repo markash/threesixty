@@ -152,9 +152,15 @@ public class I8n {
 		String PLURAL = "Objectives";
 
         interface Columns {
-            String ID = "Name";
+            String ID = "Id";
+            String NAME = "Name";
+            String TEXT = "Text";
             String ACTIVE = "Active";
         }
+
+		interface Validation {
+			String NAME_REQUIRED = "The objective name is required.";
+		}
 	}
 
 	public interface Assessment {
