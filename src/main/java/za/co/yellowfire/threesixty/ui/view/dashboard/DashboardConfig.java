@@ -11,7 +11,10 @@ import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
 import za.co.yellowfire.threesixty.domain.rating.PeriodService;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
+import za.co.yellowfire.threesixty.ui.view.objective.ObjectiveSearchView;
 import za.co.yellowfire.threesixty.ui.view.period.PeriodSearchView;
+import za.co.yellowfire.threesixty.ui.view.rating.AssessmentSearchView;
+import za.co.yellowfire.threesixty.ui.view.user.UserSearchView;
 
 import java.util.Arrays;
 
@@ -68,7 +71,7 @@ public class DashboardConfig {
                 VaadinIcons.USERS,
                 "The number of active users registered within the system.",
                 userService::getUsersCounterStatistic,
-                "" //UserSearchView.VIEW_NAME
+                UserSearchView.VIEW_NAME
         );
     }
 
@@ -90,18 +93,18 @@ public class DashboardConfig {
                 VaadinIcons.USERS, //type.getIcon(),
                 "The number of assessment.",
                 assessmentService::getAssessmentsCounterStatistic,
-                "" //type.getViewName()
+                AssessmentSearchView.VIEW_NAME
         );
     }
 
     @Bean @PrototypeScope
     public CounterStatisticsCard performanceAreasCounterStatistic(final AssessmentService assessmentService) {
         return new CounterStatisticsCard(
-                "KPAs",
-                VaadinIcons.USERS, //type.getIcon(),
-                "The number of key performance areas tracked by the application.",
+                "Objectives",
+                VaadinIcons.CUBES,
+                "The number of key objectives tracked by the application.",
                 assessmentService::getPerformanceAreasCounterStatistic,
-                "" //type.getViewName()
+                ObjectiveSearchView.VIEW_NAME
         );
     }
 
