@@ -73,7 +73,7 @@ public class LoginView extends VerticalLayout implements View {
     private Component buildLoginForm() {
         final MVerticalLayout loginPanel =
                 new MVerticalLayout()
-                        .withSizeUndefined()
+                        .withUndefinedWidth()
                         .withSpacing(true)
                         .withStyleName("login-panel")
                         .with(buildLabels(), buildFields()/*, new CheckBox("Remember me", true)*/);

@@ -26,10 +26,11 @@
 		<threesixty-components.version>0.2.1</threesixty-components.version>
 		<threesixty-theme.version>0.1.1</threesixty-theme.version>
 
-        <vaadin.version>8.1.4</vaadin.version>
+        <vaadin.version>8.2.0.beta1</vaadin.version>
         <vaadin-icons.version>2.0.0</vaadin-icons.version>
         <vaadin4spring.version>2.0.1-SNAPSHOT</vaadin4spring.version>
         <vaadin-springboot.version>2.0.1</vaadin-springboot.version>
+        <viritin.version>2.1</viritin.version>
 	</properties>
 
 	<dependencies>
@@ -107,7 +108,7 @@
 		<dependency>
 		   <groupId>org.vaadin</groupId>
 		   <artifactId>viritin</artifactId>
-		   <version>2.0.beta2</version>
+		   <version>${viritin.version}</version>
 		</dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
@@ -115,6 +116,11 @@
             <version>0.9.13</version>
             <optional>true</optional>
         </dependency>
+		<dependency>
+			<groupId>org.vaadin.addons</groupId>
+			<artifactId>vaadin-excel-exporter</artifactId>
+			<version>2.0</version>
+		</dependency>
 		<!--
 		<dependency>
 		    <groupId>org.vaadin</groupId>
@@ -224,7 +230,7 @@
             <plugin>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-maven-plugin</artifactId>
-                <version>${vaadin.version}</version>
+                <version>8.1.4</version>
                 <executions>
                     <execution>
                         <goals>
