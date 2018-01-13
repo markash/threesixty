@@ -119,7 +119,8 @@ public class I8n {
 	public interface Period {
 		String SINGULAR = "Period";
 		String PLURAL = "Periods";
-		
+		String SELECT_PERIOD = "Select Period";
+
 		interface Columns {
 			String ID = "#";
 			String START = "Start Date";

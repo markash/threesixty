@@ -27,6 +27,9 @@ import org.vaadin.viritin.button.MButton;
 import za.co.yellowfire.threesixty.Sections;
 import za.co.yellowfire.threesixty.domain.rating.Assessment;
 import za.co.yellowfire.threesixty.ui.I8n;
+import za.co.yellowfire.threesixty.ui.view.period.PeriodModel;
+import za.co.yellowfire.threesixty.ui.view.period.PeriodSelectEvent;
+import za.co.yellowfire.threesixty.ui.view.period.PeriodSelectWindow;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -42,32 +45,41 @@ public class AssessmentSearchView extends AbstractTableSearchView<Assessment, St
 	public static final String TITLE = I8n.Assessment.PLURAL;
 	public static final String VIEW_NAME = "assessments";
 
-//    public static final String[] TABLE_FILTERS = {
-//    		Assessment.FIELD_ID,
-//    		Assessment.FIELD_EMPLOYEE,
-//    		Assessment.FIELD_PERIOD,
-//    		Assessment.FIELD_SCORE,
-//    		Assessment.FIELD_STATUS};
+	private final PeriodSelectWindow periodSelectWindow;
 
-//    private PeriodFilter periodFilter;
-    
     @Autowired
     public AssessmentSearchView(
     		final ListDataProvider<Assessment> assessmentListDataProvider,
-			final TableDefinition<Assessment> assessmentTableDefinition) {
-    	super(Assessment.class, TITLE, assessmentListDataProvider, assessmentTableDefinition);
+			final TableDefinition<Assessment> assessmentTableDefinition,
+            final ListDataProvider<PeriodModel> periodListDataProvider) {
 
-//    	addHeaderComponent(new ComboBox(null, new IndexedContainer(service.findActivePeriods())).valueChangeListener(this::onPeriodFilter));
+    	super(Assessment.class, TITLE, assessmentListDataProvider, assessmentTableDefinition);
 
 		getToolbar().addAction(new MButton(I8n.Button.NEW, this::onCreate));
 		getToolbar().addAction(new MButton(VaadinIcons.DOWNLOAD_ALT, this::onExportToXlsx));
+
+        this.periodSelectWindow = new PeriodSelectWindow(I8n.Period.SELECT_PERIOD, periodListDataProvider);
+        this.periodSelectWindow.setModal(true);
+        this.periodSelectWindow.addPeriodSelectListener(this::onPeriodSelect);
     }
 
 	public void onCreate(
 	        final ClickEvent event) {
 
-		UI.getCurrent().getNavigator().navigateTo(AssessmentEditView.VIEW("/new-assessment"));
+        this.periodSelectWindow.center();
+        UI.getCurrent().addWindow(this.periodSelectWindow);
 	}
+
+	private void onPeriodSelect(
+	        final PeriodSelectEvent event) {
+
+        if (event.getAction() == PeriodSelectEvent.Action.OK && event.getPeriod().isPresent()) {
+
+            UI.getCurrent()
+                    .getNavigator()
+                    .navigateTo(AssessmentEditView.VIEW("/new-assessment", event.getPeriod().get()));
+        }
+    }
 
 	public void onExportToXlsx(
 			final ClickEvent event) {
@@ -130,44 +142,5 @@ public class AssessmentSearchView extends AbstractTableSearchView<Assessment, St
 
 		return new ExportToExcel<>(exportType, config1);
 	}
-
-
-//	protected void onPeriodFilter(final HasValue.ValueChangeEvent event) {
-//		getPeriodFilter().setPeriod((Period) event.getProperty().getValue());
-//
-//		Filterable data = (Filterable) getTable().getContainerDataSource();
-//		data.removeContainerFilter(getPeriodFilter());
-//		data.addContainerFilter(getPeriodFilter());
-//	}
-//
-//	protected PeriodFilter getPeriodFilter() {
-//
-//		if (this.periodFilter == null) {
-//			this.periodFilter = new PeriodFilter();
-//		}
-//
-//		return this.periodFilter;
-//	}
-
-//	@SuppressWarnings("serial")
-//	public static class PeriodFilter implements Container.Filter {
-//
-//		private Period selected = null;
-//
-//		public PeriodFilter() {}
-//
-//		public void setPeriod(final Period selected) { this.selected = selected; }
-//
-//		@Override
-//		public boolean passesFilter(Object itemId, Item item) throws UnsupportedOperationException {
-//			if (selected == null) { return true; }
-//			return (itemId instanceof Assessment) && (((Assessment) itemId).getPeriod().equals(selected));
-//		}
-//
-//		@Override
-//		public boolean appliesToProperty(Object propertyId) {
-//			return propertyId.equals(Assessment.FIELD_PERIOD);
-//		}
-//	}
 }
 

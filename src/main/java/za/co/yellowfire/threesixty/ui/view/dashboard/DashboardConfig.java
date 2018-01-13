@@ -67,45 +67,33 @@ public class DashboardConfig {
     @Bean @PrototypeScope
     public CounterStatisticsCard usersCounterStatistic(final UserService userService) {
         return new CounterStatisticsCard(
-                "Users",
                 VaadinIcons.USERS,
-                "The number of active users registered within the system.",
-                userService::getUsersCounterStatistic,
-                UserSearchView.VIEW_NAME
-        );
+                userService.getUsersCounterStatistic(),
+                UserSearchView.VIEW_NAME);
     }
 
     @Bean @PrototypeScope
     public CounterStatisticsCard periodsCounterStatistic(final PeriodService periodService) {
         return new CounterStatisticsCard(
-                "Periods",
                 PeriodSearchView.ICON,
-                "The number of assessment period.",
-                periodService::getPeriodCounterStatistic,
-                PeriodSearchView.VIEW_NAME
-        );
+                periodService.getPeriodCounterStatistic(),
+                PeriodSearchView.VIEW_NAME);
     }
 
     @Bean @PrototypeScope
     public CounterStatisticsCard assessmentsCounterStatistic(final AssessmentService assessmentService) {
         return new CounterStatisticsCard(
-                "Assessments",
                 VaadinIcons.USERS, //type.getIcon(),
-                "The number of assessment.",
-                assessmentService::getAssessmentsCounterStatistic,
-                AssessmentSearchView.VIEW_NAME
-        );
+                assessmentService.getAssessmentsCounterStatistic(),
+                AssessmentSearchView.VIEW_NAME);
     }
 
     @Bean @PrototypeScope
     public CounterStatisticsCard performanceAreasCounterStatistic(final AssessmentService assessmentService) {
         return new CounterStatisticsCard(
-                "Objectives",
                 VaadinIcons.CUBES,
-                "The number of key objectives tracked by the application.",
-                assessmentService::getPerformanceAreasCounterStatistic,
-                ObjectiveSearchView.VIEW_NAME
-        );
+                assessmentService.getPerformanceAreasCounterStatistic(),
+                ObjectiveSearchView.VIEW_NAME);
     }
 
     //    private Component buildKudosCard() {

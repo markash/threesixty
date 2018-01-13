@@ -20,7 +20,6 @@ import za.co.yellowfire.threesixty.ui.I8n;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 @SuppressWarnings("serial")
 public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> {
@@ -66,27 +65,23 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> {
         endField.setRequiredIndicatorVisible(true);
 
 		registeredAssessmentsCard = new CounterStatisticsCard(
-				"Registered",
 				VaadinIcons.USERS,
-				"The number of registered assessments for the review period.",
+				new CounterStatisticModel("Registered Assessments", 0),
 				"");
 
         publishedAssessmentsCard = new CounterStatisticsCard(
-                "Published",
                 VaadinIcons.USERS,
-                "The number of published assessments for the review period.",
+                new CounterStatisticModel("Published Assessments", 0),
                 "");
 
         submittedAssessmentsCard = new CounterStatisticsCard(
-                "Submitted",
                 VaadinIcons.USERS,
-                "The number of submitted assessments for the review period.",
+                new CounterStatisticModel("Submitted Assessments", 0),
                 "");
 
         reviewedAssessmentsCard = new CounterStatisticsCard(
-                "Reviewed",
                 VaadinIcons.USERS,
-                "The number of completed assessments for the review period.",
+                new CounterStatisticModel("Reviewed Assessments", 0),
                 "");
 	}
 
@@ -121,20 +116,18 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> {
         Consumer<Period> refreshStatisticsCards = (p) -> {
             Map<AssessmentStatus, AssessmentStatusCount> statusCounts = assessmentService.countAssessmentsStatusFor(p);
             statusCounts.forEach((key, e) -> {
-
-                Supplier<CounterStatisticModel> suppler = () -> new CounterStatisticModel("assessments", e.getCount());
                 switch (key) {
                     case All:
-                        this.registeredAssessmentsCard.setStatisticSupplier(suppler);
+                        this.registeredAssessmentsCard.getValue().setValue(e.getCount());
                         break;
                     case Created:
-                        this.publishedAssessmentsCard.setStatisticSupplier(suppler);
+                        this.publishedAssessmentsCard.getValue().setValue(e.getCount());
                         break;
                     case EmployeeCompleted:
-                        this.submittedAssessmentsCard.setStatisticSupplier(suppler);
+                        this.submittedAssessmentsCard.getValue().setValue(e.getCount());
                         break;
                     case Reviewed:
-                        this.reviewedAssessmentsCard.setStatisticSupplier(suppler);
+                        this.reviewedAssessmentsCard.getValue().setValue(e.getCount());
                         break;
                 }
             });

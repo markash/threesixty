@@ -23,10 +23,11 @@
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<threesixty-components.version>0.2.1</threesixty-components.version>
-		<threesixty-theme.version>0.1.1</threesixty-theme.version>
+		<threesixty-components.version>0.2.2</threesixty-components.version>
+		<threesixty-theme.version>0.1.2</threesixty-theme.version>
+		<threesixty-statistics-card.version>0.1.2</threesixty-statistics-card.version>
 
-        <vaadin.version>8.2.0.beta1</vaadin.version>
+        <vaadin.version>8.2.0</vaadin.version>
         <vaadin-icons.version>2.0.0</vaadin-icons.version>
         <vaadin4spring.version>2.0.1-SNAPSHOT</vaadin4spring.version>
         <vaadin-springboot.version>2.0.1</vaadin-springboot.version>
@@ -38,6 +39,11 @@
 			<groupId>io.threesixty.components</groupId>
 			<artifactId>components</artifactId>
 			<version>${threesixty-components.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.threesixty.components</groupId>
+			<artifactId>statistics-card</artifactId>
+			<version>${threesixty-statistics-card.version}</version>
 		</dependency>
         <dependency>
             <groupId>io.threesixty.components</groupId>
