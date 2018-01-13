@@ -12,9 +12,10 @@ import org.springframework.context.annotation.Configuration;
 import org.vaadin.spring.annotation.PrototypeScope;
 import org.vaadin.spring.events.EventBus;
 import za.co.yellowfire.threesixty.domain.PersistenceException;
-import za.co.yellowfire.threesixty.domain.mail.SendGridMailingService;
 import za.co.yellowfire.threesixty.domain.rating.Assessment;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
+import za.co.yellowfire.threesixty.domain.rating.AssessmentStatus;
+import za.co.yellowfire.threesixty.domain.rating.PeriodRepository;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.view.period.PeriodModel;
@@ -70,14 +71,31 @@ public class AssessmentConfig {
     }
 
     @Bean
-    TableDefinition<Assessment> assessmentTableDefinition() {
+    TableDefinition<Assessment> assessmentTableDefinition(
+            final PeriodRepository periodRepository) {
 
         TableDefinition<Assessment> tableDefinition = new TableDefinition<>(AssessmentEditView.VIEW_NAME);
         tableDefinition.column(String.class).withHeading(I8n.Assessment.Columns.ID).forProperty(Assessment.FIELD_ID).identity();
-        tableDefinition.column(User.class).withHeading(I8n.Assessment.Columns.EMPLOYEE).forProperty(Assessment.FIELD_EMPLOYEE);
-        tableDefinition.column(User.class).withHeading(I8n.Assessment.Columns.PERIOD).forProperty(Assessment.FIELD_PERIOD);
-        tableDefinition.column(Double.class).withHeading(I8n.Assessment.Columns.SCORE).forProperty(Assessment.FIELD_SCORE);
-        tableDefinition.column(Boolean.class).withHeading(I8n.Assessment.Columns.STATUS).forProperty(Assessment.FIELD_STATUS);
+        tableDefinition
+                .column(User.class)
+                .withHeading(I8n.Assessment.Columns.EMPLOYEE)
+                .forProperty(Assessment.FIELD_EMPLOYEE)
+                .enableTextSearch();
+        tableDefinition
+                .column(User.class)
+                .withHeading(I8n.Assessment.Columns.PERIOD)
+                .forProperty(Assessment.FIELD_PERIOD)
+                .enableTextSearch(periodRepository.findByActive(true));
+        tableDefinition
+                .column(Double.class)
+                .withHeading(I8n.Assessment.Columns.SCORE)
+                .forProperty(Assessment.FIELD_SCORE)
+                .enableTextSearch();
+        tableDefinition
+                .column(AssessmentStatus.class)
+                .withHeading(I8n.Assessment.Columns.STATUS)
+                .forProperty(Assessment.FIELD_STATUS)
+                .enableTextSearch(AssessmentStatus.list());
         return tableDefinition;
     }
 }

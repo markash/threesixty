@@ -13,10 +13,13 @@ public class Objective implements Auditable<User, Serializable> {
 	private static final long serialVersionUID = 1L;
 
 	public static final String FIELD_ID = "id";
+	public static final String FIELD_NAME = "name";
+	public static final String FIELD_TEXT = "text";
 	public static final String FIELD_ACTIVE = "active";
 
 	@Id
 	private String id;
+	private String name;
 	private String text;
 	private boolean active = true;
 	@DBRef
@@ -44,6 +47,9 @@ public class Objective implements Auditable<User, Serializable> {
 
 	public String getText() { return text; }
 	public void setText(final String text) { this.text = text; }
+
+	public String getName() { return name; }
+	public void setName(final String name) { this.name = name; }
 
 	public boolean isActive() { return active; }
 	public void setActive(final boolean active) { this.active = active; }

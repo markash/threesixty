@@ -1,34 +1,36 @@
 package za.co.yellowfire.threesixty.ui.view.objective;
 
-import io.threesixty.ui.event.EnterEntityEditViewEvent;
+import com.vaadin.ui.CheckBox;
 import io.threesixty.ui.view.AbstractEntityEditForm;
-import org.vaadin.spring.events.EventBus;
-import org.vaadin.spring.events.EventBusListener;
+import org.vaadin.viritin.fields.MTextField;
+import org.vaadin.viritin.layouts.MVerticalLayout;
 import za.co.yellowfire.threesixty.domain.rating.Objective;
-import za.co.yellowfire.threesixty.ui.view.period.PeriodModel;
-
-import javax.annotation.PreDestroy;
+import za.co.yellowfire.threesixty.ui.I8n;
 
 @SuppressWarnings("serial")
-public class ObjectiveEntityEditForm extends AbstractEntityEditForm<Objective> implements EventBusListener<EnterEntityEditViewEvent<PeriodModel>>  {
+public class ObjectiveEntityEditForm extends AbstractEntityEditForm<Objective>  {
 
-	private final EventBus.SessionEventBus eventBus;
+    private final MTextField nameField = new MTextField(I8n.Objective.Columns.NAME).withFullWidth();
+    private final MTextField textField = new MTextField(I8n.Objective.Columns.TEXT).withFullWidth();
+    private CheckBox activeField = new CheckBox(I8n.Period.Fields.ACTIVE);
 
-	ObjectiveEntityEditForm(
-			final EventBus.SessionEventBus eventBus) {
+	ObjectiveEntityEditForm() {
 		super(Objective.class);
 
-		this.eventBus = eventBus;
-		this.eventBus.subscribe(this);
+        getBinder().forField(nameField).asRequired(I8n.Objective.Validation.NAME_REQUIRED).bind(Objective.FIELD_NAME);
+        getBinder().forField(textField).bind(Objective.FIELD_TEXT);
+        getBinder().forField(activeField).bind(Objective.FIELD_ACTIVE);
+
+        nameField.setRequiredIndicatorVisible(true);
 	}
 
 	@Override
-	public void onEvent(final org.vaadin.spring.events.Event<EnterEntityEditViewEvent<PeriodModel>> event) {
-	}
+	protected void internalLayout() {
 
-	@PreDestroy
-	@SuppressWarnings("unused")
-	void destroy() {
-		eventBus.unsubscribe(this);
+		addComponent(new MVerticalLayout()
+				.withSpacing(true)
+				.withMargin(false)
+				.withWidth(100.0f, Unit.PERCENTAGE)
+				.with(nameField, textField, activeField));
 	}
 }

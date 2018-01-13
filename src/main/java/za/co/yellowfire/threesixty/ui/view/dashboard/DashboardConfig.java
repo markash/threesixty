@@ -11,7 +11,10 @@ import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
 import za.co.yellowfire.threesixty.domain.rating.PeriodService;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
+import za.co.yellowfire.threesixty.ui.view.objective.ObjectiveSearchView;
 import za.co.yellowfire.threesixty.ui.view.period.PeriodSearchView;
+import za.co.yellowfire.threesixty.ui.view.rating.AssessmentSearchView;
+import za.co.yellowfire.threesixty.ui.view.user.UserSearchView;
 
 import java.util.Arrays;
 
@@ -64,45 +67,33 @@ public class DashboardConfig {
     @Bean @PrototypeScope
     public CounterStatisticsCard usersCounterStatistic(final UserService userService) {
         return new CounterStatisticsCard(
-                "Users",
                 VaadinIcons.USERS,
-                "The number of active users registered within the system.",
-                userService::getUsersCounterStatistic,
-                "" //UserSearchView.VIEW_NAME
-        );
+                userService.getUsersCounterStatistic(),
+                UserSearchView.VIEW_NAME);
     }
 
     @Bean @PrototypeScope
     public CounterStatisticsCard periodsCounterStatistic(final PeriodService periodService) {
         return new CounterStatisticsCard(
-                "Periods",
                 PeriodSearchView.ICON,
-                "The number of assessment period.",
-                periodService::getPeriodCounterStatistic,
-                PeriodSearchView.VIEW_NAME
-        );
+                periodService.getPeriodCounterStatistic(),
+                PeriodSearchView.VIEW_NAME);
     }
 
     @Bean @PrototypeScope
     public CounterStatisticsCard assessmentsCounterStatistic(final AssessmentService assessmentService) {
         return new CounterStatisticsCard(
-                "Assessments",
                 VaadinIcons.USERS, //type.getIcon(),
-                "The number of assessment.",
-                assessmentService::getAssessmentsCounterStatistic,
-                "" //type.getViewName()
-        );
+                assessmentService.getAssessmentsCounterStatistic(),
+                AssessmentSearchView.VIEW_NAME);
     }
 
     @Bean @PrototypeScope
     public CounterStatisticsCard performanceAreasCounterStatistic(final AssessmentService assessmentService) {
         return new CounterStatisticsCard(
-                "KPAs",
-                VaadinIcons.USERS, //type.getIcon(),
-                "The number of key performance areas tracked by the application.",
-                assessmentService::getPerformanceAreasCounterStatistic,
-                "" //type.getViewName()
-        );
+                VaadinIcons.CUBES,
+                assessmentService.getPerformanceAreasCounterStatistic(),
+                ObjectiveSearchView.VIEW_NAME);
     }
 
     //    private Component buildKudosCard() {

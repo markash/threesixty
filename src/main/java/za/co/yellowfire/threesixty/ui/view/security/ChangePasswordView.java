@@ -12,8 +12,8 @@ import org.vaadin.spring.sidebar.annotation.VaadinFontIcon;
 import za.co.yellowfire.threesixty.Sections;
 import za.co.yellowfire.threesixty.ui.I8n;
 
-@SideBarItem(sectionId = Sections.PROFILE, caption = ChangePasswordView.VIEW_NAME)
-@VaadinFontIcon(VaadinIcons.CALENDAR_O)
+@SideBarItem(sectionId = Sections.PROFILE, caption = ChangePasswordView.TITLE)
+@VaadinFontIcon(VaadinIcons.SAFE_LOCK)
 @SpringView(name = ChangePasswordView.VIEW_NAME)
 public class ChangePasswordView extends HorizontalLayout implements View {
 	private static final long serialVersionUID = 1L;

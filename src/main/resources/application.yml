@@ -1,0 +1,86 @@
+rating:
+  question:
+    lowerBound: 1
+    upperBound: 5
+    increment: 1
+    locked: true
+
+user:
+  notification:
+    limit: 10
+
+threesixty:
+  application:
+    title: ThreeSixty
+    logo: "<span class='v-icon v-icon-compile' style='font-family: Vaadin-Icons;'>&#xe6c8;</span>"
+  mailing:
+    provider: sendgrid
+  badge:
+    uri: "https://yellowfire-threesixty.herokuapp.com/api/badge/image"
+  tracking:
+    code: UA-81670605-1
+    url: www.threesixty.co.za
+
+vaadin:
+  servlet:
+    production-mode: true
+
+#threesixty.badge.uri=http://localhost:8080/api/badge/image
+
+logging:
+  level.org.springframework.web: INFO
+  level.org.springframework.data: INFO
+
+---
+########################################################################################################################
+# DEVELOPMENT
+########################################################################################################################
+spring:
+  profiles: dev
+  data:
+    mongodb:
+      uri: "mongodb://127.0.0.1:27017/test"
+server:
+  port: 8082
+
+---
+########################################################################################################################
+# AZURE
+########################################################################################################################
+spring:
+  profiles: azure
+server:
+  port: 9001
+
+logging:
+  level: DEBUG
+  level.org.springframework: DEBUG
+  file: /home/LogFiles/boot.log
+
+---
+########################################################################################################################
+# HEROKU
+########################################################################################################################
+spring:
+  profiles: heroku
+  data:
+    mongodb:
+    uri: "mongodb://heroku_kv4pr8rw:le879u6618ar2ipeim43sqtsgi@ds045465.mongolab.com:45465/heroku_kv4pr8rw"
+server:
+  port: 9001
+logging:
+  level: DEBUG
+  level.org.springframework: DEBUG
+  file: /home/LogFiles/boot.log
+
+---
+########################################################################################################################
+# VAGRANT
+########################################################################################################################
+spring:
+  profiles: vagrant
+  data:
+    mongodb:
+      uri: "mongodb://127.0.0.1:27017/test"
+server:
+  port: 8080

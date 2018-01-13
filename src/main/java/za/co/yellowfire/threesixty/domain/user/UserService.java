@@ -345,7 +345,7 @@ public class UserService implements UserDetailsService {
 	}
 	
 	public CounterStatisticModel getUsersCounterStatistic() {
-		return new CounterStatisticModel("UsersCounter", Optional.of(userRepository.countActive()));
+		return new CounterStatisticModel("UsersCounter", userRepository.countActive());
 	}
 	
 	public void notify(final User to, final String message) {

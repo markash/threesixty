@@ -3,7 +3,6 @@ package za.co.yellowfire.threesixty.domain.rating;
 import com.google.common.collect.Range;
 import io.threesixty.ui.component.card.CounterStatisticModel;
 import io.threesixty.ui.security.CurrentUserProvider;
-import io.threesixty.ui.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import za.co.yellowfire.threesixty.domain.PersistenceException;
@@ -12,7 +11,6 @@ import za.co.yellowfire.threesixty.domain.user.User;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,6 +83,6 @@ public class PeriodService implements za.co.yellowfire.threesixty.domain.questio
 	}
 	
 	public CounterStatisticModel getPeriodCounterStatistic() {
-		return new CounterStatisticModel("PeriodsCounter", Optional.of(periodRepository.countActive()));
+		return new CounterStatisticModel("PeriodsCounter", periodRepository.countActive());
 	}
 }

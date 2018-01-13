@@ -1,6 +1,7 @@
 package za.co.yellowfire.threesixty.ui.view.rating;
 
 import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.ui.UI;
 import io.threesixty.ui.component.BlankSupplier;
 import io.threesixty.ui.component.EntityPersistFunction;
 import io.threesixty.ui.component.EntitySupplier;
@@ -11,6 +12,7 @@ import org.springframework.context.ApplicationEvent;
 import org.vaadin.spring.events.EventBus;
 import za.co.yellowfire.threesixty.domain.rating.Assessment;
 import za.co.yellowfire.threesixty.ui.I8n;
+import za.co.yellowfire.threesixty.ui.view.period.PeriodModel;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -24,7 +26,15 @@ public class AssessmentEditView extends AbstractEntityEditView<Assessment> {
 
 	private EventBus.SessionEventBus eventBus;
 
-    public static String VIEW(final String id) { return VIEW_NAME + (StringUtils.isBlank(id) ? "" : "/" + id); }
+    public static String VIEW(
+			final String id,
+			final PeriodModel period) {
+
+    	return VIEW_NAME +
+				((StringUtils.isBlank(id) ? "" : "/" + id) +
+				"/" + period.getId()
+				);
+    }
 
     @Autowired
     public AssessmentEditView(

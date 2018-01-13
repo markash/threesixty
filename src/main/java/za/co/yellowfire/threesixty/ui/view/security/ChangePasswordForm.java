@@ -4,11 +4,11 @@ import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.themes.ValoTheme;
 import org.vaadin.viritin.button.MButton;
 import org.vaadin.viritin.form.AbstractForm;
 import org.vaadin.viritin.layouts.MVerticalLayout;
-import org.vaadin.viritin.v7.fields.MPasswordField;
 import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.Style;
 import za.co.yellowfire.threesixty.ui.component.FormHeader;
@@ -20,18 +20,10 @@ public class ChangePasswordForm extends AbstractForm<ChangePasswordModel> {
 	private static final String LABEL_CHANGE_PASSWORD = "Change Password";
 	private static final String LABEL_APPLICATION_NAME = "Three <strong>Sixty</strong>";
 	
-	private MPasswordField oldPassword = new MPasswordField(I8n.ChangePassword.Fields.OLD_PASSWORD)
-			.withIcon(VaadinIcons.LOCK)
-			.withStyleName(ValoTheme.TEXTFIELD_INLINE_ICON)
-			.withWidth(Style.Percentage._100);
-	private MPasswordField newPassword = new MPasswordField(I8n.ChangePassword.Fields.NEW_PASSWORD)
-			.withIcon(VaadinIcons.LOCK)
-			.withStyleName(ValoTheme.TEXTFIELD_INLINE_ICON)
-			.withWidth(Style.Percentage._100);
-	private MPasswordField confirmPassword = new MPasswordField(I8n.ChangePassword.Fields.CONFIRM_PASSWORD)
-			.withIcon(VaadinIcons.LOCK)
-			.withStyleName(ValoTheme.TEXTFIELD_INLINE_ICON)
-			.withWidth(Style.Percentage._100);
+	private PasswordField oldPassword = new PasswordField(I8n.ChangePassword.Fields.OLD_PASSWORD);
+	private PasswordField newPassword = new PasswordField(I8n.ChangePassword.Fields.NEW_PASSWORD);
+	private PasswordField confirmPassword = new PasswordField(I8n.ChangePassword.Fields.CONFIRM_PASSWORD);
+
 	private MButton changePasswordButton = new MButton(I8n.Button.CHANGE_PASSWORD)
 			.withStyleName(ValoTheme.BUTTON_PRIMARY)
 			.withClickShortcut(KeyCode.ENTER)
@@ -47,6 +39,18 @@ public class ChangePasswordForm extends AbstractForm<ChangePasswordModel> {
 	        final ChangePasswordHandler changePasswordHandler) {
 		super(ChangePasswordModel.class);
 
+		this.oldPassword.setIcon(VaadinIcons.LOCK);
+		this.oldPassword.setStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
+		this.oldPassword.setWidth(Style.Percentage._100);
+
+		this.newPassword.setIcon(VaadinIcons.LOCK);
+        this.newPassword.setStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
+        this.newPassword.setWidth(Style.Percentage._100);
+
+        this.confirmPassword.setIcon(VaadinIcons.LOCK);
+        this.confirmPassword.setStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
+        this.confirmPassword.setWidth(Style.Percentage._100);
+
 		this.getBinder().withValidator(new ConfirmPasswordValidator());
 		this.setSaveButton(changePasswordButton);
 		this.setSavedHandler(changePasswordHandler);
@@ -55,7 +59,7 @@ public class ChangePasswordForm extends AbstractForm<ChangePasswordModel> {
 	@Override
 	protected Component createContent() {
 		final MVerticalLayout layout = new MVerticalLayout()
-				.withWidthUndefined()
+				.withFullWidth()
 				.withSpacing(true)
 				.withMargin(false)
 				.with(formHeader, fields)

@@ -119,7 +119,8 @@ public class I8n {
 	public interface Period {
 		String SINGULAR = "Period";
 		String PLURAL = "Periods";
-		
+		String SELECT_PERIOD = "Select Period";
+
 		interface Columns {
 			String ID = "#";
 			String START = "Start Date";
@@ -152,9 +153,15 @@ public class I8n {
 		String PLURAL = "Objectives";
 
         interface Columns {
-            String ID = "Name";
+            String ID = "Id";
+            String NAME = "Name";
+            String TEXT = "Text";
             String ACTIVE = "Active";
         }
+
+		interface Validation {
+			String NAME_REQUIRED = "The objective name is required.";
+		}
 	}
 
 	public interface Assessment {
