@@ -32,6 +32,11 @@ Three**Sixty** will provide a review feature that allows the employee to assess 
 
 Three**Sixty** is currently running in a Heroku dyno at https://yellowfire-threesixty.herokuapp.com. The application might be down at intervals because of deployments or us just messing around with the configuration to try new and exciting things.
 
+| Username | Password |
+|----------|----------|
+| admin    | password |
+
+
 ### Divisio
 
 * **Spring Boot 1.4.1** for the container
