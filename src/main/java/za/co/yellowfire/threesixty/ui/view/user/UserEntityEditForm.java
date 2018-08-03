@@ -1,14 +1,14 @@
 package za.co.yellowfire.threesixty.ui.view.user;
 
+import com.github.markash.ui.component.button.ButtonBuilder;
+import com.github.markash.ui.component.notification.NotificationBuilder;
+import com.github.markash.ui.security.CurrentUserProvider;
+import com.github.markash.ui.security.UserPrincipal;
+import com.github.markash.ui.view.AbstractEntityEditForm;
 import com.vaadin.data.StatusChangeEvent;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
-import io.threesixty.ui.component.button.ButtonBuilder;
-import io.threesixty.ui.component.notification.NotificationBuilder;
-import io.threesixty.ui.security.CurrentUserProvider;
-import io.threesixty.ui.security.UserPrincipal;
-import io.threesixty.ui.view.AbstractEntityEditForm;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 import za.co.yellowfire.threesixty.domain.organization.Organization;

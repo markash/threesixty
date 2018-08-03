@@ -1,12 +1,12 @@
 package za.co.yellowfire.threesixty.ui.view.rating;
 
+import com.github.markash.ui.view.AbstractTableSearchView;
+import com.github.markash.ui.view.TableDefinition;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.UI;
-import io.threesixty.ui.view.AbstractTableSearchView;
-import io.threesixty.ui.view.TableDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.vaadin.addons.excelexporter.ExportToExcel;

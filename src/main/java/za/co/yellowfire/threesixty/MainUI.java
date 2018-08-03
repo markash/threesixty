@@ -1,21 +1,22 @@
 package za.co.yellowfire.threesixty;
 
+import com.github.markash.ui.ApplicationUI;
+import com.github.markash.ui.component.logo.Logo;
+import com.github.markash.ui.component.notification.NotificationBuilder;
+import com.github.markash.ui.event.UserPasswordChangeEvent;
+import com.github.markash.ui.view.DisplayView;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
-import com.vaadin.navigator.ViewProvider;
 import com.vaadin.server.DefaultErrorHandler;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringUI;
+import com.vaadin.spring.navigator.SpringNavigator;
 import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Window;
-import io.threesixty.ui.ApplicationUI;
-import io.threesixty.ui.component.logo.Logo;
-import io.threesixty.ui.component.notification.NotificationBuilder;
-import io.threesixty.ui.event.UserPasswordChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.vaadin.spring.events.EventBus;
@@ -26,7 +27,10 @@ import org.vaadin.spring.security.util.SuccessfulLoginEvent;
 import org.vaadin.spring.sidebar.components.ValoSideBar;
 import org.vaadin.spring.sidebar.security.VaadinSecurityItemFilter;
 import za.co.yellowfire.threesixty.domain.user.User;
-import za.co.yellowfire.threesixty.ui.DashboardEvent.*;
+import za.co.yellowfire.threesixty.ui.DashboardEvent.CloseOpenWindowsEvent;
+import za.co.yellowfire.threesixty.ui.DashboardEvent.ProfileUpdatedEvent;
+import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLoginEvent;
+import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLogoutEvent;
 import za.co.yellowfire.threesixty.ui.view.LoginView;
 import za.co.yellowfire.threesixty.ui.view.MainView;
 import za.co.yellowfire.threesixty.ui.view.security.ChangePasswordView;
@@ -40,8 +44,8 @@ public class MainUI extends ApplicationUI {
 
 	//@Autowired
 	//private ConverterFactory converterFactory;
-    @Autowired
-    private SpringViewProvider viewProvider;
+//    @Autowired
+//    private SpringViewProvider viewProvider;
     @Autowired
     private EventBus.SessionEventBus eventBus;
     @Autowired
@@ -56,6 +60,13 @@ public class MainUI extends ApplicationUI {
     private static final String TRACKER_ID = "UA-81670605-1";
     //private GoogleAnalyticsTracker tracker;
 
+    public MainUI(
+            final SpringNavigator navigator,
+            final DisplayView displayView) {
+
+        super(navigator, displayView);
+    }
+
     @Override
     protected Component getSideBar() {
         sideBar.setLogo(logo);
@@ -63,10 +74,10 @@ public class MainUI extends ApplicationUI {
         return sideBar;
     }
 
-    @Override
-    protected ViewProvider getViewProvider() {
-        return viewProvider;
-    }
+//    @Override
+//    protected ViewProvider getViewProvider() {
+//        return viewProvider;
+//    }
 
     @Override
     public void attach() {

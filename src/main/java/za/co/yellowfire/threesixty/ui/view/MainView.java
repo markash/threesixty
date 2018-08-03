@@ -1,5 +1,6 @@
 package za.co.yellowfire.threesixty.ui.view;
 
+import com.github.markash.ui.view.ErrorView;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -9,11 +10,9 @@ import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.UI;
-import io.threesixty.ui.view.ErrorView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.spring.security.VaadinSecurity;
 import org.vaadin.spring.sidebar.components.ValoSideBar;
-import org.vaadin.spring.sidebar.security.VaadinSecurityItemFilter;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 
 /*

@@ -1,10 +1,10 @@
 package za.co.yellowfire.threesixty.ui.view.user;
 
+import com.github.markash.ui.event.LogoutEvent;
 import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.MenuBar;
-import io.threesixty.ui.event.LogoutEvent;
 import org.vaadin.spring.events.EventBus;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.component.ByteArrayStreamResource;

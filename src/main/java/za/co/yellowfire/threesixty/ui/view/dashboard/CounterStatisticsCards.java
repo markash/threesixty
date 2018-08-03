@@ -1,6 +1,6 @@
 package za.co.yellowfire.threesixty.ui.view.dashboard;
 
-import io.threesixty.ui.component.card.CounterStatisticsCard;
+import com.github.markash.ui.component.card.CounterStatisticsCard;
 
 import java.util.ArrayList;
 import java.util.List;

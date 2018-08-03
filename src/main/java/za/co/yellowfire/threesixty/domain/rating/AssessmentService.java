@@ -1,7 +1,7 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
-import io.threesixty.ui.component.card.CounterStatisticModel;
-import io.threesixty.ui.security.CurrentUserProvider;
+import com.github.markash.ui.component.card.CounterStatisticModel;
+import com.github.markash.ui.security.CurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;

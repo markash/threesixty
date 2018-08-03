@@ -1,14 +1,14 @@
 package za.co.yellowfire.threesixty.ui.view.objective;
 
+import com.github.markash.ui.view.AbstractEntityEditForm;
 import com.vaadin.ui.CheckBox;
-import io.threesixty.ui.view.AbstractEntityEditForm;
 import org.vaadin.viritin.fields.MTextField;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 import za.co.yellowfire.threesixty.domain.rating.Objective;
 import za.co.yellowfire.threesixty.ui.I8n;
 
 @SuppressWarnings("serial")
-public class ObjectiveEntityEditForm extends AbstractEntityEditForm<Objective>  {
+public class ObjectiveEntityEditForm extends AbstractEntityEditForm<Objective> {
 
     private final MTextField nameField = new MTextField(I8n.Objective.Columns.NAME).withFullWidth();
     private final MTextField textField = new MTextField(I8n.Objective.Columns.TEXT).withFullWidth();

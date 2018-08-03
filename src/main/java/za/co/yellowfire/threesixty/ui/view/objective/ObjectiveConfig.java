@@ -1,13 +1,13 @@
 package za.co.yellowfire.threesixty.ui.view.objective;
 
+import com.github.markash.ui.component.BlankSupplier;
+import com.github.markash.ui.component.EntityPersistFunction;
+import com.github.markash.ui.component.EntitySupplier;
+import com.github.markash.ui.component.notification.NotificationBuilder;
+import com.github.markash.ui.view.TableDefinition;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.TextField;
-import io.threesixty.ui.component.BlankSupplier;
-import io.threesixty.ui.component.EntityPersistFunction;
-import io.threesixty.ui.component.EntitySupplier;
-import io.threesixty.ui.component.notification.NotificationBuilder;
-import io.threesixty.ui.view.TableDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.vaadin.spring.annotation.PrototypeScope;
@@ -40,16 +40,13 @@ public class ObjectiveConfig {
 
     @Bean
     EntityPersistFunction<Objective> objectivePersistFunction(final ObjectiveService objectiveService) {
-        return new EntityPersistFunction<Objective>() {
-            @Override
-            public Objective apply(final Objective objective) {
-                try {
-                    return objectiveService.save(objective);
-                } catch (PersistenceException e) {
-                    NotificationBuilder.showNotification("Persist", e.getMessage());
-                }
-                return objective;
+        return objective -> {
+            try {
+                return objectiveService.save(objective);
+            } catch (PersistenceException e) {
+                NotificationBuilder.showNotification("Persist", e.getMessage());
             }
+            return objective;
         };
     }
 

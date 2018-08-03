@@ -1,5 +1,8 @@
 package za.co.yellowfire.threesixty.ui.view.dashboard;
 
+import com.github.markash.ui.component.field.Toolbar;
+import com.github.markash.ui.component.notification.NotificationsButton;
+import com.github.markash.ui.view.AbstractDashboardView;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Responsive;
@@ -9,9 +12,6 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.themes.ValoTheme;
-import io.threesixty.ui.component.field.Toolbar;
-import io.threesixty.ui.component.notification.NotificationsButton;
-import io.threesixty.ui.view.AbstractDashboardView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.vaadin.spring.sidebar.annotation.SideBarItem;

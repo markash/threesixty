@@ -1,9 +1,10 @@
 package za.co.yellowfire.threesixty.ui.view.dashboard;
 
+import com.github.markash.ui.component.notification.NotificationModel;
+import com.github.markash.ui.component.notification.NotificationsModel;
+import com.github.markash.ui.security.CurrentUserProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.FontIcon;
-import io.threesixty.ui.component.notification.NotificationModel;
-import io.threesixty.ui.security.CurrentUserProvider;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.domain.user.notification.NotificationCategory;
@@ -11,11 +12,11 @@ import za.co.yellowfire.threesixty.domain.user.notification.UserNotification;
 
 import java.util.stream.Collectors;
 
-public class DashboardNotificationsModel extends io.threesixty.ui.component.notification.NotificationsModel {
+class DashboardNotificationsModel extends NotificationsModel {
     private final User currentUser;
     private final UserService userService;
 
-    public DashboardNotificationsModel(final CurrentUserProvider<User> currentUserProvider, final UserService userService) {
+    DashboardNotificationsModel(final CurrentUserProvider<User> currentUserProvider, final UserService userService) {
         if (currentUserProvider.get().isPresent()) {
             this.currentUser = currentUserProvider.get().get().getUser();
         } else {
@@ -26,7 +27,7 @@ public class DashboardNotificationsModel extends io.threesixty.ui.component.noti
         refresh();
     }
 
-    public void refresh() {
+    private void refresh() {
         setNotifications(userService
                 .findNotifications(currentUser)
                 .stream()

@@ -23,37 +23,40 @@
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<threesixty-components.version>0.2.2</threesixty-components.version>
-		<threesixty-theme.version>0.1.2</threesixty-theme.version>
-		<threesixty-statistics-card.version>0.1.2</threesixty-statistics-card.version>
+		<threesixty-components.version>0.3.1-SNAPSHOT</threesixty-components.version>
 
         <vaadin.version>8.2.0</vaadin.version>
         <vaadin-icons.version>2.0.0</vaadin-icons.version>
-        <vaadin4spring.version>2.0.1-SNAPSHOT</vaadin4spring.version>
+        <vaadin4spring.version>2.0.0.RELEASE</vaadin4spring.version>
         <vaadin-springboot.version>2.0.1</vaadin-springboot.version>
         <viritin.version>2.1</viritin.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>io.threesixty.components</groupId>
+			<groupId>com.github.markash</groupId>
 			<artifactId>components</artifactId>
 			<version>${threesixty-components.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>io.threesixty.components</groupId>
+			<groupId>com.github.markash</groupId>
 			<artifactId>statistics-card</artifactId>
-			<version>${threesixty-statistics-card.version}</version>
+			<version>${threesixty-components.version}</version>
 		</dependency>
         <dependency>
-            <groupId>io.threesixty.components</groupId>
-            <artifactId>theme</artifactId>
-            <version>${threesixty-theme.version}</version>
+            <groupId>com.github.markash</groupId>
+            <artifactId>components-theme</artifactId>
+            <version>${threesixty-components.version}</version>
         </dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-spring</artifactId>
+			<version>3.1.0</version>
+		</dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-spring-boot-starter</artifactId>
-            <version>2.0.1</version>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.vaadin.spring.extensions</groupId>
@@ -273,7 +276,7 @@
 			<plugin> 
 				<groupId>com.heroku.sdk</groupId> 
 				<artifactId>heroku-maven-plugin</artifactId> 
-				<version>1.1.1</version> 
+				<version>2.0.5</version>
 				<configuration> 
 					<appName>yellowfire-threesixty</appName>
 					<includes> 

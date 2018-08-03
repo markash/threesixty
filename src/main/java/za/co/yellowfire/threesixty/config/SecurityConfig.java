@@ -1,7 +1,7 @@
 package za.co.yellowfire.threesixty.config;
 
+import com.github.markash.ui.security.SpringSecurityCurrentUserProvider;
 import com.vaadin.data.provider.ListDataProvider;
-import io.threesixty.ui.security.SpringSecurityCurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,11 +42,11 @@ public class SecurityConfig implements AuthenticationManagerConfigurer {
 
     @Bean
     public SpringSecurityCurrentUserProvider<User> currentUserProvider() {
-        return new SpringSecurityCurrentUserProvider<User>();
+        return new SpringSecurityCurrentUserProvider<>();
     }
 
     @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+    public void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(authenticationProvider());
 //        auth.inMemoryAuthentication()
 //                .withUser("user").password("user").roles("USER")

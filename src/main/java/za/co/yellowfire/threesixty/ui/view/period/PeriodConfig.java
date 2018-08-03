@@ -1,13 +1,13 @@
 package za.co.yellowfire.threesixty.ui.view.period;
 
+import com.github.markash.ui.component.BlankSupplier;
+import com.github.markash.ui.component.EntityPersistFunction;
+import com.github.markash.ui.component.EntitySupplier;
+import com.github.markash.ui.component.notification.NotificationBuilder;
+import com.github.markash.ui.view.TableDefinition;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.renderers.DateRenderer;
-import io.threesixty.ui.component.BlankSupplier;
-import io.threesixty.ui.component.EntityPersistFunction;
-import io.threesixty.ui.component.EntitySupplier;
-import io.threesixty.ui.component.notification.NotificationBuilder;
-import io.threesixty.ui.view.TableDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.vaadin.spring.annotation.PrototypeScope;
@@ -42,16 +42,13 @@ public class PeriodConfig {
 
     @Bean
     EntityPersistFunction<PeriodModel> periodPersistFunction(final PeriodService periodService) {
-        return new EntityPersistFunction<PeriodModel>() {
-            @Override
-            public PeriodModel apply(final PeriodModel period) {
-                try {
-                    return new PeriodModel(periodService.save(period.getWrapped()));
-                } catch (PersistenceException e) {
-                    NotificationBuilder.showNotification("Persist", e.getMessage());
-                }
-                return period;
+        return period -> {
+            try {
+                return new PeriodModel(periodService.save(period.getWrapped()));
+            } catch (PersistenceException e) {
+                NotificationBuilder.showNotification("Persist", e.getMessage());
             }
+            return period;
         };
     }
 

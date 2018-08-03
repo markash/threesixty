@@ -1,17 +1,15 @@
 package za.co.yellowfire.threesixty.ui.view.user;
 
+import com.github.markash.ui.component.BlankSupplier;
+import com.github.markash.ui.component.EntityPersistFunction;
+import com.github.markash.ui.component.EntitySupplier;
+import com.github.markash.ui.component.notification.NotificationBuilder;
+import com.github.markash.ui.security.CurrentUserProvider;
+import com.github.markash.ui.view.TableDefinition;
 import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.ui.renderers.DateRenderer;
-import io.threesixty.ui.component.BlankSupplier;
-import io.threesixty.ui.component.EntityPersistFunction;
-import io.threesixty.ui.component.EntitySupplier;
-import io.threesixty.ui.component.notification.NotificationBuilder;
-import io.threesixty.ui.security.CurrentUserProvider;
-import io.threesixty.ui.view.TableDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.vaadin.spring.annotation.PrototypeScope;
-import za.co.yellowfire.threesixty.domain.PersistenceException;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.I8n;

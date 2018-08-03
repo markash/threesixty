@@ -1,5 +1,8 @@
 package za.co.yellowfire.threesixty.ui.view.user;
 
+import com.github.markash.ui.component.notification.NotificationBuilder;
+import com.github.markash.ui.view.AbstractTableSearchView;
+import com.github.markash.ui.view.TableDefinition;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.Registration;
@@ -7,9 +10,6 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
-import io.threesixty.ui.component.notification.NotificationBuilder;
-import io.threesixty.ui.view.AbstractTableSearchView;
-import io.threesixty.ui.view.TableDefinition;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.simpleflatmapper.poi.SheetMapper;

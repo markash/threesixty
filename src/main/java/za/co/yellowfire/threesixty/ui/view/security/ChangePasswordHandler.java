@@ -1,7 +1,7 @@
 package za.co.yellowfire.threesixty.ui.view.security;
 
-import io.threesixty.ui.component.notification.NotificationBuilder;
-import io.threesixty.ui.event.UserPasswordChangeEvent;
+import com.github.markash.ui.component.notification.NotificationBuilder;
+import com.github.markash.ui.event.UserPasswordChangeEvent;
 import org.vaadin.spring.events.EventBus;
 import org.vaadin.viritin.form.AbstractForm;
 import za.co.yellowfire.threesixty.Response;

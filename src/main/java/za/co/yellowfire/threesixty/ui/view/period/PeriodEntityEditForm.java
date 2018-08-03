@@ -1,13 +1,14 @@
 package za.co.yellowfire.threesixty.ui.view.period;
 
+import com.github.markash.ui.component.card.CounterStatisticModel;
+import com.github.markash.ui.component.card.CounterStatisticsCard;
+import com.github.markash.ui.view.AbstractEntityEditForm;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.VerticalLayout;
-import io.threesixty.ui.component.card.CounterStatisticModel;
-import io.threesixty.ui.component.card.CounterStatisticsCard;
-import io.threesixty.ui.view.AbstractEntityEditForm;
+
 import org.vaadin.viritin.layouts.MFormLayout;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;

@@ -1,6 +1,6 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
-import io.threesixty.ui.security.CurrentUserProvider;
+import com.github.markash.ui.security.CurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import za.co.yellowfire.threesixty.domain.PersistenceException;

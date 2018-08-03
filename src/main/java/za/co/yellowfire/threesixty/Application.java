@@ -1,18 +1,15 @@
 package za.co.yellowfire.threesixty;
 
+import com.github.markash.ui.annotation.EnableThreeSixtyComponents;
 import com.vaadin.server.CustomizedSystemMessages;
 import com.vaadin.server.SystemMessages;
 import com.vaadin.server.SystemMessagesInfo;
 import com.vaadin.server.SystemMessagesProvider;
-import io.threesixty.ui.annotation.EnableThreeSixtyComponents;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.vaadin.spring.security.annotation.EnableVaadinManagedSecurity;
-import org.vaadin.spring.security.config.AuthenticationManagerConfigurer;
 import za.co.yellowfire.threesixty.domain.kudos.BadgeProperties;
 import za.co.yellowfire.threesixty.domain.mail.MailingProperties;
 

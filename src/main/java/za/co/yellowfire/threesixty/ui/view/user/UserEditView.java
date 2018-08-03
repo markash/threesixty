@@ -1,11 +1,11 @@
 package za.co.yellowfire.threesixty.ui.view.user;
 
+import com.github.markash.ui.component.BlankSupplier;
+import com.github.markash.ui.component.EntityPersistFunction;
+import com.github.markash.ui.component.EntitySupplier;
+import com.github.markash.ui.view.AbstractEntityEditView;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
-import io.threesixty.ui.component.BlankSupplier;
-import io.threesixty.ui.component.EntityPersistFunction;
-import io.threesixty.ui.component.EntitySupplier;
-import io.threesixty.ui.view.AbstractEntityEditView;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;

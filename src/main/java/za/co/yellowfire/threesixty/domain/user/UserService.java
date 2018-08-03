@@ -1,9 +1,10 @@
 package za.co.yellowfire.threesixty.domain.user;
 
+import com.github.markash.ui.component.card.CounterStatisticModel;
+import com.github.markash.ui.security.CurrentUserProvider;
+import com.github.markash.ui.security.UserPrincipal;
 import com.mongodb.DBRef;
 import com.vaadin.server.VaadinSession;
-import io.threesixty.ui.component.card.CounterStatisticModel;
-import io.threesixty.ui.security.CurrentUserProvider;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -219,7 +220,7 @@ public class UserService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(final String userName) throws UsernameNotFoundException {
 		return Optional.ofNullable(findUser(userName))
-                .map(UserPrincipal::wrap)
+                .map(Principal::wrap)
 				.orElseThrow(() -> new UsernameNotFoundException("Unable to find user " + userName));
 	}
 
@@ -242,7 +243,7 @@ public class UserService implements UserDetailsService {
      */
 	public List<User> findUsersExceptCurrent() {
 
-	    Optional<io.threesixty.ui.security.UserPrincipal<User>> principal = this.currentUserProvider.get();
+	    Optional<UserPrincipal<User>> principal = this.currentUserProvider.get();
 	    if (principal.isPresent()) {
             return userRepository.findByIdNot(principal.get().getUser().getId());
         }

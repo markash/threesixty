@@ -1,5 +1,6 @@
 package za.co.yellowfire.threesixty.ui.view;
 
+import com.github.markash.ui.component.notification.NotificationBuilder;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
@@ -10,7 +11,6 @@ import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.themes.ValoTheme;
-import io.threesixty.ui.component.notification.NotificationBuilder;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

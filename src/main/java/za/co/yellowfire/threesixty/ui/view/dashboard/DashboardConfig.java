@@ -1,9 +1,9 @@
 package za.co.yellowfire.threesixty.ui.view.dashboard;
 
+import com.github.markash.ui.component.card.CounterStatisticsCard;
+import com.github.markash.ui.security.CurrentUserProvider;
+import com.github.markash.ui.security.UserPrincipal;
 import com.vaadin.icons.VaadinIcons;
-import io.threesixty.ui.component.card.CounterStatisticsCard;
-import io.threesixty.ui.security.CurrentUserProvider;
-import io.threesixty.ui.security.UserPrincipal;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.vaadin.spring.annotation.PrototypeScope;
@@ -17,6 +17,7 @@ import za.co.yellowfire.threesixty.ui.view.rating.AssessmentSearchView;
 import za.co.yellowfire.threesixty.ui.view.user.UserSearchView;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @SuppressWarnings("unused")
@@ -57,7 +58,7 @@ public class DashboardConfig {
             );
         } else {
             return new CounterStatisticsCards(
-                    Arrays.asList(
+                    Collections.singletonList(
                             usersCounterStatistic(userService)
                     )
             );
@@ -83,7 +84,7 @@ public class DashboardConfig {
     @Bean @PrototypeScope
     public CounterStatisticsCard assessmentsCounterStatistic(final AssessmentService assessmentService) {
         return new CounterStatisticsCard(
-                VaadinIcons.USERS, //type.getIcon(),
+                VaadinIcons.USERS,
                 assessmentService.getAssessmentsCounterStatistic(),
                 AssessmentSearchView.VIEW_NAME);
     }

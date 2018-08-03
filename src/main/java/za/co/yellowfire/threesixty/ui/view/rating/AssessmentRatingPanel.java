@@ -1,12 +1,12 @@
 package za.co.yellowfire.threesixty.ui.view.rating;
 
+import com.github.markash.ui.component.panel.PanelBuilder;
 import com.vaadin.data.*;
 import com.vaadin.data.converter.StringToDoubleConverter;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.EventRouter;
 import com.vaadin.shared.Registration;
 import com.vaadin.ui.*;
-import io.threesixty.ui.component.panel.PanelBuilder;
 import org.vaadin.viritin.fields.MTextField;
 import org.vaadin.viritin.label.MLabel;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentRating;
