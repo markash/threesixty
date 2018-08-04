@@ -66,7 +66,12 @@ public class DashboardView extends AbstractDashboardView {
         CssLayout dashboardPanels = new CssLayout();
         dashboardPanels.addStyleName("dashboard-panels");
         Responsive.makeResponsive(dashboardPanels);
-        this.dashboardStatisticCards.stream().forEach(dashboardPanels::addComponent);
+        this.dashboardStatisticCards
+                .stream()
+                .forEach(card -> {
+                    card.setWidth(258, Unit.PIXELS);
+                    dashboardPanels.addComponent(card);
+                });
 
 //        if (this.user.isAdmin()) {
 //	        dashboardPanels.addComponent(usersCounterStatistic);

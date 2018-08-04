@@ -81,8 +81,4 @@ public class PeriodService implements za.co.yellowfire.threesixty.domain.questio
 	public void setPeriodRepository(PeriodRepository periodRepository) {
 		this.periodRepository = periodRepository;
 	}
-	
-	public CounterStatisticModel getPeriodCounterStatistic() {
-		return new CounterStatisticModel("PeriodsCounter", periodRepository.countActive());
-	}
 }

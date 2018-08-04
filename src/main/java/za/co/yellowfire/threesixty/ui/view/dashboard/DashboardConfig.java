@@ -1,14 +1,17 @@
 package za.co.yellowfire.threesixty.ui.view.dashboard;
 
+import com.github.markash.ui.component.card.CounterStatisticModel;
 import com.github.markash.ui.component.card.CounterStatisticsCard;
+import com.github.markash.ui.component.card.StatisticShow;
 import com.github.markash.ui.security.CurrentUserProvider;
 import com.github.markash.ui.security.UserPrincipal;
 import com.vaadin.icons.VaadinIcons;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.vaadin.spring.annotation.PrototypeScope;
-import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
-import za.co.yellowfire.threesixty.domain.rating.PeriodService;
+import za.co.yellowfire.threesixty.domain.rating.AssessmentRepository;
+import za.co.yellowfire.threesixty.domain.rating.PerformanceAreaRepository;
+import za.co.yellowfire.threesixty.domain.rating.PeriodRepository;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.view.objective.ObjectiveSearchView;
@@ -32,28 +35,30 @@ public class DashboardConfig {
     public CounterStatisticsCards dashboardStatisticCards(
             final CurrentUserProvider<User> currentUserProvider,
             final UserService userService,
-            final PeriodService periodService,
-            final AssessmentService assessmentService) {
+            final PeriodRepository periodRepository,
+            final AssessmentRepository assessmentRepository,
+            final PerformanceAreaRepository performanceAreaRepository) {
 
         return currentUserProvider
                 .get()
-                .map(principal -> dashboardStatisticCards(principal, userService, periodService, assessmentService))
+                .map(principal -> dashboardStatisticCards(principal, userService, periodRepository, assessmentRepository, performanceAreaRepository))
                 .orElse(new CounterStatisticsCards());
     }
 
     private CounterStatisticsCards dashboardStatisticCards(
             final UserPrincipal<User> principal,
             final UserService userService,
-            final PeriodService periodService,
-            final AssessmentService assessmentService) {
+            final PeriodRepository periodRepository,
+            final AssessmentRepository assessmentRepository,
+            final PerformanceAreaRepository performanceAreaRepository) {
 
         if (principal.getUser().isAdmin()) {
             return new CounterStatisticsCards(
                     Arrays.asList(
                             usersCounterStatistic(userService),
-                            periodsCounterStatistic(periodService),
-                            assessmentsCounterStatistic(assessmentService),
-                            performanceAreasCounterStatistic(assessmentService)
+                            periodsCounterStatistic(periodRepository),
+                            assessmentsCounterStatistic(assessmentRepository),
+                            performanceAreasCounterStatistic(performanceAreaRepository)
                     )
             );
         } else {
@@ -66,34 +71,74 @@ public class DashboardConfig {
     }
 
     @Bean @PrototypeScope
+    public CounterStatisticModel usersCounterModel(final UserService userService) {
+        return new CounterStatisticModel(
+                "Registered Users",
+                userService.getUserRepository().countActive())
+                .withShow(StatisticShow.Sum)
+                .withIconHidden()
+                .withShowOnlyStatistic(true);
+    }
+
+    @Bean @PrototypeScope
     public CounterStatisticsCard usersCounterStatistic(final UserService userService) {
         return new CounterStatisticsCard(
                 VaadinIcons.USERS,
-                userService.getUsersCounterStatistic(),
+                usersCounterModel(userService),
                 UserSearchView.VIEW_NAME);
     }
 
     @Bean @PrototypeScope
-    public CounterStatisticsCard periodsCounterStatistic(final PeriodService periodService) {
+    public CounterStatisticModel periodsCounterModel(final PeriodRepository repository) {
+        return new CounterStatisticModel(
+                "Periods",
+                repository.countActive())
+                .withShow(StatisticShow.Sum)
+                .withIconHidden()
+                .withShowOnlyStatistic(true);
+    }
+
+    @Bean @PrototypeScope
+    public CounterStatisticsCard periodsCounterStatistic(final PeriodRepository repository) {
         return new CounterStatisticsCard(
                 PeriodSearchView.ICON,
-                periodService.getPeriodCounterStatistic(),
+                periodsCounterModel(repository),
                 PeriodSearchView.VIEW_NAME);
     }
 
     @Bean @PrototypeScope
-    public CounterStatisticsCard assessmentsCounterStatistic(final AssessmentService assessmentService) {
+    public CounterStatisticModel assessmentsCounterModel(final AssessmentRepository repository) {
+        return new CounterStatisticModel(
+                "Assessments",
+                repository.countActive())
+                .withShow(StatisticShow.Sum)
+                .withIconHidden()
+                .withShowOnlyStatistic(true);
+    }
+
+    @Bean @PrototypeScope
+    public CounterStatisticsCard assessmentsCounterStatistic(final AssessmentRepository repository) {
         return new CounterStatisticsCard(
                 VaadinIcons.USERS,
-                assessmentService.getAssessmentsCounterStatistic(),
+                assessmentsCounterModel(repository),
                 AssessmentSearchView.VIEW_NAME);
     }
 
     @Bean @PrototypeScope
-    public CounterStatisticsCard performanceAreasCounterStatistic(final AssessmentService assessmentService) {
+    public CounterStatisticModel performanceAreasCounterModel(final PerformanceAreaRepository repository) {
+        return new CounterStatisticModel(
+                "Performance Areas",
+                repository.countActive())
+                .withShow(StatisticShow.Sum)
+                .withIconHidden()
+                .withShowOnlyStatistic(true);
+    }
+
+    @Bean @PrototypeScope
+    public CounterStatisticsCard performanceAreasCounterStatistic(final PerformanceAreaRepository repository) {
         return new CounterStatisticsCard(
                 VaadinIcons.CUBES,
-                assessmentService.getPerformanceAreasCounterStatistic(),
+                performanceAreasCounterModel(repository),
                 ObjectiveSearchView.VIEW_NAME);
     }
 

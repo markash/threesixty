@@ -1,6 +1,9 @@
 package za.co.yellowfire.threesixty.domain.user;
 
 import com.github.markash.ui.component.card.CounterStatisticModel;
+import com.github.markash.ui.component.card.DataLabelSettings;
+import com.github.markash.ui.component.card.StatisticShow;
+import com.github.markash.ui.component.chart.options.DataPoint;
 import com.github.markash.ui.security.CurrentUserProvider;
 import com.github.markash.ui.security.UserPrincipal;
 import com.mongodb.DBRef;
@@ -34,6 +37,8 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -344,11 +349,7 @@ public class UserService implements UserDetailsService {
 						UserNotification.class, 
 						NotificationSummary.class).getMappedResults();
 	}
-	
-	public CounterStatisticModel getUsersCounterStatistic() {
-		return new CounterStatisticModel("UsersCounter", userRepository.countActive());
-	}
-	
+
 	public void notify(final User to, final String message) {
 		notify(to, null, NotificationCategory.System, message);
 	}

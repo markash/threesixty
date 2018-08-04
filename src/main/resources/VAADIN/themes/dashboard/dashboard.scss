@@ -30,7 +30,7 @@ $v-layout-spacing-horizontal: 5px;
 @import "common";
 @import "views/login";
 @import "views/rating";
-@import "component/statsField";
+@import "../../addons/statistics/statistics.scss";
 
 //@import "views/dashboardview";
 //@import "views/schedule";
@@ -61,5 +61,5 @@ $valo-menu-background-color: rgb(4, 73, 112);
   @include dashboard-common;
   @include dashboard-login-view;
   @include dashboard-rating-view;
-  @include stats-field;
+  @include statistics;
 }
