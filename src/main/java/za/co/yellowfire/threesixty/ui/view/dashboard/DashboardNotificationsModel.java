@@ -18,7 +18,7 @@ class DashboardNotificationsModel extends NotificationsModel {
 
     DashboardNotificationsModel(final CurrentUserProvider<User> currentUserProvider, final UserService userService) {
         if (currentUserProvider.get().isPresent()) {
-            this.currentUser = currentUserProvider.get().get().getUser();
+            this.currentUser = currentUserProvider.get().get();
         } else {
             this.currentUser = null;
         }
@@ -28,11 +28,15 @@ class DashboardNotificationsModel extends NotificationsModel {
     }
 
     private void refresh() {
-        setNotifications(userService
-                .findNotifications(currentUser)
-                .stream()
-                .map(this::mapToNotificationModel)
-                .collect(Collectors.toList()));
+        if (currentUser != null) {
+            setNotifications(userService
+                    .findNotifications(currentUser)
+                    .stream()
+                    .map(this::mapToNotificationModel)
+                    .collect(Collectors.toList()));
+        } else {
+            clearNotifications();
+        }
     }
 
     private NotificationModel mapToNotificationModel(UserNotification n) {

@@ -1,7 +1,6 @@
 package za.co.yellowfire.threesixty.domain.user;
 
 import com.github.markash.ui.security.CurrentUserProvider;
-import com.github.markash.ui.security.UserPrincipal;
 import com.mongodb.DBRef;
 import com.vaadin.server.VaadinSession;
 import org.joda.time.DateTime;
@@ -215,13 +214,6 @@ public class UserService /*implements UserDetailsService*/ {
 		return user;
 	}
 
-//	@Override
-//	public UserDetails loadUserByUsername(final String userName) throws UsernameNotFoundException {
-//		return Optional.ofNullable(findUser(userName))
-//                .map(Principal::wrap)
-//				.orElseThrow(() -> new UsernameNotFoundException("Unable to find user " + userName));
-//	}
-
 	public List<User> findUsers() {
 		return userRepository.findByActive(true);
 	}
@@ -241,9 +233,9 @@ public class UserService /*implements UserDetailsService*/ {
      */
 	public List<User> findUsersExceptCurrent() {
 
-	    Optional<UserPrincipal<User>> principal = this.currentUserProvider.get();
+	    Optional<User> principal = this.currentUserProvider.get();
 	    if (principal.isPresent()) {
-            return userRepository.findByIdNot(principal.get().getUser().getId());
+            return userRepository.findByIdNot(principal.get().getId());
         }
 
         LOG.warn("No current user when calling findUsersExceptCurrent which might be an error");
@@ -253,7 +245,7 @@ public class UserService /*implements UserDetailsService*/ {
 	public User save(final User user) throws IOException {
         Objects.requireNonNull(user, "The user to save is required");
 
-        this.currentUserProvider.get().ifPresent(p -> user.auditChangedBy(p.getUser()));
+        this.currentUserProvider.get().ifPresent(user::auditChangedBy);
 		user.storePicture(client);
 
 		return userRepository.save(user);

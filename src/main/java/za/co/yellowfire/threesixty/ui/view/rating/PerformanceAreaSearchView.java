@@ -1,55 +1,43 @@
 package za.co.yellowfire.threesixty.ui.view.rating;
 
-//@SpringView(name = PerformanceAreaSearchView.VIEW_NAME)
-public class PerformanceAreaSearchView /*extends AbstractTableSearchView<PerformanceArea, String>*/ {
+import com.github.markash.ui.view.AbstractTableSearchView;
+import com.github.markash.ui.view.TableDefinition;
+import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.UI;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.vaadin.spring.sidebar.annotation.SideBarItem;
+import org.vaadin.spring.sidebar.annotation.VaadinFontIcon;
+import org.vaadin.viritin.button.MButton;
+import za.co.yellowfire.threesixty.Sections;
+import za.co.yellowfire.threesixty.domain.rating.PerformanceArea;
+import za.co.yellowfire.threesixty.ui.I8n;
+import za.co.yellowfire.threesixty.ui.view.objective.ObjectiveEditView;
+
+@Secured({"ROLE_ADMIN", "ROLE_USER"})
+@SideBarItem(sectionId = Sections.DASHBOARD, caption = PerformanceAreaEditView.TITLE)
+@VaadinFontIcon(VaadinIcons.CHECK_CIRCLE_O)
+@SpringView(name = PerformanceAreaSearchView.VIEW_NAME)
+public class PerformanceAreaSearchView extends AbstractTableSearchView<PerformanceArea, String> {
 	private static final long serialVersionUID = 1L;
-	
-	public static final String TITLE = "Performance Areas";
-	public static final String EDIT_ID = "area-edit";
-    public static final String TITLE_ID = "area-title";
-    public static final String VIEW_NAME = "performance-areas";
-    public static final String[] TABLE_PROPERTIES = {"id"};
-    public static final String[] TABLE_FILTERS = {"id"};
-    public static final String[] TABLE_HEADERS = {"Name"};
-    
-//    protected Button newButton = ButtonBuilder.NEW(this::onCreate);
-//    protected Button[] tableButtons = {newButton};
-    
-//    @Autowired
-//    public PerformanceAreaSearchView(PerformanceAreaRepository repository) {
-//    	super(PerformanceArea.class, new SpringEntityProvider<PerformanceArea>(repository), TABLE_FILTERS);
-//    }
-//
-//    @Override
-//	protected String getTitle() { return TITLE; }
-//	@Override
-//	protected String getTitleId() { return TITLE_ID; }
-//    @Override
-//	protected String getEditId() { return EDIT_ID; }
-//
-//	protected String[] getTablePropertyNames() { return TABLE_PROPERTIES; }
-//	protected String[] getTablePropertyHeaders() { return TABLE_HEADERS; }
-//
-//	protected Button[] getTableButtons() {
-//		if (this.tableButtons == null) {
-//			tableButtons = new Button[] { ButtonBuilder.NEW(this::onCreate) };
-//		}
-//		return this.tableButtons;
-//	}
-//
-//	@Override
-//	protected void onCreate(ClickEvent event) {
-//		UI.getCurrent().getNavigator().navigateTo(PerformanceAreaEditView.VIEW("/new-performance-area"));
-//	}
-//
-//	@Override
-//	protected void onTableIdClick(final ClickEvent event, final String value) {
-//		UI.getCurrent().getNavigator().navigateTo(PerformanceAreaEditView.VIEW(value));
-//	}
-//
-//	@Override
-//	protected PerformanceArea buildEmpty() {
-//		return null;
-//	}
+
+    public static final String TITLE = I8n.PerformanceArea.PLURAL;
+    public static final String VIEW_NAME = "kpa";
+
+    @Autowired
+    public PerformanceAreaSearchView(
+            final ListDataProvider<PerformanceArea> performanceAreaListDataProvider,
+            final TableDefinition<PerformanceArea> performanceAreaTableDefinition) {
+
+        super(PerformanceArea.class, TITLE, performanceAreaListDataProvider, performanceAreaTableDefinition);
+
+        getToolbar().addAction(new MButton(I8n.Button.NEW, this::onCreate));
+    }
+
+    @SuppressWarnings("unused")
+    public void onCreate(Button.ClickEvent event) { UI.getCurrent().getNavigator().navigateTo(ObjectiveEditView.VIEW("/new-performance-area")); }
 }
 

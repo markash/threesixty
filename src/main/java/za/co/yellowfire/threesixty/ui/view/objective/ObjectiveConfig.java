@@ -11,7 +11,6 @@ import com.vaadin.ui.TextField;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.vaadin.spring.annotation.PrototypeScope;
-import za.co.yellowfire.threesixty.domain.PersistenceException;
 import za.co.yellowfire.threesixty.domain.rating.Objective;
 import za.co.yellowfire.threesixty.domain.rating.ObjectiveService;
 import za.co.yellowfire.threesixty.ui.I8n;
@@ -43,7 +42,7 @@ public class ObjectiveConfig {
         return objective -> {
             try {
                 return objectiveService.save(objective);
-            } catch (PersistenceException e) {
+            } catch (Exception e) {
                 NotificationBuilder.showNotification("Persist", e.getMessage());
             }
             return objective;

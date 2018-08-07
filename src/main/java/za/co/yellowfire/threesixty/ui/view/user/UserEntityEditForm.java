@@ -3,7 +3,6 @@ package za.co.yellowfire.threesixty.ui.view.user;
 import com.github.markash.ui.component.button.ButtonBuilder;
 import com.github.markash.ui.component.notification.NotificationBuilder;
 import com.github.markash.ui.security.CurrentUserProvider;
-import com.github.markash.ui.security.UserPrincipal;
 import com.github.markash.ui.view.AbstractEntityEditForm;
 import com.vaadin.data.StatusChangeEvent;
 import com.vaadin.data.provider.ListDataProvider;
@@ -178,6 +177,7 @@ public class UserEntityEditForm extends AbstractEntityEditForm<User> {
         updatePicture();
     }
 
+    @SuppressWarnings("unused")
     private void onChangePicture(
             Button.ClickEvent event) {
 
@@ -187,10 +187,10 @@ public class UserEntityEditForm extends AbstractEntityEditForm<User> {
     private void onResetPassword(
             Button.ClickEvent event) {
 
-	    Optional<UserPrincipal<User>> principal = this.currentUserProvider.get();
+	    Optional<User> principal = this.currentUserProvider.get();
         if (principal.isPresent()) {
 
-            String currentUserId = principal.get().getUser().getId();
+            String currentUserId = principal.get().getId();
             this.userService.resetPassword(getValue(), currentUserId);
             if (getValue().getId().equalsIgnoreCase(currentUserId)) {
                 NotificationBuilder.showNotification(
@@ -232,7 +232,7 @@ public class UserEntityEditForm extends AbstractEntityEditForm<User> {
 
         this.reportsTo.clear();
         this.currentUserProvider
-                .getUser()
+                .get()
                 .map(userService::findUsersExcept)
                 .ifPresent(reportsTo::addAll);
         this.reportsToProvider.refreshAll();

@@ -30,6 +30,7 @@
         <vaadin-icons.version>2.0.0</vaadin-icons.version>
         <vaadin4spring.version>2.0.0.RELEASE</vaadin4spring.version>
         <vaadin-springboot.version>2.0.1</vaadin-springboot.version>
+		<vaadin-spring.version>3.0.1</vaadin-spring.version>
         <viritin.version>2.6</viritin.version>
 	</properties>
 
@@ -52,12 +53,12 @@
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-spring</artifactId>
-			<version>3.1.0</version>
+			<version>${vaadin-spring.version}</version>
 		</dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-spring-boot-starter</artifactId>
-            <version>3.1.0</version>
+            <version>${vaadin-spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.vaadin.spring.extensions</groupId>

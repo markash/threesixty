@@ -21,7 +21,6 @@ import org.vaadin.viritin.button.MButton;
 import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
-import za.co.yellowfire.threesixty.domain.PersistenceException;
 import za.co.yellowfire.threesixty.domain.rating.*;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.I8n;
@@ -64,7 +63,7 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 	    super(Assessment.class);
 
 	    this.service = service;
-		currentUserProvider.get().ifPresent(p -> this.currentUser = p.getUser());
+		currentUserProvider.get().ifPresent(p -> this.currentUser = p);
 
 		this.periodListDataProvider = periodListDataProvider;
 		this.managerField = new ComboBox<>(I8n.Assessment.Fields.MANAGER);
@@ -139,8 +138,8 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 //		}
 //	}
 	
-	private void onAssessmentRatingChange(final AssessmentRatingEvent event) {
-	}
+//	private void onAssessmentRatingChange(final AssessmentRatingEvent event) {
+//	}
 
 	//DELETE
 //	private void onRecalculation(final AssessmentRecalculationEvent event) {
@@ -258,7 +257,7 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 			NotificationBuilder.showNotification("Assessment progression", successNotification);
 	        //Update the user interface
 	        maintainAssessment();
-		} catch (PersistenceException | ValidationException exception) {
+		} catch (Exception exception) {
             Notification.show("Error while updating : " + exception.getMessage(), Notification.Type.ERROR_MESSAGE);
         }
 	}

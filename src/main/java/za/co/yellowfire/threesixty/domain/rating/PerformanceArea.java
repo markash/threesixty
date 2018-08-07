@@ -1,21 +1,21 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.domain.Auditable;
 import org.springframework.data.mongodb.core.mapping.DBRef;
-
 import za.co.yellowfire.threesixty.domain.user.User;
 
-public class PerformanceArea implements Auditable<User, String> {
+import java.io.Serializable;
+
+public class PerformanceArea implements Auditable<User, Serializable> {
 	private static final long serialVersionUID = 1L;
 	
-	@Id @NotNull
+	@Id
 	private String id;
-	
+	private String name;
+	private String text;
 	private boolean active = true;
 	@DBRef
 	private User createdBy;
@@ -40,7 +40,13 @@ public class PerformanceArea implements Auditable<User, String> {
 	@Override
 	public String getId() { return this.id; }
     public void setId(String id) { this.id = id; }
-    
+
+	public String getName() { return name; }
+	public void setName(String name) { this.name = name; }
+
+	public String getText() { return text; }
+	public void setText(String text) { this.text = text; }
+
 	public boolean isActive() { return active; }
 	public void setActive(boolean active) { this.active = active; }
 

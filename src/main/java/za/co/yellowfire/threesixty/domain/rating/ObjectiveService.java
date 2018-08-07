@@ -3,7 +3,6 @@ package za.co.yellowfire.threesixty.domain.rating;
 import com.github.markash.ui.security.CurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import za.co.yellowfire.threesixty.domain.PersistenceException;
 import za.co.yellowfire.threesixty.domain.user.User;
 
 import java.util.Objects;
@@ -29,10 +28,10 @@ public class ObjectiveService implements za.co.yellowfire.threesixty.domain.ques
 		return objectiveRepository.findOne(id);
 	}
 	
-	public Objective save(final Objective objective) throws PersistenceException {
+	public Objective save(final Objective objective) {
         Objects.requireNonNull(objective, "The objective is required");
 
-		this.currentUserProvider.get().ifPresent(p -> objective.auditChangedBy(p.getUser()));
+		this.currentUserProvider.get().ifPresent(objective::auditChangedBy);
 		return objectiveRepository.save(objective);
 	}
 	
@@ -40,7 +39,7 @@ public class ObjectiveService implements za.co.yellowfire.threesixty.domain.ques
         Objects.requireNonNull(objective, "The objective is required");
 
         objective.setActive(false);
-        this.currentUserProvider.get().ifPresent(p -> objective.auditChangedBy(p.getUser()));
+        this.currentUserProvider.get().ifPresent(objective::auditChangedBy);
 		objectiveRepository.save(objective);
 	}
 }

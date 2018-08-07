@@ -10,71 +10,69 @@ import com.vaadin.data.provider.ListDataProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.vaadin.spring.annotation.PrototypeScope;
-import org.vaadin.spring.events.EventBus;
-import za.co.yellowfire.threesixty.domain.PersistenceException;
-import za.co.yellowfire.threesixty.domain.rating.Assessment;
-import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
-import za.co.yellowfire.threesixty.domain.rating.AssessmentStatus;
-import za.co.yellowfire.threesixty.domain.rating.PeriodRepository;
+import za.co.yellowfire.threesixty.domain.rating.*;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.view.period.PeriodModel;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Optional;
 
 @Configuration
 @SuppressWarnings("unused")
-public class AssessmentConfig {
+public class PerformanceAreaConfig {
 
     @Bean @PrototypeScope
-    AssessmentEntityEditForm assessmentEntityEditForm(
+    PerformanceAreaEntityEditForm performaceAreaEntityEditForm(
             final ListDataProvider<PeriodModel> activePeriodListDataProvider,
             final ListDataProvider<User> activeUserListDataProvider,
-            final AssessmentService assessmentService,
-            final CurrentUserProvider<User> currentUserProvider,
-            final EventBus.SessionEventBus eventBus) {
-        return new AssessmentEntityEditForm(activePeriodListDataProvider, activeUserListDataProvider, assessmentService, currentUserProvider);
+            final PerformanceAreaRepository performanceAreaRepository,
+            final CurrentUserProvider<User> currentUserProvider) {
+
+        return new PerformanceAreaEntityEditForm(
+                performanceAreaRepository,
+                currentUserProvider);
     }
 
     @Bean
-    EntitySupplier<Assessment, Serializable> assessmentSupplier(final AssessmentService assessmentService) {
-        return id -> Optional.ofNullable(assessmentService.findById((String) id));
+    EntitySupplier<PerformanceArea, Serializable> performanceAreaSupplier(
+            final PerformanceAreaRepository repository) {
+
+        return id -> Optional.ofNullable(repository.findOne((String) id));
     }
 
     @Bean
-    BlankSupplier<Assessment> blankAssessmentSupplier() {
-        return Assessment::new;
+    BlankSupplier<PerformanceArea> blankPerformanceSupplier() {
+        return PerformanceArea::new;
     }
 
     @Bean
-    EntityPersistFunction<Assessment> assessmentPersistFunction(final AssessmentService assessmentService) {
-        return new EntityPersistFunction<Assessment>() {
-            @Override
-            public Assessment apply(final Assessment assessment) {
-                try {
-                    return assessmentService.save(assessment);
-                } catch (Exception e) {
-                    NotificationBuilder.showNotification("Persist", e.getMessage());
-                }
-                return assessment;
+    EntityPersistFunction<PerformanceArea> performanceAreaPersistFunction(
+            final PerformanceAreaRepository repository) {
+
+        return performanceArea -> {
+            try {
+                return repository.save(performanceArea);
+            } catch (Throwable e) {
+                NotificationBuilder.showNotification("Persist", e.getMessage());
             }
+            return performanceArea;
         };
     }
 
     @Bean
     @PrototypeScope
-    ListDataProvider<Assessment> assessmentListDataProvider(final AssessmentService assessmentService) {
-        List<Assessment> list = assessmentService.getAssessmentRepository().findAll();
-        return new ListDataProvider<>(list);
+    ListDataProvider<PerformanceArea> performanceAreaListDataProvider(
+            final PerformanceAreaRepository repository) {
+
+        return new ListDataProvider<>(repository.findAll());
     }
 
     @Bean
-    TableDefinition<Assessment> assessmentTableDefinition(
+    TableDefinition<PerformanceArea> performanceAreaTableDefinition(
             final PeriodRepository periodRepository) {
 
-        TableDefinition<Assessment> tableDefinition = new TableDefinition<>(AssessmentEditView.VIEW_NAME);
+        TableDefinition<PerformanceArea> tableDefinition = new TableDefinition<>(PerformanceAreaEditView.VIEW_NAME);
         tableDefinition.column(String.class).withHeading(I8n.Assessment.Columns.ID).forProperty(Assessment.FIELD_ID).identity();
         tableDefinition
                 .column(User.class)

@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
-import za.co.yellowfire.threesixty.domain.PersistenceException;
 import za.co.yellowfire.threesixty.domain.mail.MailingException;
 import za.co.yellowfire.threesixty.domain.mail.SendGridMailingService;
 import za.co.yellowfire.threesixty.domain.user.User;
@@ -97,10 +96,10 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 		return assessmentRepository.findOne(id);
 	}
 	
-	public Assessment save(final Assessment assessment) throws PersistenceException {
+	public Assessment save(final Assessment assessment) {
 		Objects.requireNonNull(assessment, "The assessment is required");
 
-		this.currentUserProvider.get().ifPresent(p -> assessment.auditChangedBy(p.getUser()));
+		this.currentUserProvider.get().ifPresent(assessment::auditChangedBy);
 
         try {
             mailingService.send();
@@ -115,7 +114,7 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
         Objects.requireNonNull(assessment, "The assessment is required");
 
 		assessment.setActive(false);
-        this.currentUserProvider.get().ifPresent(p -> assessment.auditChangedBy(p.getUser()));
+        this.currentUserProvider.get().ifPresent(assessment::auditChangedBy);
 		assessmentRepository.save(assessment);
 	}
 	

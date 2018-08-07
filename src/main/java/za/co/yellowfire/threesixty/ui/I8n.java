@@ -164,6 +164,22 @@ public class I8n {
 		}
 	}
 
+	public interface PerformanceArea {
+		String SINGULAR = "KPA";
+		String PLURAL = "KPAs";
+
+		interface Columns {
+			String ID = "Id";
+			String NAME = "Name";
+			String TEXT = "Text";
+			String ACTIVE = "Active";
+		}
+
+		interface Validation {
+			String NAME_REQUIRED = "The objective name is required.";
+		}
+	}
+
 	public interface Assessment {
 		VaadinIcons ICON = VaadinIcons.BRIEFCASE;
 		String SINGULAR = "Assessment";

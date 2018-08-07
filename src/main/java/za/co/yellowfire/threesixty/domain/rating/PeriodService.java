@@ -1,6 +1,5 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
-import com.github.markash.ui.component.card.CounterStatisticModel;
 import com.github.markash.ui.security.CurrentUserProvider;
 import com.google.common.collect.Range;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +42,7 @@ public class PeriodService implements za.co.yellowfire.threesixty.domain.questio
             overlapping.forEach(range -> b.append(range.toString()).append(" "));
             throw new PersistenceException("The period overlaps the following: " + b.toString());
         }
-		this.currentUserProvider.get().ifPresent(p -> period.auditChangedBy(p.getUser()));
+		this.currentUserProvider.get().ifPresent(period::auditChangedBy);
 		return periodRepository.save(period);
 	}
 
@@ -52,7 +51,7 @@ public class PeriodService implements za.co.yellowfire.threesixty.domain.questio
 		Objects.requireNonNull(period, "The period to save is required");
 
 		period.setActive(false);
-		this.currentUserProvider.get().ifPresent(p -> period.auditChangedBy(p.getUser()));
+		this.currentUserProvider.get().ifPresent(period::auditChangedBy);
 		periodRepository.save(period);
 	}
 

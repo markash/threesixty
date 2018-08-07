@@ -19,7 +19,6 @@ import org.vaadin.spring.sidebar.annotation.VaadinFontIcon;
 import za.co.yellowfire.threesixty.Sections;
 import za.co.yellowfire.threesixty.ui.I8n;
 
-@Secured("ROLE_ADMIN")
 @SideBarItem(sectionId = Sections.DASHBOARD, caption = DashboardView.TITLE)
 @VaadinFontIcon(VaadinIcons.HOME)
 @SpringView(name = DashboardView.VIEW_NAME)

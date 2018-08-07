@@ -1,5 +1,6 @@
 package za.co.yellowfire.threesixty.config;
 
+import com.github.markash.ui.security.CurrentUserProvider;
 import com.github.markash.ui.security.SpringSecurityCurrentUserProvider;
 import com.vaadin.data.provider.ListDataProvider;
 import org.slf4j.Logger;
@@ -18,7 +19,6 @@ import org.vaadin.spring.annotation.PrototypeScope;
 import org.vaadin.spring.events.EventBus;
 import org.vaadin.spring.security.config.AuthenticationManagerConfigurer;
 import za.co.yellowfire.threesixty.domain.GridFsClient;
-import za.co.yellowfire.threesixty.domain.user.Principal;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserRepository;
 import za.co.yellowfire.threesixty.domain.user.UserService;
@@ -28,6 +28,7 @@ import za.co.yellowfire.threesixty.ui.view.security.ChangePasswordHandler;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 @Configuration
 public class SecurityConfig implements AuthenticationManagerConfigurer {
@@ -49,7 +50,6 @@ public class SecurityConfig implements AuthenticationManagerConfigurer {
                 LOG.info("Looking for user " + userName);
 
                 UserDetails user = Optional.ofNullable(findUser(userName))
-                        .map(Principal::wrap)
                         .orElseThrow(() -> new UsernameNotFoundException("Unable to find user " + userName));
 
                 LOG.info("Found user " + user);
@@ -81,8 +81,9 @@ public class SecurityConfig implements AuthenticationManagerConfigurer {
     }
 
     @Bean
-    public SpringSecurityCurrentUserProvider<User> currentUserProvider() {
-        return new SpringSecurityCurrentUserProvider<>();
+    public CurrentUserProvider<User> currentUserProvider() {
+
+        return () -> new SpringSecurityCurrentUserProvider().get().map(o -> (User) o);
     }
 
     @Override

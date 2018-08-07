@@ -4,7 +4,6 @@ import com.github.markash.ui.component.card.CounterStatisticModel;
 import com.github.markash.ui.component.card.CounterStatisticsCard;
 import com.github.markash.ui.component.card.StatisticShow;
 import com.github.markash.ui.security.CurrentUserProvider;
-import com.github.markash.ui.security.UserPrincipal;
 import com.vaadin.icons.VaadinIcons;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,9 +13,9 @@ import za.co.yellowfire.threesixty.domain.rating.PerformanceAreaRepository;
 import za.co.yellowfire.threesixty.domain.rating.PeriodRepository;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
-import za.co.yellowfire.threesixty.ui.view.objective.ObjectiveSearchView;
 import za.co.yellowfire.threesixty.ui.view.period.PeriodSearchView;
 import za.co.yellowfire.threesixty.ui.view.rating.AssessmentSearchView;
+import za.co.yellowfire.threesixty.ui.view.rating.PerformanceAreaSearchView;
 import za.co.yellowfire.threesixty.ui.view.user.UserSearchView;
 
 import java.util.Arrays;
@@ -46,13 +45,13 @@ public class DashboardConfig {
     }
 
     private CounterStatisticsCards dashboardStatisticCards(
-            final UserPrincipal<User> principal,
+            final User principal,
             final UserService userService,
             final PeriodRepository periodRepository,
             final AssessmentRepository assessmentRepository,
             final PerformanceAreaRepository performanceAreaRepository) {
 
-        if (principal.getUser().isAdmin()) {
+        if (principal.isAdmin()) {
             return new CounterStatisticsCards(
                     Arrays.asList(
                             usersCounterStatistic(userService),
@@ -135,11 +134,13 @@ public class DashboardConfig {
     }
 
     @Bean @PrototypeScope
-    public CounterStatisticsCard performanceAreasCounterStatistic(final PerformanceAreaRepository repository) {
+    public CounterStatisticsCard performanceAreasCounterStatistic(
+            final PerformanceAreaRepository repository) {
+
         return new CounterStatisticsCard(
                 VaadinIcons.CUBES,
                 performanceAreasCounterModel(repository),
-                ObjectiveSearchView.VIEW_NAME);
+                PerformanceAreaSearchView.VIEW_NAME);
     }
 
     //    private Component buildKudosCard() {
