@@ -1,9 +1,5 @@
 package za.co.yellowfire.threesixty.domain.user;
 
-import com.github.markash.ui.component.card.CounterStatisticModel;
-import com.github.markash.ui.component.card.DataLabelSettings;
-import com.github.markash.ui.component.card.StatisticShow;
-import com.github.markash.ui.component.chart.options.DataPoint;
 import com.github.markash.ui.security.CurrentUserProvider;
 import com.github.markash.ui.security.UserPrincipal;
 import com.mongodb.DBRef;
@@ -18,7 +14,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import za.co.yellowfire.threesixty.RequestResult;
@@ -37,11 +32,9 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService /*implements UserDetailsService*/ {
 	private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 	
 	private UserRepository userRepository;
@@ -222,12 +215,12 @@ public class UserService implements UserDetailsService {
 		return user;
 	}
 
-	@Override
-	public UserDetails loadUserByUsername(final String userName) throws UsernameNotFoundException {
-		return Optional.ofNullable(findUser(userName))
-                .map(Principal::wrap)
-				.orElseThrow(() -> new UsernameNotFoundException("Unable to find user " + userName));
-	}
+//	@Override
+//	public UserDetails loadUserByUsername(final String userName) throws UsernameNotFoundException {
+//		return Optional.ofNullable(findUser(userName))
+//                .map(Principal::wrap)
+//				.orElseThrow(() -> new UsernameNotFoundException("Unable to find user " + userName));
+//	}
 
 	public List<User> findUsers() {
 		return userRepository.findByActive(true);

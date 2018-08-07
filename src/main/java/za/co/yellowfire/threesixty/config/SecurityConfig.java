@@ -2,34 +2,67 @@ package za.co.yellowfire.threesixty.config;
 
 import com.github.markash.ui.security.SpringSecurityCurrentUserProvider;
 import com.vaadin.data.provider.ListDataProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.vaadin.spring.annotation.PrototypeScope;
 import org.vaadin.spring.events.EventBus;
 import org.vaadin.spring.security.config.AuthenticationManagerConfigurer;
+import za.co.yellowfire.threesixty.domain.GridFsClient;
+import za.co.yellowfire.threesixty.domain.user.Principal;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserRepository;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.view.security.ChangePasswordForm;
 import za.co.yellowfire.threesixty.ui.view.security.ChangePasswordHandler;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Configuration
 public class SecurityConfig implements AuthenticationManagerConfigurer {
+    private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
+    @Autowired
+    private GridFsClient client;
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userService);
+        authProvider.setUserDetailsService(new UserDetailsService() {
+            @Override
+            public UserDetails loadUserByUsername(
+                    final String userName) throws UsernameNotFoundException {
+                return Optional.ofNullable(findUser(userName))
+                        .map(Principal::wrap)
+                        .orElseThrow(() -> new UsernameNotFoundException("Unable to find user " + userName));
+            }
+
+            private User findUser(final String id) {
+                User user =  userRepository.findOne(id);
+                if (user != null) {
+                    try {
+                        user.retrievePicture(client);
+                    } catch (IOException e) {
+                        LOG.warn("Unable to load the profile picture for user " + id, e);
+                    }
+                }
+                return user;
+            }
+        });
+
         authProvider.setPasswordEncoder(encoder());
         return authProvider;
     }
