@@ -45,9 +45,16 @@ public class SecurityConfig implements AuthenticationManagerConfigurer {
             @Override
             public UserDetails loadUserByUsername(
                     final String userName) throws UsernameNotFoundException {
-                return Optional.ofNullable(findUser(userName))
+
+                LOG.info("Looking for user " + userName);
+
+                UserDetails user = Optional.ofNullable(findUser(userName))
                         .map(Principal::wrap)
                         .orElseThrow(() -> new UsernameNotFoundException("Unable to find user " + userName));
+
+                LOG.info("Found user " + user);
+
+                return user;
             }
 
             private User findUser(final String id) {
