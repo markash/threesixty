@@ -12,7 +12,7 @@ public class VaadinAuditorAware implements AuditorAware<User>{
 	private final Logger LOG = LoggerFactory.getLogger(VaadinAuditorAware.class);
 	
 	@Autowired
-	private UserService userService;
+	private UserRepository userRepository;
 	
 	@Override
 	public User getCurrentAuditor() {
@@ -23,6 +23,6 @@ public class VaadinAuditorAware implements AuditorAware<User>{
 			return (User) session.getAttribute(User.class.getName());
 		}
 		/* Return the administrator user since the server is performing the operation */
-		return userService.findUser("admin");
+		return userRepository.findOne("admin");
 	}
 }
