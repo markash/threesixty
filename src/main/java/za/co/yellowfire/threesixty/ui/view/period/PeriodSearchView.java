@@ -16,7 +16,7 @@ import za.co.yellowfire.threesixty.Sections;
 import za.co.yellowfire.threesixty.ui.I8n;
 
 @Secured("ROLE_ADMIN")
-@SideBarItem(sectionId = Sections.DASHBOARD, caption = PeriodEditView.TITLE)
+@SideBarItem(sectionId = Sections.DASHBOARD, caption = PeriodEditView.TITLE, order = 4)
 @VaadinFontIcon(VaadinIcons.CALENDAR_O)
 @SpringView(name = PeriodSearchView.VIEW_NAME)
 public class PeriodSearchView extends AbstractTableSearchView<PeriodModel, String> {

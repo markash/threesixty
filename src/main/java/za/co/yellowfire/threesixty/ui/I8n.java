@@ -164,9 +164,9 @@ public class I8n {
 		}
 	}
 
-	public interface PerformanceArea {
-		String SINGULAR = "KPA";
-		String PLURAL = "KPAs";
+	public interface Discipline {
+		String SINGULAR = "Discipline";
+		String PLURAL = "Disciplines";
 
 		interface Columns {
 			String ID = "Id";
@@ -176,7 +176,7 @@ public class I8n {
 		}
 
 		interface Validation {
-			String NAME_REQUIRED = "The objective name is required.";
+			String NAME_REQUIRED = "The discipline name is required.";
 		}
 	}
 

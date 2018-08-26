@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Secured({"ROLE_ADMIN", "ROLE_USER"})
-@SideBarItem(sectionId = Sections.DASHBOARD, caption = AssessmentEditView.TITLE)
+@SideBarItem(sectionId = Sections.DASHBOARD, caption = AssessmentEditView.TITLE, order = 5)
 @VaadinFontIcon(VaadinIcons.BOOKMARK_O)
 @SpringView(name = AssessmentSearchView.VIEW_NAME)
 public class AssessmentSearchView extends AbstractTableSearchView<Assessment, String> {

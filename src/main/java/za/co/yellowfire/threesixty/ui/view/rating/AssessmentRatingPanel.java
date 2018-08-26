@@ -11,7 +11,7 @@ import org.vaadin.viritin.fields.MTextField;
 import org.vaadin.viritin.label.MLabel;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentRating;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentStatus;
-import za.co.yellowfire.threesixty.domain.rating.PerformanceArea;
+import za.co.yellowfire.threesixty.domain.rating.Discipline;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.Style;
 import za.co.yellowfire.threesixty.ui.component.field.MDoubleLabel;
@@ -24,7 +24,7 @@ public class AssessmentRatingPanel extends GridLayout {
     private TextArea measurementField = new TextArea("Measurement");
     private TextArea managerCommentField = new TextArea("Manager Comment");
     private TextArea employeeCommentField = new TextArea("Employee Comment");
-    private ComboBox<PerformanceArea> areaField;
+    private ComboBox<Discipline> areaField;
     private ComboBox<Double> weightField = new ComboBox<>("Weight");
     private ComboBox<Double> ratingField = new ComboBox<>("Rating");
     private MTextField scoreField = new MTextField("Score").withWidth(100.0f, Unit.PERCENTAGE).withReadOnly(true);
@@ -45,7 +45,7 @@ public class AssessmentRatingPanel extends GridLayout {
             final User currentUser,
             final Collection<Double> possibleRatings,
             final Collection<Double> possibleWeightings,
-            final Collection<PerformanceArea> performanceAreas) {
+            final Collection<Discipline> disciplines) {
         super(3, 3);
 
         setWidth(100.0f, Unit.PERCENTAGE);
@@ -55,7 +55,7 @@ public class AssessmentRatingPanel extends GridLayout {
         this.rating = rating;
         this.currentUser = currentUser;
 
-        this.areaField = new ComboBox<>("Performance Area", performanceAreas);
+        this.areaField = new ComboBox<>("Performance Area", disciplines);
         this.areaField.setWidth(100.0f, Unit.PERCENTAGE);
 
         ListDataProvider<Double> ratingsProvider = new ListDataProvider<>(possibleRatings);

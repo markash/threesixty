@@ -13,13 +13,12 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.vaadin.spring.sidebar.annotation.SideBarItem;
 import org.vaadin.spring.sidebar.annotation.VaadinFontIcon;
 import za.co.yellowfire.threesixty.Sections;
 import za.co.yellowfire.threesixty.ui.I8n;
 
-@SideBarItem(sectionId = Sections.DASHBOARD, caption = DashboardView.TITLE)
+@SideBarItem(sectionId = Sections.DASHBOARD, caption = DashboardView.TITLE, order = 1)
 @VaadinFontIcon(VaadinIcons.HOME)
 @SpringView(name = DashboardView.VIEW_NAME)
 public class DashboardView extends AbstractDashboardView {

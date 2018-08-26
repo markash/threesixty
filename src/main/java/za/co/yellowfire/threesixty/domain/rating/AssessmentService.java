@@ -19,7 +19,7 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 	//private static final Logger LOG = LoggerFactory.getLogger(AssessmentService.class);
 	
 	private final AssessmentRepository assessmentRepository;
-	private final PerformanceAreaRepository performanceAreaRepository;
+	private final DisciplineRepository disciplineRepository;
 	private final UserRepository userRepository;
 	private final PeriodRepository periodRepository;
 	private final ArrayList<Double> possibleRatings;
@@ -30,7 +30,7 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 	@Autowired
 	public AssessmentService(
 			final AssessmentRepository assessmentRepository,
-			final PerformanceAreaRepository performanceAreaRepository,
+			final DisciplineRepository disciplineRepository,
 			final PeriodRepository periodRepository,
 			final UserRepository userRepository,
             final CurrentUserProvider<User> currentUserProvider,
@@ -39,7 +39,7 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 		this.assessmentRepository = assessmentRepository;
 		this.userRepository = userRepository;
 		this.periodRepository = periodRepository;
-		this.performanceAreaRepository = performanceAreaRepository;
+		this.disciplineRepository = disciplineRepository;
 		this.currentUserProvider = currentUserProvider;
         this.mailingService = mailingService;
 
@@ -88,8 +88,8 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 		return this.possibleWeightings;
 	}
 
-	public List<PerformanceArea> findPerformanceAreas() {
-		return this.performanceAreaRepository.findAll();
+	public List<Discipline> findPerformanceAreas() {
+		return this.disciplineRepository.findAll();
 	}
 	
 	public Assessment findById(final String id) {
@@ -130,7 +130,7 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 	}
 	
 	public CounterStatisticModel getPerformanceAreasCounterStatistic() {
-		return new CounterStatisticModel("PerformanceAreasCounter", performanceAreaRepository.countActive());
+		return new CounterStatisticModel("PerformanceAreasCounter", disciplineRepository.countActive());
 	}
 	
 	public Map<AssessmentStatus, AssessmentStatusCount> countAssessmentsStatusFor(final Period period) {

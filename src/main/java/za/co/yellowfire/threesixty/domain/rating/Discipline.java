@@ -9,9 +9,13 @@ import za.co.yellowfire.threesixty.domain.user.User;
 
 import java.io.Serializable;
 
-public class PerformanceArea implements Auditable<User, Serializable> {
+public class Discipline implements Auditable<User, Serializable> {
 	private static final long serialVersionUID = 1L;
-	
+    public static final String FIELD_ID = "id";
+    public static final String FIELD_NAME = "name";
+    public static final String FIELD_TEXT = "text";
+    public static final String FIELD_ACTIVE = "active";
+
 	@Id
 	private String id;
 	private String name;
@@ -24,15 +28,17 @@ public class PerformanceArea implements Auditable<User, Serializable> {
 	private DateTime createdDate;
 	private DateTime modifiedDate;
 	
-	public static PerformanceArea EMPTY() {
-		return new PerformanceArea();
+	public static Discipline EMPTY() {
+		return new Discipline();
 	}
 	
-	public PerformanceArea() {
+	public Discipline() {
 		super();
 	}
 
-	public PerformanceArea(String id) {
+	public Discipline(
+			final String id) {
+
 		super();
 		this.id = id;
 	}

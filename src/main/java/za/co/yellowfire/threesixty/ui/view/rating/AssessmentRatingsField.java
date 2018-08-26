@@ -11,7 +11,7 @@ import com.vaadin.ui.CustomField;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.Tab;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentRating;
-import za.co.yellowfire.threesixty.domain.rating.PerformanceArea;
+import za.co.yellowfire.threesixty.domain.rating.Discipline;
 import za.co.yellowfire.threesixty.domain.user.User;
 
 import java.util.*;
@@ -25,7 +25,7 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 	/* Fields */
 	private LinkedList<Double> possibleRatings = new LinkedList<>();
 	private LinkedList<Double> possibleWeightings = new LinkedList<>();
-	private LinkedList<PerformanceArea> performanceAreas = new LinkedList<>();
+	private LinkedList<Discipline> disciplines = new LinkedList<>();
 
 	private User currentUser;
 	private Map<AssessmentRating, List<Registration>> ratings = new HashMap<>();
@@ -34,11 +34,11 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 	AssessmentRatingsField(
 			final Collection<Double> possibleRatings, 
 			final Collection<Double> possibleWeightings,
-			final Collection<PerformanceArea> performanceAreas) {
+			final Collection<Discipline> disciplines) {
 		
 		this.possibleRatings.addAll(possibleRatings);
 		this.possibleWeightings.addAll(possibleWeightings);
-		this.performanceAreas.addAll(performanceAreas);
+		this.disciplines.addAll(disciplines);
 	}
 
     Registration addAssessmentDirtyListener(final AssessmentDirtyListener listener) {
@@ -207,7 +207,7 @@ public class AssessmentRatingsField extends CustomField<Set<AssessmentRating>> {
 	private List<Registration> addAssessmentRatingPanel(final AssessmentRating rating, final User currentUser, final boolean focusOnPanel) {
 		
 		/* Add the the new assessment panel */
-		AssessmentRatingPanel panel = new AssessmentRatingPanel(rating, currentUser, this.possibleRatings, this.possibleWeightings, this.performanceAreas);
+		AssessmentRatingPanel panel = new AssessmentRatingPanel(rating, currentUser, this.possibleRatings, this.possibleWeightings, this.disciplines);
 		
 		Tab tab = this.tabSheet.addTab(panel);
 		tab.setCaption("Rating #" + (tabSheet.getTabPosition(tab) + 1));

@@ -9,13 +9,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.vaadin.spring.annotation.PrototypeScope;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentRepository;
-import za.co.yellowfire.threesixty.domain.rating.PerformanceAreaRepository;
+import za.co.yellowfire.threesixty.domain.rating.DisciplineRepository;
 import za.co.yellowfire.threesixty.domain.rating.PeriodRepository;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.view.period.PeriodSearchView;
 import za.co.yellowfire.threesixty.ui.view.rating.AssessmentSearchView;
-import za.co.yellowfire.threesixty.ui.view.rating.PerformanceAreaSearchView;
+import za.co.yellowfire.threesixty.ui.view.discipline.DisciplineSearchView;
 import za.co.yellowfire.threesixty.ui.view.user.UserSearchView;
 
 import java.util.Arrays;
@@ -36,11 +36,11 @@ public class DashboardConfig {
             final UserService userService,
             final PeriodRepository periodRepository,
             final AssessmentRepository assessmentRepository,
-            final PerformanceAreaRepository performanceAreaRepository) {
+            final DisciplineRepository disciplineRepository) {
 
         return currentUserProvider
                 .get()
-                .map(principal -> dashboardStatisticCards(principal, userService, periodRepository, assessmentRepository, performanceAreaRepository))
+                .map(principal -> dashboardStatisticCards(principal, userService, periodRepository, assessmentRepository, disciplineRepository))
                 .orElse(new CounterStatisticsCards());
     }
 
@@ -49,7 +49,7 @@ public class DashboardConfig {
             final UserService userService,
             final PeriodRepository periodRepository,
             final AssessmentRepository assessmentRepository,
-            final PerformanceAreaRepository performanceAreaRepository) {
+            final DisciplineRepository disciplineRepository) {
 
         if (principal.isAdmin()) {
             return new CounterStatisticsCards(
@@ -57,7 +57,7 @@ public class DashboardConfig {
                             usersCounterStatistic(userService),
                             periodsCounterStatistic(periodRepository),
                             assessmentsCounterStatistic(assessmentRepository),
-                            performanceAreasCounterStatistic(performanceAreaRepository)
+                            performanceAreasCounterStatistic(disciplineRepository)
                     )
             );
         } else {
@@ -124,7 +124,7 @@ public class DashboardConfig {
     }
 
     @Bean @PrototypeScope
-    public CounterStatisticModel performanceAreasCounterModel(final PerformanceAreaRepository repository) {
+    public CounterStatisticModel performanceAreasCounterModel(final DisciplineRepository repository) {
         return new CounterStatisticModel(
                 "Performance Areas",
                 repository.countActive())
@@ -135,12 +135,12 @@ public class DashboardConfig {
 
     @Bean @PrototypeScope
     public CounterStatisticsCard performanceAreasCounterStatistic(
-            final PerformanceAreaRepository repository) {
+            final DisciplineRepository repository) {
 
         return new CounterStatisticsCard(
                 VaadinIcons.CUBES,
                 performanceAreasCounterModel(repository),
-                PerformanceAreaSearchView.VIEW_NAME);
+                DisciplineSearchView.VIEW_NAME);
     }
 
     //    private Component buildKudosCard() {

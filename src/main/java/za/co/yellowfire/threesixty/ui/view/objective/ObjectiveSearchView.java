@@ -17,7 +17,7 @@ import za.co.yellowfire.threesixty.domain.rating.Objective;
 import za.co.yellowfire.threesixty.ui.I8n;
 
 @Secured("ROLE_ADMIN")
-@SideBarItem(sectionId = Sections.DASHBOARD, caption = ObjectiveEditView.TITLE)
+@SideBarItem(sectionId = Sections.DASHBOARD, caption = ObjectiveEditView.TITLE, order = 2)
 @VaadinFontIcon(VaadinIcons.STAR_O)
 @SpringView(name = ObjectiveSearchView.VIEW_NAME)
 public class ObjectiveSearchView extends AbstractTableSearchView<Objective, String> {

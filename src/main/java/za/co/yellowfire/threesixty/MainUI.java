@@ -7,7 +7,9 @@ import com.github.markash.ui.event.UserPasswordChangeEvent;
 import com.github.markash.ui.view.DisplayView;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.annotations.PreserveOnRefresh;
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
+import com.vaadin.navigator.PushStateNavigation;
 import com.vaadin.server.DefaultErrorHandler;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
@@ -39,6 +41,8 @@ import za.co.yellowfire.threesixty.ui.view.security.ChangePasswordView;
 @Theme("dashboard")
 @SpringUI
 @PreserveOnRefresh
+//@Push
+//@PushStateNavigation
 public class MainUI extends ApplicationUI {
 	private static final long serialVersionUID = 1L;
 

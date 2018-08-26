@@ -20,8 +20,8 @@ public class AssessmentRating implements Auditable<User, String> {
 	@Id
 	private String id;
 	
-	@DBRef @NotNull(message = "{assessment.performanceArea.NotNull.message}")
-	private PerformanceArea performanceArea;
+	@DBRef @NotNull(message = "{assessment.discipline.NotNull.message}")
+	private Discipline discipline;
 	
 	@NotNull(message = "{assessment.measurement.NotNull.message}")
 	private String measurement;
@@ -48,8 +48,8 @@ public class AssessmentRating implements Auditable<User, String> {
 	public String getId() { return this.id; }
     public void setId(String id) { this.id = id; }
     
-	public PerformanceArea getPerformanceArea() { return performanceArea; }
-	public void setPerformanceArea(final PerformanceArea performanceArea) { this.performanceArea = performanceArea; }
+	public Discipline getDiscipline() { return discipline; }
+	public void setDiscipline(final Discipline discipline) { this.discipline = discipline; }
 
 	public String getMeasurement() { return measurement; }
 	public void setMeasurement(String measurement) { this.measurement = measurement; }

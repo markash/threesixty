@@ -10,7 +10,7 @@ import za.co.yellowfire.threesixty.ui.view.dashboard.DashboardView;
 //import za.co.yellowfire.threesixty.ui.view.kudos.KudosEditView;
 //import za.co.yellowfire.threesixty.ui.view.org.OrganizationView;
 //import za.co.yellowfire.threesixty.ui.view.rating.AssessmentSearchView;
-//import za.co.yellowfire.threesixty.ui.view.rating.PerformanceAreaSearchView;
+//import za.co.yellowfire.threesixty.ui.view.discipline.DisciplineSearchView;
 //import za.co.yellowfire.threesixty.ui.view.rating.PeriodSearchView;
 //import za.co.yellowfire.threesixty.ui.view.user.UserSearchView;
 //import za.co.yellowfire.threesixty.ui.view.user.notification.UserNotificationSearchView;
@@ -20,7 +20,7 @@ public enum DashboardViewType {
 //    ORGANIZATION(OrganizationView.VIEW_NAME, OrganizationView.class, I8n.Organization.ICON, true, null),
 //    USER_SEARCH(UserSearchView.VIEW_NAME, UserSearchView.class, FontAwesome.USERS, true, Role.ADMIN),
 //    PERIOD_SEARCH(PeriodSearchView.VIEW_NAME, PeriodSearchView.class, FontAwesome.CALENDAR_TIMES_O, true, Role.ADMIN),
-//    PERFORMANCE_AREA_SEARCH(PerformanceAreaSearchView.VIEW_NAME, PerformanceAreaSearchView.class, FontAwesome.BUILDING_O, true, Role.ADMIN),
+//    PERFORMANCE_AREA_SEARCH(DisciplineSearchView.VIEW_NAME, DisciplineSearchView.class, FontAwesome.BUILDING_O, true, Role.ADMIN),
 //    ASSESSMENT_SEARCH(AssessmentSearchView.VIEW_NAME, AssessmentSearchView.class, FontAwesome.BRIEFCASE, true, null),
 //    BADGE_SEARCH(BadgeSearchView.VIEW_NAME, BadgeSearchView.class, FontAwesome.STAR_O, true, Role.ADMIN),
 //    IDEAL_SEARCH(IdealSearchView.VIEW_NAME, IdealSearchView.class, FontAwesome.DIAMOND, true, Role.ADMIN),
