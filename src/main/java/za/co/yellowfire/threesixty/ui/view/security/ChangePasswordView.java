@@ -35,6 +35,6 @@ public class ChangePasswordView extends HorizontalLayout implements View {
 
     @Override
     public void enter(ViewChangeEvent event) {
-        this.changePasswordForm.getBinder().readBean(new ChangePasswordModel());
+        this.changePasswordForm.setEntity(new ChangePasswordModel());
     }
 }

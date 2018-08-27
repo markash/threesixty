@@ -40,7 +40,11 @@ class DashboardNotificationsModel extends NotificationsModel {
     }
 
     private NotificationModel mapToNotificationModel(UserNotification n) {
-        return new NotificationModel(mapCategoryToIcon(n.getCategory()), "Notification", n.getContent(), n.isRead());
+        return new NotificationModel()
+                .withIcon(mapCategoryToIcon(n.getCategory()))
+                .withTitle("Notification")
+                .withMessage(n.getContent())
+                .withRead(n.isRead());
     }
 
     private FontIcon mapCategoryToIcon(final NotificationCategory category) {

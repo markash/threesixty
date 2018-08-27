@@ -21,6 +21,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Window;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.EventListener;
 import org.vaadin.spring.events.EventBus;
 import org.vaadin.spring.events.annotation.EventBusListenerMethod;
 import org.vaadin.spring.security.VaadinSecurity;
@@ -206,7 +207,7 @@ public class MainUI extends ApplicationUI {
         updateContent();
     }
 
-    @Subscribe
+    @EventListener
     public void userPasswordChanged(final UserPasswordChangeEvent event) {
         VaadinSession.getCurrent().setAttribute(User.class, (User) event.getEntity());
         updateContent();

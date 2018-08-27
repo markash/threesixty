@@ -2,6 +2,7 @@ package za.co.yellowfire.threesixty.ui.view.security;
 
 import com.github.markash.ui.component.notification.NotificationBuilder;
 import com.github.markash.ui.event.UserPasswordChangeEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.vaadin.spring.events.EventBus;
 import org.vaadin.viritin.form.AbstractForm;
 import za.co.yellowfire.threesixty.Response;
@@ -11,13 +12,13 @@ import za.co.yellowfire.threesixty.domain.user.UserService;
 public class ChangePasswordHandler implements AbstractForm.SavedHandler<ChangePasswordModel> {
 
     private final UserService userService;
-    private final EventBus.SessionEventBus eventBus;
+    private final ApplicationEventPublisher publisher;
 
     public ChangePasswordHandler(
             final UserService userService,
-            final EventBus.SessionEventBus eventBus) {
+            final ApplicationEventPublisher publisher) {
         this.userService = userService;
-        this.eventBus = eventBus;
+        this.publisher = publisher;
     }
 
     @Override
@@ -27,7 +28,7 @@ public class ChangePasswordHandler implements AbstractForm.SavedHandler<ChangePa
         Response<User> response = userService.changePassword(user.getId(), model.getOldPassword(), model.getNewPassword());
         switch (response.getResult()) {
             case OK:
-                this.eventBus.publish(this, UserPasswordChangeEvent.build("", user));
+                this.publisher.publishEvent(UserPasswordChangeEvent.build("", response.getValue()));
                 break;
             case UNAUTHORIZED:
                 NotificationBuilder.showNotification(

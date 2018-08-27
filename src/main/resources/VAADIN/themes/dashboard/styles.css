@@ -15812,6 +15812,14 @@ div.v-layout.v-horizontal.v-widget {
 	margin-bottom: 4px;
 }
 
+.dashboard .notification_button_show {
+	color: black;
+}
+
+.dashboard .notification_button_hide {
+	color: silver;
+}
+
 .dashboard .stats-panel {
 	position: relative;
 	overflow: hidden;

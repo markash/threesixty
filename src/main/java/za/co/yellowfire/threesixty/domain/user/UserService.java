@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -344,7 +345,11 @@ public class UserService /*implements UserDetailsService*/ {
 	}
 	
 	public User getCurrentUser() {
-		return VaadinSession.getCurrent().getAttribute(User.class);
+		User user = VaadinSession.getCurrent().getAttribute(User.class);
+		if (user == null) {
+			user = (User) ((SecurityContext) VaadinSession.getCurrent().getAttribute("org.vaadin.spring.security.internal.springSecurityContext")).getAuthentication().getPrincipal();
+		}
+		return user;
 	}
 	
 	private static String[] genders = {
