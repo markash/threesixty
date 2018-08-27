@@ -25,7 +25,7 @@ public class DashboardView extends AbstractDashboardView {
 	private static final long serialVersionUID = 1L;
 
     static final String TITLE = I8n.Dashboard.SINGULAR;
-    static final String VIEW_NAME = "";
+    public static final String VIEW_NAME = "";
     static final VaadinIcons ICON = VaadinIcons.HOME;
 
     private final CounterStatisticsCards dashboardStatisticCards;

@@ -36,6 +36,7 @@ import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLoginEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLogoutEvent;
 import za.co.yellowfire.threesixty.ui.view.LoginView;
 import za.co.yellowfire.threesixty.ui.view.MainView;
+import za.co.yellowfire.threesixty.ui.view.dashboard.DashboardView;
 import za.co.yellowfire.threesixty.ui.view.security.ChangePasswordView;
 
 @SuppressWarnings("serial")
@@ -186,7 +187,7 @@ public class MainUI extends ApplicationUI {
         
     	User user = getCurrentUser();
         if ( user != null && !user.isPasswordChangeRequired()) {
-            getNavigator().navigateTo(MainView.VIEW_NAME);
+            getNavigator().navigateTo(DashboardView.VIEW_NAME);
         } else if ( user != null && user.isPasswordChangeRequired()) {
         	getNavigator().navigateTo(ChangePasswordView.VIEW_NAME);
         } else {
