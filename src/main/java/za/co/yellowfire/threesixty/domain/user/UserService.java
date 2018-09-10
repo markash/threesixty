@@ -13,16 +13,14 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import za.co.yellowfire.threesixty.RequestResult;
 import za.co.yellowfire.threesixty.Response;
 import za.co.yellowfire.threesixty.domain.GridFsClient;
 import za.co.yellowfire.threesixty.domain.InvalidUserException;
-import za.co.yellowfire.threesixty.domain.organization.Organization;
-import za.co.yellowfire.threesixty.domain.organization.OrganizationService;
-import za.co.yellowfire.threesixty.domain.organization.OrganizationType;
+import za.co.yellowfire.threesixty.domain.organization.Identity;
+import za.co.yellowfire.threesixty.domain.organization.IdentityService;
+import za.co.yellowfire.threesixty.domain.organization.IdentityType;
 import za.co.yellowfire.threesixty.domain.user.notification.NotificationCategory;
 import za.co.yellowfire.threesixty.domain.user.notification.NotificationSummary;
 import za.co.yellowfire.threesixty.domain.user.notification.UserNotification;
@@ -43,7 +41,7 @@ public class UserService /*implements UserDetailsService*/ {
 	private JobProfileRepository jobProfileRepository;
 	private PositionRepository positionRepository;
 	private UserNotificationRepository userNotificationRepository;
-	private OrganizationService organizationService;
+	private IdentityService identityService;
 	
 	private UserConfiguration userConfiguration;
 	
@@ -62,7 +60,7 @@ public class UserService /*implements UserDetailsService*/ {
 			final PositionRepository positionRepository,
 			final UserNotificationRepository userNotificationRepository,
 			final UserConfiguration userConfiguration,
-			final OrganizationService organizationService,
+			final IdentityService identityService,
 			final GridFsClient client,
             final CurrentUserProvider<User> currentUserProvider) {
 		
@@ -73,7 +71,7 @@ public class UserService /*implements UserDetailsService*/ {
 		this.jobProfileRepository = jobProfileRepository;
 		this.positionRepository = positionRepository;
 		this.userNotificationRepository = userNotificationRepository;
-		this.organizationService = organizationService;
+		this.identityService = identityService;
 		this.client = client;
 		this.currentUserProvider = currentUserProvider;
 	}
@@ -122,42 +120,42 @@ public class UserService /*implements UserDetailsService*/ {
 		}
 		
 		/* Sample organisation */
-		if (organizationService.count() == 0) {
-//			Organization root = new Organization("Organization");
+		if (identityService.count() == 0) {
+//			Identity root = new Identity("Identity");
 //			root.child(
-//					new Organization("Division 1").child(
-//							new Organization("Department A").child(
-//									new Organization("Team X"),
-//									new Organization("Team Y")),
-//							new Organization("Department B")).child(
-//									new Organization("Team S"),
-//									new Organization("Team T")),
-//					new Organization("Division 2")).child(
-//							new Organization("Department A").child(
-//									new Organization("Team X"),
-//									new Organization("Team Y"),
-//							new Organization("Department B")).child(
-//									new Organization("Team S"),
-//									new Organization("Team T")
+//					new Identity("Division 1").child(
+//							new Identity("Department A").child(
+//									new Identity("Team X"),
+//									new Identity("Team Y")),
+//							new Identity("Department B")).child(
+//									new Identity("Team S"),
+//									new Identity("Team T")),
+//					new Identity("Division 2")).child(
+//							new Identity("Department A").child(
+//									new Identity("Team X"),
+//									new Identity("Team Y"),
+//							new Identity("Department B")).child(
+//									new Identity("Team S"),
+//									new Identity("Team T")
 //							)
 //					);
 
-			Organization root = new Organization("Organization", OrganizationType.Organization).child(
-					new Organization("Division 1", OrganizationType.Division).child(
-							new Organization("Department A", OrganizationType.Department).child(
-									new Organization("Team X", OrganizationType.Team), 
-									new Organization("Team Y", OrganizationType.Team), 
-									new Organization("Team Z", OrganizationType.Team)), 
-							new Organization("Department B", OrganizationType.Department)),
-					new Organization("Division 2", OrganizationType.Division).child(
-							new Organization("Department X", OrganizationType.Department), 
-							new Organization("Department Z", OrganizationType.Department).child(
-									new Organization("Team 1", OrganizationType.Team), 
-									new Organization("Team 2", OrganizationType.Team), 
-									new Organization("Team 3", OrganizationType.Team)))
+			Identity root = new Identity("Identity", IdentityType.Organization).child(
+					new Identity("Division 1", IdentityType.Division).child(
+							new Identity("Department A", IdentityType.Department).child(
+									new Identity("Team X", IdentityType.Team),
+									new Identity("Team Y", IdentityType.Team),
+									new Identity("Team Z", IdentityType.Team)),
+							new Identity("Department B", IdentityType.Department)),
+					new Identity("Division 2", IdentityType.Division).child(
+							new Identity("Department X", IdentityType.Department),
+							new Identity("Department Z", IdentityType.Department).child(
+									new Identity("Team 1", IdentityType.Team),
+									new Identity("Team 2", IdentityType.Team),
+									new Identity("Team 3", IdentityType.Team)))
 					);
 
-			organizationService.persist(root);
+			identityService.persist(root);
 		}
 		
 		/* Ensure the countries are defined */
@@ -280,12 +278,12 @@ public class UserService /*implements UserDetailsService*/ {
 		return positionRepository.findAll(new Sort("id"));
 	}
 	
-	public List<Organization> findDepartments() {
-		return this.organizationService.retrieve();
+	public List<Identity> findDepartments() {
+		return this.identityService.retrieve(IdentityType.Department, true);
 	}
 	
-	public List<User> findUsersForDepartment(final Organization organization) {
-		return this.userRepository.findByDepartment(organization.getId());
+	public List<User> findUsersForDepartment(final Identity identity) {
+		return this.userRepository.findByDepartment(identity.getId());
 	}
 	
 	public int getUnreadNotificationsCount(@NotNull final User user) {

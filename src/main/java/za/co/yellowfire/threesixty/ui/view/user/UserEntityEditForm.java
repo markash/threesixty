@@ -10,7 +10,7 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
-import za.co.yellowfire.threesixty.domain.organization.Organization;
+import za.co.yellowfire.threesixty.domain.organization.Identity;
 import za.co.yellowfire.threesixty.domain.user.*;
 import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.component.ByteArrayStreamResource;
@@ -35,7 +35,7 @@ public class UserEntityEditForm extends AbstractEntityEditForm<User> {
 	private ComboBox<Role> roleField;
 	private ComboBox<Position> positionField;
 	private ComboBox<User> reportsToField;
-	private ComboBox<Organization> departmentField;
+	private ComboBox<Identity> departmentField;
 
 	private List<User> reportsTo = new ArrayList<>();
 	private ListDataProvider<User> reportsToProvider = new ListDataProvider<>(reportsTo);

@@ -263,10 +263,10 @@ public class I8n {
         }
 	}
 	
-	public interface Organization {
+	public interface Identity {
 		VaadinIcons ICON = VaadinIcons.SITEMAP;
-		String SINGULAR = "Organization";
-		String PLURAL = "Organization";
+		String SINGULAR = "Identity";
+		String PLURAL = "Identities";
 		
 		interface Fields {
 			String NAME = "Name";
@@ -275,12 +275,15 @@ public class I8n {
 			String USERS = "Users";
 		}
 		interface Level {
-			VaadinIcons ORGANIZATION = Organization.ICON;
+			VaadinIcons GLOBAL = VaadinIcons.GLOBE;
+			VaadinIcons TENANT = VaadinIcons.RECORDS;
+			VaadinIcons ORGANIZATION = VaadinIcons.AUTOMATION;
 			VaadinIcons GROUP = VaadinIcons.INSTITUTION;
 			VaadinIcons REGION = VaadinIcons.FLAG;
 			VaadinIcons DIVISION = VaadinIcons.BUILDING;
 			VaadinIcons DEPARTMENT = VaadinIcons.CUBES;
 			VaadinIcons TEAM = VaadinIcons.CUBE;
+			VaadinIcons INDIVIDUAL = VaadinIcons.USER;
 			VaadinIcons OTHER = VaadinIcons.FOLDER;
 		}
 	}

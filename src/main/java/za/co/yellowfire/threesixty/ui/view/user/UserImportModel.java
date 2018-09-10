@@ -1,6 +1,6 @@
 package za.co.yellowfire.threesixty.ui.view.user;
 
-import za.co.yellowfire.threesixty.domain.organization.Organization;
+import za.co.yellowfire.threesixty.domain.organization.Identity;
 import za.co.yellowfire.threesixty.domain.user.Country;
 import za.co.yellowfire.threesixty.domain.user.Position;
 import za.co.yellowfire.threesixty.domain.user.Role;
@@ -36,7 +36,7 @@ public class UserImportModel implements Serializable {
     public String getGender() { return this.getUser().getGender(); }
     public String getTitle() { return getUser().getTitle(); }
     public Role getRole() { return getUser().getRole(); }
-    public Organization getDepartment() { return getUser().getDepartment(); }
+    public Identity getDepartment() { return getUser().getDepartment(); }
     public User getReportsTo() { return getUser().getReportsTo(); }
     public Position getPosition() { return getUser().getPosition(); }
     public String getFirstName() { return getUser().getFirstName(); }

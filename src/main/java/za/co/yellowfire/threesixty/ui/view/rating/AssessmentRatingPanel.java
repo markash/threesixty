@@ -80,13 +80,13 @@ public class AssessmentRatingPanel extends GridLayout {
 
 		/* Bind */
         this.binder.forField(idField).bind("id");
-        this.binder.forField(areaField).bind("performanceArea");
-        this.binder.forField(measurementField).bind("measurement");
-        this.binder.forField(managerCommentField).bind("managerComment");
-        this.binder.forField(employeeCommentField).bind("employeeComment");
-        this.binder.forField(weightField).bind("weight");
-        this.binder.forField(ratingField).bind("rating");
-        this.binder.forField(scoreField).withConverter(new StringToDoubleConverter(0.0, "Unable to convert weighting")).bind("score");
+        this.binder.forField(areaField).bind(AssessmentRating.FIELD_DISCIPLINE);
+        this.binder.forField(measurementField).bind(AssessmentRating.FIELD_MEASUREMENT);
+        this.binder.forField(managerCommentField).bind(AssessmentRating.FIELD_MANAGER_COMMENT);
+        this.binder.forField(employeeCommentField).bind(AssessmentRating.FIELD_EMPLOYEE_COMMENT);
+        this.binder.forField(weightField).bind(AssessmentRating.FIELD_WEIGHT);
+        this.binder.forField(ratingField).bind(AssessmentRating.FIELD_RATING);
+        this.binder.forField(scoreField).withConverter(new StringToDoubleConverter(0.0, "Unable to convert weighting")).bind(AssessmentRating.FIELD_SCORE);
         this.binder.readBean(this.rating);
         this.binder.addStatusChangeListener(event -> {
             boolean isValid = event.getBinder().isValid();

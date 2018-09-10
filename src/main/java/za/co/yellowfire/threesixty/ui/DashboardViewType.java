@@ -8,7 +8,7 @@ import za.co.yellowfire.threesixty.ui.view.dashboard.DashboardView;
 //import za.co.yellowfire.threesixty.ui.view.kudos.BadgeSearchView;
 //import za.co.yellowfire.threesixty.ui.view.kudos.IdealSearchView;
 //import za.co.yellowfire.threesixty.ui.view.kudos.KudosEditView;
-//import za.co.yellowfire.threesixty.ui.view.org.OrganizationView;
+//import za.co.yellowfire.threesixty.ui.view.org.IdentityView;
 //import za.co.yellowfire.threesixty.ui.view.rating.AssessmentSearchView;
 //import za.co.yellowfire.threesixty.ui.view.discipline.DisciplineSearchView;
 //import za.co.yellowfire.threesixty.ui.view.rating.PeriodSearchView;
@@ -17,7 +17,7 @@ import za.co.yellowfire.threesixty.ui.view.dashboard.DashboardView;
 
 public enum DashboardViewType {
     DASHBOARD("dashboard", DashboardView.class, VaadinIcons.HOME, true, null),
-//    ORGANIZATION(OrganizationView.VIEW_NAME, OrganizationView.class, I8n.Organization.ICON, true, null),
+//    ORGANIZATION(IdentityView.VIEW_NAME, IdentityView.class, I8n.Identity.ICON, true, null),
 //    USER_SEARCH(UserSearchView.VIEW_NAME, UserSearchView.class, FontAwesome.USERS, true, Role.ADMIN),
 //    PERIOD_SEARCH(PeriodSearchView.VIEW_NAME, PeriodSearchView.class, FontAwesome.CALENDAR_TIMES_O, true, Role.ADMIN),
 //    PERFORMANCE_AREA_SEARCH(DisciplineSearchView.VIEW_NAME, DisciplineSearchView.class, FontAwesome.BUILDING_O, true, Role.ADMIN),

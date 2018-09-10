@@ -5,18 +5,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-public class OrganizationMetadata {
-	private List<OrganizationLevelMetadata> levels;
-	private OrganizationLevelMetadata defaultLevel;
-	
-	public OrganizationMetadata() {
+public class IdentityMetadata {
+	private final List<OrganizationLevelMetadata> levels;
+
+	public IdentityMetadata() {
 		this.levels = new ArrayList<>();
-		this.levels.add(new OrganizationLevelMetadata("Organization", OrganizationType.Organization, this));
-		this.levels.add(new OrganizationLevelMetadata("Region", OrganizationType.Region, this));
-		this.levels.add(new OrganizationLevelMetadata("Division", OrganizationType.Division, this));
-		this.levels.add(new OrganizationLevelMetadata("Department", OrganizationType.Department, this));
-		this.levels.add(new OrganizationLevelMetadata("Team", OrganizationType.Team, this));
-		this.levels.add(new OrganizationLevelMetadata("Group", OrganizationType.Group, this));
+		this.levels.add(new OrganizationLevelMetadata("Global", IdentityType.Global, this));
+		this.levels.add(new OrganizationLevelMetadata("Tenant", IdentityType.Tenant, this));
+		this.levels.add(new OrganizationLevelMetadata("Identity", IdentityType.Organization, this));
+		this.levels.add(new OrganizationLevelMetadata("Region", IdentityType.Region, this));
+		this.levels.add(new OrganizationLevelMetadata("Division", IdentityType.Division, this));
+		this.levels.add(new OrganizationLevelMetadata("Department", IdentityType.Department, this));
+		this.levels.add(new OrganizationLevelMetadata("Team", IdentityType.Team, this));
+		this.levels.add(new OrganizationLevelMetadata("Group", IdentityType.Group, this));
+		this.levels.add(new OrganizationLevelMetadata("Individual", IdentityType.Individual, this));
 	}
 	
 	public int getNumberOflevels() {
@@ -26,25 +28,19 @@ public class OrganizationMetadata {
 	public List<OrganizationLevelMetadata> getLevels() {
 		return levels;
 	}
-	
-	public void setLevels(List<OrganizationLevelMetadata> levels) {
-		this.levels = levels;
-	}
-	
+
 	public OrganizationLevelMetadata getRootMetadata() {
 		return this.levels.get(0);
 	}
 	
-	public Optional<OrganizationLevelMetadata> getMetadata(OrganizationType type) {
+	public Optional<OrganizationLevelMetadata> getMetadata(IdentityType type) {
 		return this.levels.stream().filter(o -> o.getType() == type).findFirst();
 	}
 	
 	public Optional<OrganizationLevelMetadata> getPreviousLevelMetadata(OrganizationLevelMetadata level) {
 		
 		OrganizationLevelMetadata previous = null;
-		Iterator<OrganizationLevelMetadata> i = this.levels.iterator();
-		while (i.hasNext()) {
-			OrganizationLevelMetadata meta = i.next();
+		for (OrganizationLevelMetadata meta : this.levels) {
 			if (meta.getName().equals(level.getName()) && meta.getType() == level.getType()) {
 				return Optional.ofNullable(previous);
 			}

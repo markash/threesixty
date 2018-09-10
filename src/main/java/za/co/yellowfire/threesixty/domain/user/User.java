@@ -17,7 +17,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import za.co.yellowfire.threesixty.domain.GridFsClient;
-import za.co.yellowfire.threesixty.domain.organization.Organization;
+import za.co.yellowfire.threesixty.domain.organization.Identity;
 
 import javax.validation.constraints.NotNull;
 import java.io.File;
@@ -72,7 +72,7 @@ public final class User implements Auditable<User, Serializable>, UserDetails {
     @DBRef
     private User reportsTo;
     @DBRef
-    private Organization department;
+    private Identity department;
     @DBRef
     private Position position;
     @DBRef
@@ -138,8 +138,8 @@ public final class User implements Auditable<User, Serializable>, UserDetails {
     public Role getRole() { return role; }
     public void setRole(final Role role) { this.role = role; }
 
-    public Organization getDepartment() { return department; }
-	public void setDepartment(Organization department) { this.department = department; }
+    public Identity getDepartment() { return department; }
+	public void setDepartment(Identity department) { this.department = department; }
 
 	public User getReportsTo() { return reportsTo; }
 	public void setReportsTo(User reportsTo) { this.reportsTo = reportsTo; }

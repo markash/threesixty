@@ -17,6 +17,14 @@ import za.co.yellowfire.threesixty.domain.user.User;
 public class AssessmentRating implements Auditable<User, String> {
 	private static final long serialVersionUID = 1L;
 
+	public static final String FIELD_DISCIPLINE = "discipline";
+	public static final String FIELD_MEASUREMENT = "measurement";
+	public static final String FIELD_MANAGER_COMMENT = "managerComment";
+	public static final String FIELD_EMPLOYEE_COMMENT = "employeeComment";
+	public static final String FIELD_WEIGHT = "weight";
+	public static final String FIELD_RATING = "rating";
+	public static final String FIELD_SCORE = "score";
+
 	@Id
 	private String id;
 	

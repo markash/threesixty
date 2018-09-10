@@ -1,5 +1,6 @@
 package za.co.yellowfire.threesixty.domain.organization;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,21 +18,21 @@ import za.co.yellowfire.threesixty.domain.user.User;
 
 
 @AccessType(Type.FIELD)
-public class Organization implements Auditable<User, String> {
+public class Identity implements Auditable<User, Serializable> {
 	private static final long serialVersionUID = 8006445483328831553L;
 
 	@Id
 	private String id;
 	private String name;
 	private String parentId;
-	private OrganizationType type;
+	private IdentityType type;
 	
 	@DBRef
-	private Organization parent = null;
+	private Identity parent = null;
 	@Transient
-	private Optional<OrganizationLevelMetadata> metadata = Optional.empty();
+	private OrganizationLevelMetadata metadata = null;
 	@Transient
-	private List<Organization> children = new ArrayList<>();
+	private List<Identity> children = new ArrayList<>();
 	private boolean active = true;
 	@DBRef
 	private User createdBy;
@@ -40,26 +41,36 @@ public class Organization implements Auditable<User, String> {
 	private DateTime createdDate;
 	private DateTime modifiedDate;
 
-	public Organization() { }
+	public Identity() { }
 	
-	public Organization(final String name, final OrganizationType type) {
+	public Identity(
+			final String name,
+			final IdentityType type) {
+
 		this.name = name;
 		this.type = type;
 	}
 
-	public Organization(final String name, final Organization parent) {
+	public Identity(
+			final String name,
+			final Identity parent) {
+
 		this.name = name;
 		this.setParent(parent);
 	}
 	
-	public Organization child(final Organization child) {
+	public Identity child(
+			final Identity child) {
+
 		child.setParent(this);
 		this.children.add(child);
 		return this;
 	}
 	
-	public Organization child(final Organization...children) {
-		for(Organization child : children) {
+	public Identity child(
+			final Identity...children) {
+
+		for(Identity child : children) {
 			child.setParent(this);
 			this.children.add(child);
 		}
@@ -73,30 +84,31 @@ public class Organization implements Auditable<User, String> {
 	public void setName(final String name) { this.name = name; }
 	public String getParentId() { return this.parentId; }
 	public void setParentId(final String parentId) { this.parentId = parentId; }
-	public Organization getParent() { return this.parent; }
-	public void setParent(final Organization parent) { 
+	public Identity getParent() { return this.parent; }
+	public void setParent(final Identity parent) {
 		this.parent = parent; 
 		this.parentId = this.parent.getId();
 	}
 	public boolean hasChildren() { return !this.children.isEmpty(); }
 	public boolean isActive() { return active; }
 	public void setActive(boolean active) { this.active = active; }
-	public void setChildren(final List<Organization> children) { this.children =  children; }
-	public List<Organization> getChildren() { return this.children; }
-	public Optional<OrganizationLevelMetadata> getMetadata() { return metadata; }
+	public void setChildren(final List<Identity> children) { this.children =  children; }
+	public List<Identity> getChildren() { return this.children; }
+	public Optional<OrganizationLevelMetadata> getMetadata() { return Optional.ofNullable(metadata); }
 	
-	public void setMetadata(Optional<OrganizationLevelMetadata> metadata) { 
+	public void setMetadata(
+			final OrganizationLevelMetadata metadata) {
+
 		this.metadata = metadata; 
-		if (this.metadata.isPresent()) {
-			OrganizationLevelMetadata m = this.metadata.get();
-			if ((this.type == null && m.getType() !=  null) || (this.type != m.getType())) {
-				this.type = m.getType();
+		if (this.metadata != null) {
+			if ((this.type == null && this.metadata.getType() !=  null) || (this.type != this.metadata.getType())) {
+				this.type = this.metadata.getType();
 			}
 		}
 	}
 	
-	public OrganizationType getType() { return type; }
-	public void setType(OrganizationType type) { this.type = type; }
+	public IdentityType getType() { return type; }
+	public void setType(IdentityType type) { this.type = type; }
 
 	@Override
 	public boolean isNew() {
