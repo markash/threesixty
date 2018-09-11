@@ -54,7 +54,7 @@ public class IdentityService {
 
 		List<Identity> roots = onlyActive ? repository.findRoot(onlyActive) : repository.findRoot();
 		for (Identity root : roots) {
-			root.setMetadata(metadata.getRootMetadata());
+			root.setMetadata(metadata.getMetadata(root.getType()).orElse(metadata.getRootMetadata()));
 			retrieveChildren(root);
 		}
 		return roots;
@@ -78,7 +78,7 @@ public class IdentityService {
 
 		List<Identity> roots = repository.findByType(type, onlyActive);
 		for (Identity root : roots) {
-			root.setMetadata(metadata.getRootMetadata());
+			root.setMetadata(metadata.getMetadata(root.getType()).orElse(metadata.getRootMetadata()));
 			retrieveChildren(root);
 		}
 		return roots;
