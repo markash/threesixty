@@ -45,16 +45,13 @@ public class UserConfig {
     EntityPersistFunction<User> userPersistFunction(
             final UserService userService) {
 
-        return new EntityPersistFunction<User>() {
-            @Override
-            public User apply(final User user) {
-                try {
-                    return userService.save(user);
-                } catch (IOException e) {
-                    NotificationBuilder.showNotification("Persist", e.getMessage());
-                }
-                return user;
+        return user -> {
+            try {
+                return userService.save(user);
+            } catch (IOException e) {
+                NotificationBuilder.showNotification("Persist", e.getMessage());
             }
+            return user;
         };
     }
 

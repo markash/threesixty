@@ -3,20 +3,18 @@ package za.co.yellowfire.threesixty;
 import com.github.markash.ui.ApplicationUI;
 import com.github.markash.ui.component.logo.Logo;
 import com.github.markash.ui.component.notification.NotificationBuilder;
+import com.github.markash.ui.event.LogoutEvent;
 import com.github.markash.ui.event.UserPasswordChangeEvent;
 import com.github.markash.ui.view.DisplayView;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.annotations.PreserveOnRefresh;
-import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
-import com.vaadin.navigator.PushStateNavigation;
 import com.vaadin.server.DefaultErrorHandler;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.navigator.SpringNavigator;
-import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Window;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +31,6 @@ import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.CloseOpenWindowsEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.ProfileUpdatedEvent;
 import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLoginEvent;
-import za.co.yellowfire.threesixty.ui.DashboardEvent.UserLogoutEvent;
 import za.co.yellowfire.threesixty.ui.view.LoginView;
 import za.co.yellowfire.threesixty.ui.view.MainView;
 import za.co.yellowfire.threesixty.ui.view.dashboard.DashboardView;
@@ -48,10 +45,6 @@ import za.co.yellowfire.threesixty.ui.view.security.ChangePasswordView;
 public class MainUI extends ApplicationUI {
 	private static final long serialVersionUID = 1L;
 
-	//@Autowired
-	//private ConverterFactory converterFactory;
-//    @Autowired
-//    private SpringViewProvider viewProvider;
     @Autowired
     private EventBus.SessionEventBus eventBus;
     @Autowired
@@ -202,7 +195,7 @@ public class MainUI extends ApplicationUI {
         //System.out.println("Tracking " + trackerId + " : " + hostName);
     }
 
-    @Subscribe
+    @EventListener
     public void userLogin(final UserLoginEvent event) {
         VaadinSession.getCurrent().setAttribute(User.class, event.getUser());
         updateContent();
@@ -214,9 +207,12 @@ public class MainUI extends ApplicationUI {
         updateContent();
     }
     
-    @Subscribe
-    public void userLogout(final UserLogoutEvent event) {
-        // When the user logs out, current VaadinSession gets closed and the
+    @EventListener
+    @SuppressWarnings("unused")
+    public void userLogout(
+            final LogoutEvent event) {
+
+        // When the user logs out, current Vaadin Session gets closed and the
         // page gets reloaded on the login screen. Do notice the this doesn't
         // invalidate the current HttpSession.
         VaadinSession.getCurrent().close();

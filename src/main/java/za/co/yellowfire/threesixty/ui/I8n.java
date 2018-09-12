@@ -244,6 +244,7 @@ public class I8n {
 		String SINGULAR = "User";
 		String PLURAL = "Users";
 		String IMPORT = "Import "+ PLURAL;
+		String LOGOUT = "Logout";
 
 		interface Columns {
 			String ID = "User Name";
