@@ -43,6 +43,9 @@ public final class User implements Auditable<User, Serializable>, UserDetails {
 	public static final String FIELD_PHONE = "phone";
 	public static final String FIELD_WEBSITE = "website";
 	public static final String FIELD_BIO = "bio";
+	public static final String FIELD_DEPARTMENT = "department";
+	public static final String FIELD_POSITION = "position";
+	public static final String FIELD_REPORTS_TO = "reportsTo";
 	public static final String FIELD_ACTIVE = "active";
 
 	public static final String USER_ADMIN = "admin";

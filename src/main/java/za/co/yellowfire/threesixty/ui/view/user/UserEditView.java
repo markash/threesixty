@@ -3,9 +3,11 @@ package za.co.yellowfire.threesixty.ui.view.user;
 import com.github.markash.ui.component.BlankSupplier;
 import com.github.markash.ui.component.EntityPersistFunction;
 import com.github.markash.ui.component.EntitySupplier;
+import com.github.markash.ui.component.button.ButtonBuilder;
 import com.github.markash.ui.view.AbstractEntityEditView;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.ui.Button;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
@@ -42,7 +44,10 @@ public class UserEditView extends AbstractEntityEditView<User> {
                 userSupplier,
                 blankUserSupplier,
                 userPersistFunction);
+
     	this.eventBus = eventBus;
+
+    	getToolbar().addAction(ButtonBuilder.RESET_PASSWORD(this::onResetPassword));
     }
 
 	@Override
@@ -54,5 +59,12 @@ public class UserEditView extends AbstractEntityEditView<User> {
     protected void publishOnEventBus(final ApplicationEvent event) {
         Optional.ofNullable(eventBus).ifPresent(eb -> eb.publish(this, event));
     }
+
+	@SuppressWarnings("unused")
+	private void onResetPassword(
+			final Button.ClickEvent event) {
+
+		((UserEntityEditForm) getForm()).resetPassword();
+	}
 }
 

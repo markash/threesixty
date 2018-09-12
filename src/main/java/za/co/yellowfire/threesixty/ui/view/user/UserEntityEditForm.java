@@ -44,10 +44,7 @@ public class UserEntityEditForm extends AbstractEntityEditForm<User> {
     private boolean pictureChanged = false;
 
 	private Button pictureButton = ButtonBuilder.CHANGE(this::onChangePicture);
-	//private Button saveButton = ButtonBuilder.SAVE(this::save);
-	//private Button resetButton = ButtonBuilder.RESET(this::reset);
-	//private Button createButton = ButtonBuilder.NEW(this::create);
-	//private Button resetPasswordButton = ButtonBuilder.RESET_PASSWORD(this::onResetPassword);
+
 
     private final CurrentUserProvider<User> currentUserProvider;
     private final UserService userService;
@@ -101,7 +98,12 @@ public class UserEntityEditForm extends AbstractEntityEditForm<User> {
         getBinder().forField(emailField).bind(User.FIELD_EMAIL);
         getBinder().forField(phoneField).bind(User.FIELD_PHONE);
         getBinder().forField(websiteField).bind(User.FIELD_WEBSITE);
-        getBinder().forField(bioField).bind(User.FIELD_WEBSITE);
+        getBinder().forField(bioField).bind(User.FIELD_BIO);
+        getBinder().forField(departmentField).bind(User.FIELD_DEPARTMENT);
+        getBinder().forField(positionField).bind(User.FIELD_POSITION);
+        getBinder().forField(reportsToField).bind(User.FIELD_REPORTS_TO);
+        getBinder().forField(countryField).bind(User.FIELD_LOCATION);
+        getBinder().forField(roleField).bind(User.FIELD_ROLE);
 
         firstNameField.setRequiredIndicatorVisible(true);
         lastNameField.setRequiredIndicatorVisible(true);
@@ -184,8 +186,8 @@ public class UserEntityEditForm extends AbstractEntityEditForm<User> {
 	    UI.getCurrent().addWindow(pictureWindow);
     }
 
-    private void onResetPassword(
-            Button.ClickEvent event) {
+
+    void resetPassword() {
 
 	    Optional<User> principal = this.currentUserProvider.get();
         if (principal.isPresent()) {
