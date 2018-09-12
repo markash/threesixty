@@ -22,16 +22,6 @@ public abstract class DashboardEvent {
         }
     }
 
-
-    
-    public static class BrowserResizeEvent {
-
-    }
-
-    public static class UserLogoutEvent {
-
-    }
-
     public static class NotificationsCountUpdatedEvent {
     }
 

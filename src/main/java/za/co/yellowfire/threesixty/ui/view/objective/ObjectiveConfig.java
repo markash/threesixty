@@ -5,9 +5,16 @@ import com.github.markash.ui.component.EntityPersistFunction;
 import com.github.markash.ui.component.EntitySupplier;
 import com.github.markash.ui.component.notification.NotificationBuilder;
 import com.github.markash.ui.view.TableDefinition;
+import com.vaadin.annotations.Push;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.navigator.PushStateNavigation;
+import com.vaadin.navigator.View;
+import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.vaadin.spring.annotation.PrototypeScope;
@@ -21,6 +28,9 @@ import java.util.Optional;
 @Configuration
 @SuppressWarnings("unused")
 public class ObjectiveConfig {
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Bean @PrototypeScope
     ObjectiveEntityEditForm objectiveEntityEditForm() {
@@ -62,6 +72,23 @@ public class ObjectiveConfig {
         tableDefinition.column(DateField.class).withHeading(I8n.Objective.Columns.NAME).forProperty(Objective.FIELD_ID).identity().display(Objective.FIELD_NAME);
         tableDefinition.column(TextField.class).withHeading(I8n.Objective.Columns.TEXT).forProperty(Objective.FIELD_TEXT).enableTextSearch();
         tableDefinition.column(Boolean.class).withHeading(I8n.Objective.Columns.ACTIVE).forProperty(Objective.FIELD_ACTIVE);
+
+        if (isPushStateNavigationEnabled()) {
+            tableDefinition.withPushUrls();
+        }
+
         return tableDefinition;
+    }
+
+    private boolean isPushStateNavigationEnabled() {
+
+        String[] beanNames = applicationContext.getBeanNamesForAnnotation(PushStateNavigation.class);
+        for (String beanName : beanNames) {
+            Class<?> beanType = applicationContext.getType(beanName);
+            if (UI.class.isAssignableFrom(beanType)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

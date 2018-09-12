@@ -8,7 +8,9 @@ import com.github.markash.ui.event.UserPasswordChangeEvent;
 import com.github.markash.ui.view.DisplayView;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.annotations.PreserveOnRefresh;
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
+import com.vaadin.navigator.PushStateNavigation;
 import com.vaadin.server.DefaultErrorHandler;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
@@ -16,6 +18,7 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.navigator.SpringNavigator;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -40,7 +43,7 @@ import za.co.yellowfire.threesixty.ui.view.security.ChangePasswordView;
 @Theme("dashboard")
 @SpringUI
 @PreserveOnRefresh
-//@Push
+@Push
 //@PushStateNavigation
 public class MainUI extends ApplicationUI {
 	private static final long serialVersionUID = 1L;
@@ -105,6 +108,10 @@ public class MainUI extends ApplicationUI {
                 } else {
                     super.error(event);
                 }
+                /* Clear the navigation state error from the MainUI component */
+                if (getComponentError() != null) {
+                    setComponentError(null);
+                }
             }
         });
         if (vaadinSecurity.isAuthenticated()) {
@@ -112,6 +119,8 @@ public class MainUI extends ApplicationUI {
         } else {
             showLoginScreen(request.getParameter("goodbye") != null);
         }
+
+        UI.getCurrent().getSession().getErrorHandler();
     }
 
     private void showMainScreen() {
