@@ -38,5 +38,12 @@ public class DisciplineEditView extends AbstractEntityEditView<Discipline> {
                 blankDisciplineSupplier,
                 disciplinePersistFunction);
     }
+
+    @Override
+    protected String successfulPersistNotification(
+            final Discipline entity) {
+
+        return entity.getName() + " successfully persisted.";
+    }
 }
 

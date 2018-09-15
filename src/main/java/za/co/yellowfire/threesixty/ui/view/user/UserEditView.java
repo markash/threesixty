@@ -66,5 +66,12 @@ public class UserEditView extends AbstractEntityEditView<User> {
 
 		((UserEntityEditForm) getForm()).resetPassword();
 	}
+
+	@Override
+	protected String successfulPersistNotification(
+			final User entity) {
+
+		return "Record for " + entity.getFullName() + " successfully persisted.";
+	}
 }
 

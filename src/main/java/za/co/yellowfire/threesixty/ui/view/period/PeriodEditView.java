@@ -5,13 +5,11 @@ import com.github.markash.ui.component.EntityPersistFunction;
 import com.github.markash.ui.component.EntitySupplier;
 import com.github.markash.ui.view.AbstractEntityEditView;
 import com.vaadin.spring.annotation.SpringView;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.security.access.annotation.Secured;
 import org.vaadin.spring.events.EventBus;
-
 import za.co.yellowfire.threesixty.ui.I8n;
 
 import java.io.Serializable;
@@ -49,5 +47,12 @@ public class PeriodEditView extends AbstractEntityEditView<PeriodModel> {
     protected void publishOnEventBus(final ApplicationEvent event) {
         Optional.ofNullable(eventBus).ifPresent(eb -> eb.publish(this, event));
     }
+
+	@Override
+	protected String successfulPersistNotification(
+			final PeriodModel entity) {
+
+		return "Period " + entity.toString() + " successfully persisted.";
+	}
 }
 

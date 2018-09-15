@@ -151,6 +151,8 @@ public class I8n {
 	public interface Objective {
 		String SINGULAR = "Objective";
 		String PLURAL = "Objectives";
+		String EDIT_VIEW = "objective";
+		String SEARCH_VIEW = "objectives";
 
         interface Columns {
             String ID = "Id";

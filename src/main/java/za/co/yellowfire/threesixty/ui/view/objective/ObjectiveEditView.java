@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.security.access.annotation.Secured;
 import org.vaadin.spring.events.EventBus;
+import za.co.yellowfire.threesixty.domain.rating.Discipline;
 import za.co.yellowfire.threesixty.domain.rating.Objective;
 import za.co.yellowfire.threesixty.ui.I8n;
 
@@ -22,7 +23,7 @@ public class ObjectiveEditView extends AbstractEntityEditView<Objective> {
 	private static final long serialVersionUID = 1L;
 
     public static final String TITLE = I8n.Objective.SINGULAR;
-    public static final String VIEW_NAME = "outcome";
+    public static final String VIEW_NAME = I8n.Objective.EDIT_VIEW;
 
     private EventBus.SessionEventBus eventBus;
 
@@ -43,6 +44,13 @@ public class ObjectiveEditView extends AbstractEntityEditView<Objective> {
     @Override
     protected void publishOnEventBus(final ApplicationEvent event) {
         Optional.ofNullable(eventBus).ifPresent(eb -> eb.publish(this, event));
+    }
+
+    @Override
+    protected String successfulPersistNotification(
+            final Objective entity) {
+
+        return entity.getName() + " successfully persisted.";
     }
 }
 

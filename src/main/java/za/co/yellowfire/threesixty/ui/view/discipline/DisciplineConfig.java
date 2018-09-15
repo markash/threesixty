@@ -4,7 +4,6 @@ import com.github.markash.ui.component.BlankSupplier;
 import com.github.markash.ui.component.EntityPersistFunction;
 import com.github.markash.ui.component.EntitySupplier;
 import com.github.markash.ui.component.notification.NotificationBuilder;
-import com.github.markash.ui.security.CurrentUserProvider;
 import com.github.markash.ui.view.TableDefinition;
 import com.vaadin.data.provider.ListDataProvider;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.vaadin.spring.annotation.PrototypeScope;
 import za.co.yellowfire.threesixty.domain.rating.Discipline;
 import za.co.yellowfire.threesixty.domain.rating.DisciplineRepository;
-import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.I8n;
 
 import java.io.Serializable;
@@ -23,12 +21,7 @@ import java.util.Optional;
 public class DisciplineConfig {
 
     @Bean @PrototypeScope
-    DisciplineEntityEditForm disciplineEntityEditForm(
-            final ListDataProvider<Discipline> activePeriodListDataProvider,
-            final ListDataProvider<User> activeUserListDataProvider,
-            final DisciplineRepository disciplineRepository,
-            final CurrentUserProvider<User> currentUserProvider) {
-
+    DisciplineEntityEditForm disciplineEntityEditForm() {
         return new DisciplineEntityEditForm();
     }
 
@@ -48,13 +41,13 @@ public class DisciplineConfig {
     EntityPersistFunction<Discipline> disciplinePersistFunction(
             final DisciplineRepository repository) {
 
-        return performanceArea -> {
+        return discipline -> {
             try {
-                return repository.save(performanceArea);
+                return repository.save(discipline);
             } catch (Throwable e) {
                 NotificationBuilder.showNotification("Persist", e.getMessage());
             }
-            return performanceArea;
+            return discipline;
         };
     }
 

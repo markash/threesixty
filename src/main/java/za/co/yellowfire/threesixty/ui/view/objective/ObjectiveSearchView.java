@@ -17,6 +17,7 @@ import za.co.yellowfire.threesixty.domain.rating.Objective;
 import za.co.yellowfire.threesixty.ui.I8n;
 
 @Secured("ROLE_ADMIN")
+@SuppressWarnings("unused")
 @SideBarItem(sectionId = Sections.DASHBOARD, caption = ObjectiveEditView.TITLE, order = 2)
 @VaadinFontIcon(VaadinIcons.STAR_O)
 @SpringView(name = ObjectiveSearchView.VIEW_NAME)
@@ -24,8 +25,7 @@ public class ObjectiveSearchView extends AbstractTableSearchView<Objective, Stri
 	private static final long serialVersionUID = 1L;
 	
 	public static final String TITLE = I8n.Objective.PLURAL;
-    public static final String VIEW_NAME = "objectives";
-    public static final VaadinIcons ICON = VaadinIcons.STAR_O;
+    public static final String VIEW_NAME = I8n.Objective.SEARCH_VIEW;
 
     @Autowired
     public ObjectiveSearchView(
@@ -37,6 +37,6 @@ public class ObjectiveSearchView extends AbstractTableSearchView<Objective, Stri
     }
 
     @SuppressWarnings("unused")
-    public void onCreate(ClickEvent event) { UI.getCurrent().getNavigator().navigateTo(ObjectiveEditView.VIEW("/new-outcome")); }
+    public void onCreate(ClickEvent event) { UI.getCurrent().getNavigator().navigateTo(ObjectiveEditView.VIEW("/new-entity")); }
 }
 

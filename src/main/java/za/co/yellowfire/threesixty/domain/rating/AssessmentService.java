@@ -88,7 +88,7 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 		return this.possibleWeightings;
 	}
 
-	public List<Discipline> findPerformanceAreas() {
+	public List<Discipline> findDisciplines() {
 		return this.disciplineRepository.findAll();
 	}
 	

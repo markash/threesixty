@@ -37,6 +37,6 @@ public class DisciplineSearchView extends AbstractTableSearchView<Discipline, St
     }
 
     @SuppressWarnings("unused")
-    public void onCreate(Button.ClickEvent event) { UI.getCurrent().getNavigator().navigateTo(DisciplineEditView.VIEW("/new-discipline")); }
+    public void onCreate(Button.ClickEvent event) { UI.getCurrent().getNavigator().navigateTo(DisciplineEditView.VIEW("/new-entity")); }
 }
 

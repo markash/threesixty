@@ -13,6 +13,7 @@ import za.co.yellowfire.threesixty.domain.rating.AssessmentRating;
 import za.co.yellowfire.threesixty.domain.rating.AssessmentStatus;
 import za.co.yellowfire.threesixty.domain.rating.Discipline;
 import za.co.yellowfire.threesixty.domain.user.User;
+import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.Style;
 import za.co.yellowfire.threesixty.ui.component.field.MDoubleLabel;
 
@@ -24,7 +25,7 @@ public class AssessmentRatingPanel extends GridLayout {
     private TextArea measurementField = new TextArea("Measurement");
     private TextArea managerCommentField = new TextArea("Manager Comment");
     private TextArea employeeCommentField = new TextArea("Employee Comment");
-    private ComboBox<Discipline> areaField;
+    private ComboBox<Discipline> disciplineField;
     private ComboBox<Double> weightField = new ComboBox<>("Weight");
     private ComboBox<Double> ratingField = new ComboBox<>("Rating");
     private MTextField scoreField = new MTextField("Score").withWidth(100.0f, Unit.PERCENTAGE).withReadOnly(true);
@@ -55,8 +56,8 @@ public class AssessmentRatingPanel extends GridLayout {
         this.rating = rating;
         this.currentUser = currentUser;
 
-        this.areaField = new ComboBox<>("Performance Area", disciplines);
-        this.areaField.setWidth(100.0f, Unit.PERCENTAGE);
+        this.disciplineField = new ComboBox<>(I8n.Discipline.SINGULAR, disciplines);
+        this.disciplineField.setWidth(100.0f, Unit.PERCENTAGE);
 
         ListDataProvider<Double> ratingsProvider = new ListDataProvider<>(possibleRatings);
         this.ratingField.setDataProvider(ratingsProvider);
@@ -80,7 +81,7 @@ public class AssessmentRatingPanel extends GridLayout {
 
 		/* Bind */
         this.binder.forField(idField).bind("id");
-        this.binder.forField(areaField).bind(AssessmentRating.FIELD_DISCIPLINE);
+        this.binder.forField(disciplineField).bind(AssessmentRating.FIELD_DISCIPLINE);
         this.binder.forField(measurementField).bind(AssessmentRating.FIELD_MEASUREMENT);
         this.binder.forField(managerCommentField).bind(AssessmentRating.FIELD_MANAGER_COMMENT);
         this.binder.forField(employeeCommentField).bind(AssessmentRating.FIELD_EMPLOYEE_COMMENT);
@@ -101,7 +102,7 @@ public class AssessmentRatingPanel extends GridLayout {
         });
 
         /* Column 0 */
-        addComponent(areaField, 0, 0);
+        addComponent(disciplineField, 0, 0);
         addComponent(managerCommentField, 0, 1);
         addComponent(employeeCommentField, 0, 2);
 
@@ -178,7 +179,7 @@ public class AssessmentRatingPanel extends GridLayout {
 
     void updateFieldAccess() {
 
-        this.areaField.setReadOnly(isAreaReadOnly());
+        this.disciplineField.setReadOnly(isAreaReadOnly());
         this.measurementField.setReadOnly(isMeasurementReadOnly());
         this.managerCommentField.setReadOnly(isManagerCommentReadOnly());
         this.employeeCommentField.setReadOnly(isEmployeeCommentReadOnly());

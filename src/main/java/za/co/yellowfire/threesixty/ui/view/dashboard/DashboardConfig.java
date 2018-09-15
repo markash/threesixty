@@ -13,6 +13,7 @@ import za.co.yellowfire.threesixty.domain.rating.DisciplineRepository;
 import za.co.yellowfire.threesixty.domain.rating.PeriodRepository;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
+import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.view.period.PeriodSearchView;
 import za.co.yellowfire.threesixty.ui.view.rating.AssessmentSearchView;
 import za.co.yellowfire.threesixty.ui.view.discipline.DisciplineSearchView;
@@ -57,7 +58,7 @@ public class DashboardConfig {
                             usersCounterStatistic(userService),
                             periodsCounterStatistic(periodRepository),
                             assessmentsCounterStatistic(assessmentRepository),
-                            performanceAreasCounterStatistic(disciplineRepository)
+                            disciplinesCounterStatistic(disciplineRepository)
                     )
             );
         } else {
@@ -72,7 +73,7 @@ public class DashboardConfig {
     @Bean @PrototypeScope
     public CounterStatisticModel usersCounterModel(final UserService userService) {
         return new CounterStatisticModel(
-                "Registered Users",
+                I8n.User.PLURAL,
                 userService.getUserRepository().countActive())
                 .withShow(StatisticShow.Sum)
                 .withIconHidden()
@@ -90,7 +91,7 @@ public class DashboardConfig {
     @Bean @PrototypeScope
     public CounterStatisticModel periodsCounterModel(final PeriodRepository repository) {
         return new CounterStatisticModel(
-                "Periods",
+                I8n.Period.PLURAL,
                 repository.countActive())
                 .withShow(StatisticShow.Sum)
                 .withIconHidden()
@@ -108,7 +109,7 @@ public class DashboardConfig {
     @Bean @PrototypeScope
     public CounterStatisticModel assessmentsCounterModel(final AssessmentRepository repository) {
         return new CounterStatisticModel(
-                "Assessments",
+                I8n.Assessment.PLURAL,
                 repository.countActive())
                 .withShow(StatisticShow.Sum)
                 .withIconHidden()
@@ -124,9 +125,9 @@ public class DashboardConfig {
     }
 
     @Bean @PrototypeScope
-    public CounterStatisticModel performanceAreasCounterModel(final DisciplineRepository repository) {
+    public CounterStatisticModel disciplinesCounterModel(final DisciplineRepository repository) {
         return new CounterStatisticModel(
-                "Performance Areas",
+                I8n.Discipline.PLURAL,
                 repository.countActive())
                 .withShow(StatisticShow.Sum)
                 .withIconHidden()
@@ -134,12 +135,12 @@ public class DashboardConfig {
     }
 
     @Bean @PrototypeScope
-    public CounterStatisticsCard performanceAreasCounterStatistic(
+    public CounterStatisticsCard disciplinesCounterStatistic(
             final DisciplineRepository repository) {
 
         return new CounterStatisticsCard(
                 VaadinIcons.CUBES,
-                performanceAreasCounterModel(repository),
+                disciplinesCounterModel(repository),
                 DisciplineSearchView.VIEW_NAME);
     }
 
