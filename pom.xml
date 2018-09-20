@@ -60,11 +60,11 @@
             <artifactId>vaadin-spring-boot-starter</artifactId>
             <version>${vaadin-spring.version}</version>
         </dependency>
-		<dependency>
-			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-push</artifactId>
-			<version>${vaadin.version}</version>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>com.vaadin</groupId>-->
+			<!--<artifactId>vaadin-push</artifactId>-->
+			<!--<version>${vaadin.version}</version>-->
+		<!--</dependency>-->
         <dependency>
             <groupId>org.vaadin.spring.extensions</groupId>
             <artifactId>vaadin-spring-ext-boot</artifactId>
