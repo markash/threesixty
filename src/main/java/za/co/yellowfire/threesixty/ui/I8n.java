@@ -53,7 +53,7 @@ public class I8n {
 		String HEADER = "Notifications";
 		String BUTTON_VIEW_ALL = "View All Notifications";
 		
-		public interface Fields {
+		public interface Columns {
 			String ID = I8n.Fields.ID;
 			String ACTION = "Action";
 			String CONTENT = "Content";

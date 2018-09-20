@@ -10,10 +10,27 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import za.co.yellowfire.threesixty.domain.user.User;
 
+import java.io.Serializable;
+
+@SuppressWarnings("unused")
 @AccessType(Type.FIELD)
-public final class UserNotification implements Auditable<User, String> {
+public final class UserNotification implements Auditable<User, Serializable> {
 	private static final long serialVersionUID = 1L;
-	public static final UserNotification EMPTY() { return new UserNotification(); }
+
+	public static final String FIELD_ID = "id";
+	public static final String FIELD_CATEGORY = "category";
+	public static final String FIELD_CONTENT = "content";
+	public static final String FIELD_READ = "read";
+	public static final String FIELD_USER = "user";
+	public static final String FIELD_TIME = "time";
+	public static final String FIELD_ACTION = "action";
+	public static final String FIELD_ACTIVE = "active";
+	public static final String FIELD_CREATED_BY = "createdBy";
+	public static final String FIELD_CREATED_DATE = "createdDate";
+	public static final String FIELD_LAST_MODIFIED_BY = "lastModifiedBy";
+	public static final String FIELD_LAST_MODIFIED_DATE = "lastModifiedDate";
+
+	public static UserNotification EMPTY() { return new UserNotification(); }
 	
 	@Id
 	private String id;
@@ -43,7 +60,6 @@ public final class UserNotification implements Auditable<User, String> {
 	}
 	
     public String getId() { return id; }
-    public void setId(final String id) { this.id = id; }
 
     public NotificationCategory getCategory() { return category; }
 	public void setCategory(NotificationCategory category) { this.category = category; }
@@ -125,11 +141,8 @@ public final class UserNotification implements Auditable<User, String> {
 			return false;
 		UserNotification other = (UserNotification) obj;
 		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
+			return other.id == null;
+		} else return id.equals(other.id);
 	}
 	
 	@Override
@@ -155,7 +168,12 @@ public final class UserNotification implements Auditable<User, String> {
 		this.setContent(message);
 		return this;
 	}
-	
+
+	public UserNotification action(final String action) {
+		this.setAction(action);
+		return this;
+	}
+
 	public UserNotification from(final User user) {
 		if (user != null) {
 			this.setCreatedBy(user);

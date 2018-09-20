@@ -11,12 +11,14 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.spring.sidebar.annotation.SideBarItem;
 import org.vaadin.spring.sidebar.annotation.VaadinFontIcon;
 import za.co.yellowfire.threesixty.Sections;
 import za.co.yellowfire.threesixty.ui.I8n;
+import za.co.yellowfire.threesixty.ui.view.notification.UserNotificationSearchView;
 
 @SideBarItem(sectionId = Sections.DASHBOARD, caption = DashboardView.TITLE, order = 1)
 @VaadinFontIcon(VaadinIcons.HOME)
@@ -152,7 +154,7 @@ public class DashboardView extends AbstractDashboardView {
 
     @SuppressWarnings("unused")
     private void onViewNotifications(final ClickEvent event) {
-//    	UI.getCurrent().getNavigator().navigateTo(UserNotificationSearchView.VIEW_NAME);
+    	UI.getCurrent().getNavigator().navigateTo(UserNotificationSearchView.VIEW_NAME);
     }
     
     @Override

@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 
 import za.co.yellowfire.threesixty.domain.user.User;
 
+@SuppressWarnings("unused")
 public class CustomNotificationRepositoryImpl implements CustomNotificationRepository {
 
 	@Autowired
@@ -30,7 +31,4 @@ public class CustomNotificationRepositoryImpl implements CustomNotificationRepos
 						UserNotification.class, 
 						NotificationSummary.class).getMappedResults();
 	}
-	
-	
-
 }

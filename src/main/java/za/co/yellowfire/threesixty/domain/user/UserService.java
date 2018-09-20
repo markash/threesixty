@@ -21,10 +21,7 @@ import za.co.yellowfire.threesixty.domain.InvalidUserException;
 import za.co.yellowfire.threesixty.domain.organization.Identity;
 import za.co.yellowfire.threesixty.domain.organization.IdentityService;
 import za.co.yellowfire.threesixty.domain.organization.IdentityType;
-import za.co.yellowfire.threesixty.domain.user.notification.NotificationCategory;
-import za.co.yellowfire.threesixty.domain.user.notification.NotificationSummary;
-import za.co.yellowfire.threesixty.domain.user.notification.UserNotification;
-import za.co.yellowfire.threesixty.domain.user.notification.UserNotificationRepository;
+import za.co.yellowfire.threesixty.domain.user.notification.*;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -162,7 +159,12 @@ public class UserService /*implements UserDetailsService*/ {
 		countryRepository.save(Arrays.asList(countries));
 		
 		/*Notify that the server is running */
-		notify(administrator, administrator, NotificationCategory.System,  "Server started.");
+		notify(
+				administrator,
+				administrator,
+				NotificationCategory.System,
+				NotificationAction.Started.name(),
+				"Server started.");
 	}
 
 	public UserRepository getUserRepository() {
@@ -334,12 +336,28 @@ public class UserService /*implements UserDetailsService*/ {
 						NotificationSummary.class).getMappedResults();
 	}
 
-	public void notify(final User to, final String message) {
-		notify(to, null, NotificationCategory.System, message);
+	public void notify(
+			final User to,
+			final String message) {
+
+		notify(to, null, NotificationCategory.System, null, message);
 	}
 	
-	public void notify(final User to, final User from, final NotificationCategory category, final String message) {
-		this.userNotificationRepository.save(UserNotification.to(to).from(from).at(DateTime.now()).category(category).content(message));
+	public void notify(
+			final User to,
+			final User from,
+			final NotificationCategory category,
+			final String action,
+			final String message) {
+
+		this.userNotificationRepository.save(
+				UserNotification
+						.to(to)
+						.from(from)
+						.at(DateTime.now())
+						.category(category)
+						.action(action)
+						.content(message));
 	}
 	
 	public User getCurrentUser() {
