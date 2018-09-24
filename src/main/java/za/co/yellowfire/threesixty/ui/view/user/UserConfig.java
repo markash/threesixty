@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.github.markash.ui.view.ValueBuilder.bool;
+import static com.github.markash.ui.view.ValueBuilder.string;
+
 @Configuration
 @SuppressWarnings("unused")
 public class UserConfig {
@@ -67,13 +70,34 @@ public class UserConfig {
     @Bean
     TableDefinition<User> userTableDefinition() {
 
-        TableDefinition<User> tableDefinition = new TableDefinition<>(UserEditView.VIEW_NAME);
-        tableDefinition.column(String.class).withHeading(I8n.User.Columns.ID).forProperty(User.FIELD_ID).identity().enableTextSearch();
-        tableDefinition.column(String.class).withHeading(I8n.User.Columns.FIRST_NAME).forProperty(User.FIELD_FIRST_NAME).enableTextSearch();
-        tableDefinition.column(String.class).withHeading(I8n.User.Columns.LAST_NAME).forProperty(User.FIELD_LAST_NAME).enableTextSearch();
-        tableDefinition.column(String.class).withHeading(I8n.User.Columns.ROLE).forProperty(User.FIELD_ROLE);
-        tableDefinition.column(String.class).withHeading(I8n.User.Columns.WEBSITE).forProperty(User.FIELD_WEBSITE);
-        tableDefinition.column(Boolean.class).withHeading(I8n.User.Columns.ACTIVE).forProperty(User.FIELD_ACTIVE);
+        TableDefinition<User> tableDefinition = new TableDefinition<>(User.class, UserEditView.VIEW_NAME);
+        tableDefinition
+                .column(true)
+                .withHeading(I8n.User.Columns.ID)
+                .withValue(string(User.FIELD_ID))
+                .enableTextSearch();
+        tableDefinition
+                .column()
+                .withHeading(I8n.User.Columns.FIRST_NAME)
+                .withValue(string(User.FIELD_FIRST_NAME))
+                .enableTextSearch();
+        tableDefinition
+                .column()
+                .withHeading(I8n.User.Columns.LAST_NAME)
+                .withValue(string(User.FIELD_LAST_NAME))
+                .enableTextSearch();
+        tableDefinition
+                .column()
+                .withHeading(I8n.User.Columns.ROLE)
+                .withValue(string(User.FIELD_ROLE));
+        tableDefinition
+                .column()
+                .withHeading(I8n.User.Columns.WEBSITE)
+                .withValue(string(User.FIELD_WEBSITE));
+        tableDefinition
+                .column()
+                .withHeading(I8n.User.Columns.ACTIVE)
+                .withValue(bool(User.FIELD_ACTIVE));
         return tableDefinition;
     }
 
@@ -87,15 +111,15 @@ public class UserConfig {
     @Bean
     TableDefinition<UserImportModel> userImportTableDefinition() {
 
-        TableDefinition<UserImportModel> tableDefinition = new TableDefinition<>(UserEditView.VIEW_NAME);
-        tableDefinition.column(String.class).withHeading(I8n.User.Columns.ID).forProperty(User.FIELD_ID).identity().enableTextSearch();
-        tableDefinition.column(String.class).withHeading(I8n.User.Columns.FIRST_NAME).forProperty(User.FIELD_FIRST_NAME).enableTextSearch();
-        tableDefinition.column(String.class).withHeading(I8n.User.Columns.LAST_NAME).forProperty(User.FIELD_LAST_NAME).enableTextSearch();
-        tableDefinition.column(String.class).withHeading(I8n.User.Columns.ROLE).forProperty(User.FIELD_ROLE);
-        tableDefinition.column(String.class).withHeading(I8n.User.Columns.WEBSITE).forProperty(User.FIELD_WEBSITE);
-        tableDefinition.column(String.class).withHeading(I8n.User.Columns.PHONE).forProperty(User.FIELD_PHONE);
-        tableDefinition.column(String.class).withHeading(I8n.User.Columns.EMAIL).forProperty(User.FIELD_EMAIL);
-        tableDefinition.column(String.class).withHeading(I8n.User.Columns.IMPORT_STATUS).forProperty(UserImportModel.FIELD_IMPORT_STATUS);
+        TableDefinition<UserImportModel> tableDefinition = new TableDefinition<>(UserImportModel.class, UserEditView.VIEW_NAME);
+        tableDefinition.column(true).withHeading(I8n.User.Columns.ID).withValue(string(User.FIELD_ID)).enableTextSearch();
+        tableDefinition.column().withHeading(I8n.User.Columns.FIRST_NAME).withValue(string(User.FIELD_FIRST_NAME)).enableTextSearch();
+        tableDefinition.column().withHeading(I8n.User.Columns.LAST_NAME).withValue(string(User.FIELD_LAST_NAME)).enableTextSearch();
+        tableDefinition.column().withHeading(I8n.User.Columns.ROLE).withValue(string(User.FIELD_ROLE));
+        tableDefinition.column().withHeading(I8n.User.Columns.WEBSITE).withValue(string(User.FIELD_WEBSITE));
+        tableDefinition.column().withHeading(I8n.User.Columns.PHONE).withValue(string(User.FIELD_PHONE));
+        tableDefinition.column().withHeading(I8n.User.Columns.EMAIL).withValue(string(User.FIELD_EMAIL));
+        tableDefinition.column().withHeading(I8n.User.Columns.IMPORT_STATUS).withValue(string(UserImportModel.FIELD_IMPORT_STATUS));
         return tableDefinition;
     }
 }

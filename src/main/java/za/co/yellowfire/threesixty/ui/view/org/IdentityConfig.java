@@ -17,6 +17,9 @@ import za.co.yellowfire.threesixty.ui.I8n;
 import java.io.Serializable;
 import java.util.Optional;
 
+import static com.github.markash.ui.view.ValueBuilder.bool;
+import static com.github.markash.ui.view.ValueBuilder.string;
+
 @Configuration
 @SuppressWarnings("unused")
 public class IdentityConfig {
@@ -68,18 +71,17 @@ public class IdentityConfig {
     @Bean
     TableDefinition<Identity> identityTableDefinition() {
 
-        TableDefinition<Identity> tableDefinition = new TableDefinition<>(IdentityView.VIEW_NAME);
+        TableDefinition<Identity> tableDefinition = new TableDefinition<>(Identity.class, IdentityView.VIEW_NAME);
         tableDefinition
-                .column(String.class)
+                .column(true)
                 .withHeading(I8n.Discipline.Columns.NAME)
-                .forProperty(Discipline.FIELD_ID)
-                .display(Discipline.FIELD_NAME)
-                .enableTextSearch()
-                .identity();
+                .withValue(string(Discipline.FIELD_ID))
+                .withDisplay(string(Discipline.FIELD_NAME))
+                .enableTextSearch();
         tableDefinition
-                .column(Boolean.class)
+                .column()
                 .withHeading(I8n.Discipline.Columns.ACTIVE)
-                .forProperty(Discipline.FIELD_ACTIVE);
+                .withValue(bool(Discipline.FIELD_ACTIVE));
         return tableDefinition;
     }
 }

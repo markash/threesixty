@@ -11,10 +11,14 @@ import org.vaadin.viritin.layouts.MVerticalLayout;
 import za.co.yellowfire.threesixty.domain.organization.Identity;
 import za.co.yellowfire.threesixty.domain.organization.IdentityType;
 import za.co.yellowfire.threesixty.domain.organization.OrganizationLevelMetadata;
+import za.co.yellowfire.threesixty.domain.user.Role;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.Style;
+
+import static com.github.markash.ui.view.ValueBuilder.property;
+import static com.github.markash.ui.view.ValueBuilder.string;
 
 public class IdentityEntityEditForm extends AbstractEntityEditForm<Identity> {
 	private static final long serialVersionUID = 1L;
@@ -97,31 +101,30 @@ public class IdentityEntityEditForm extends AbstractEntityEditForm<Identity> {
 
 	private TableDefinition<User> userTableDefinition() {
 
-		TableDefinition<User> tableDefinition = new TableDefinition<>(IdentityView.VIEW_NAME);
+		TableDefinition<User> tableDefinition = new TableDefinition<>(User.class, IdentityView.VIEW_NAME);
 		tableDefinition
-				.column(String.class)
+				.column(true)
 				.withHeading(I8n.User.Columns.ID)
-				.forProperty(User.FIELD_ID)
-				.enableTextSearch()
-				.identity();
+				.withValue(string(User.FIELD_ID))
+				.enableTextSearch();
 		tableDefinition
-				.column(String.class)
+				.column()
 				.withHeading(I8n.User.Columns.FIRST_NAME)
-				.forProperty(User.FIELD_FIRST_NAME)
+				.withValue(string(User.FIELD_FIRST_NAME))
 				.enableTextSearch();
 		tableDefinition
-				.column(String.class)
+				.column()
 				.withHeading(I8n.User.Columns.LAST_NAME)
-				.forProperty(User.FIELD_LAST_NAME)
+				.withValue(string(User.FIELD_LAST_NAME))
 				.enableTextSearch();
 		tableDefinition
-				.column(String.class)
+				.column()
 				.withHeading(I8n.User.Columns.ROLE)
-				.forProperty(User.FIELD_ROLE);
+				.withValue(property(Role.class, User.FIELD_ROLE));
 		tableDefinition
-				.column(String.class)
+				.column()
 				.withHeading(I8n.User.Columns.EMAIL)
-				.forProperty(User.FIELD_EMAIL)
+				.withValue(string(User.FIELD_EMAIL))
 				.enableTextSearch();
 
 		return tableDefinition;

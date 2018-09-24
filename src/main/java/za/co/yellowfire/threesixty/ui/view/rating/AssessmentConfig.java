@@ -11,11 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.vaadin.spring.annotation.PrototypeScope;
 import org.vaadin.spring.events.EventBus;
-import za.co.yellowfire.threesixty.domain.PersistenceException;
-import za.co.yellowfire.threesixty.domain.rating.Assessment;
-import za.co.yellowfire.threesixty.domain.rating.AssessmentService;
-import za.co.yellowfire.threesixty.domain.rating.AssessmentStatus;
-import za.co.yellowfire.threesixty.domain.rating.PeriodRepository;
+import za.co.yellowfire.threesixty.domain.rating.*;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.view.period.PeriodModel;
@@ -23,6 +19,8 @@ import za.co.yellowfire.threesixty.ui.view.period.PeriodModel;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
+
+import static com.github.markash.ui.view.ValueBuilder.property;
 
 @Configuration
 @SuppressWarnings("unused")
@@ -50,16 +48,13 @@ public class AssessmentConfig {
 
     @Bean
     EntityPersistFunction<Assessment> assessmentPersistFunction(final AssessmentService assessmentService) {
-        return new EntityPersistFunction<Assessment>() {
-            @Override
-            public Assessment apply(final Assessment assessment) {
-                try {
-                    return assessmentService.save(assessment);
-                } catch (Exception e) {
-                    NotificationBuilder.showNotification("Persist", e.getMessage());
-                }
-                return assessment;
+        return assessment -> {
+            try {
+                return assessmentService.save(assessment);
+            } catch (Exception e) {
+                NotificationBuilder.showNotification("Persist", e.getMessage());
             }
+            return assessment;
         };
     }
 
@@ -74,28 +69,38 @@ public class AssessmentConfig {
     TableDefinition<Assessment> assessmentTableDefinition(
             final PeriodRepository periodRepository) {
 
-        TableDefinition<Assessment> tableDefinition = new TableDefinition<>(AssessmentEditView.VIEW_NAME);
-        tableDefinition.column(String.class).withHeading(I8n.Assessment.Columns.ID).forProperty(Assessment.FIELD_ID).identity();
+        TableDefinition<Assessment> tableDefinition =
+                TableDefinition.forEntity(Assessment.class, AssessmentEditView.VIEW_NAME);
+
         tableDefinition
-                .column(User.class)
+                .column(true)
+                .withHeading(I8n.Assessment.Columns.ID)
+                .withValue(property(String.class, Assessment.FIELD_ID))
+        ;
+        tableDefinition
+                .column()
                 .withHeading(I8n.Assessment.Columns.EMPLOYEE)
-                .forProperty(Assessment.FIELD_EMPLOYEE)
-                .enableTextSearch();
+                .enableTextSearch()
+                .withValue(property(User.class, Assessment.FIELD_EMPLOYEE))
+                ;
         tableDefinition
-                .column(User.class)
+                .column()
                 .withHeading(I8n.Assessment.Columns.PERIOD)
-                .forProperty(Assessment.FIELD_PERIOD)
-                .enableTextSearch(periodRepository.findByActive(true));
+                .enableTextSearch(periodRepository.findByActive(true))
+                .withValue(property(Period.class, Assessment.FIELD_PERIOD))
+                ;
         tableDefinition
-                .column(Double.class)
+                .column()
                 .withHeading(I8n.Assessment.Columns.SCORE)
-                .forProperty(Assessment.FIELD_SCORE)
-                .enableTextSearch();
+                .enableTextSearch()
+                .withValue(property(Double.class, Assessment.FIELD_SCORE))
+                ;
         tableDefinition
-                .column(AssessmentStatus.class)
+                .column()
                 .withHeading(I8n.Assessment.Columns.STATUS)
-                .forProperty(Assessment.FIELD_STATUS)
-                .enableTextSearch(AssessmentStatus.list());
+                .enableTextSearch(AssessmentStatus.list())
+                .withValue(property(AssessmentStatus.class, Assessment.FIELD_STATUS))
+                ;
         return tableDefinition;
     }
 }

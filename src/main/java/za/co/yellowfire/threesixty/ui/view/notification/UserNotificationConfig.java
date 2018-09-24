@@ -6,8 +6,10 @@ import com.github.markash.ui.component.EntitySupplier;
 import com.github.markash.ui.component.notification.NotificationBuilder;
 import com.github.markash.ui.view.TableDefinition;
 import com.vaadin.data.provider.ListDataProvider;
+import org.joda.time.DateTime;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.Formatter;
 import org.vaadin.spring.annotation.PrototypeScope;
 import za.co.yellowfire.threesixty.domain.user.UserRepository;
 import za.co.yellowfire.threesixty.domain.user.notification.UserNotification;
@@ -15,7 +17,11 @@ import za.co.yellowfire.threesixty.domain.user.notification.UserNotificationRepo
 import za.co.yellowfire.threesixty.ui.I8n;
 
 import java.io.Serializable;
+import java.util.Locale;
 import java.util.Optional;
+
+import static com.github.markash.ui.view.ValueBuilder.property;
+import static com.github.markash.ui.view.ValueBuilder.string;
 
 @Configuration
 @SuppressWarnings("unused")
@@ -65,29 +71,56 @@ public class UserNotificationConfig {
     @Bean
     TableDefinition<UserNotification> notificationTableDefinition() {
 
-        TableDefinition<UserNotification> tableDefinition = new TableDefinition<>(UserNotificationEditView.VIEW_NAME);
+
+        Formatter<DateTime> formatter = new Formatter<DateTime>() {
+
+            @Override
+            public DateTime parse(String s, Locale locale) {
+                return null;
+            }
+
+            @Override
+            public String print(
+                    DateTime dateTime, Locale locale) {
+
+                return dateTime.toString("yyyy-MM-dd hh:mm:ss", locale);
+            }
+        };
+
+        TableDefinition<UserNotification> tableDefinition =
+                TableDefinition.forEntity(UserNotification.class, UserNotificationEditView.VIEW_NAME);
+
         tableDefinition
-                .column(String.class)
-                .withHeading(I8n.Notifications.Columns.ID)
-                .forProperty(UserNotification.FIELD_ID)
-                .enableTextSearch()
-                .identity();
-        tableDefinition
-                .column(String.class)
-                .withHeading(I8n.Notifications.Columns.CATEGORY)
-                .forProperty(UserNotification.FIELD_CATEGORY);
-        tableDefinition
-                .column(String.class)
-                .withHeading(I8n.Notifications.Columns.ACTION)
-                .forProperty(UserNotification.FIELD_ACTION);
-        tableDefinition
-                .column(String.class)
+                .column(true)
                 .withHeading(I8n.Notifications.Columns.TIME)
-                .forProperty(UserNotification.FIELD_TIME);
+                .enableTextSearch()
+                .withValue(
+                        string(UserNotification.FIELD_ID)
+                )
+                .withDisplay(
+                        property(DateTime.class, UserNotification.FIELD_TIME)
+                                .withFormatter(formatter)
+                );
         tableDefinition
-                .column(String.class)
+                .column()
+                .withHeading(I8n.Notifications.Columns.CATEGORY)
+                .withValue(string(UserNotification.FIELD_CATEGORY))
+                .enableTextSearch();
+        tableDefinition
+                .column()
+                .withHeading(I8n.Notifications.Columns.ACTION)
+                .withValue(string(UserNotification.FIELD_ACTION))
+                .enableTextSearch();
+        tableDefinition
+                .column()
                 .withHeading(I8n.Notifications.Columns.USER)
-                .forProperty(UserNotification.FIELD_USER);
+                .withValue(string(UserNotification.FIELD_USER))
+                .enableTextSearch();
+        tableDefinition
+                .column()
+                .withHeading(I8n.Notifications.Columns.CONTENT)
+                .withValue(string(UserNotification.FIELD_CONTENT))
+                .enableTextSearch();
         return tableDefinition;
     }
 }

@@ -16,6 +16,9 @@ import za.co.yellowfire.threesixty.ui.I8n;
 import java.io.Serializable;
 import java.util.Optional;
 
+import static com.github.markash.ui.view.ValueBuilder.bool;
+import static com.github.markash.ui.view.ValueBuilder.string;
+
 @Configuration
 @SuppressWarnings("unused")
 public class DisciplineConfig {
@@ -62,18 +65,22 @@ public class DisciplineConfig {
     @Bean
     TableDefinition<Discipline> disciplineTableDefinition() {
 
-        TableDefinition<Discipline> tableDefinition = new TableDefinition<>(DisciplineEditView.VIEW_NAME);
+        TableDefinition<Discipline> tableDefinition =
+                new TableDefinition<>(Discipline.class, DisciplineEditView.VIEW_NAME);
+
         tableDefinition
-                .column(String.class)
+                .column(true)
                 .withHeading(I8n.Discipline.Columns.NAME)
-                .forProperty(Discipline.FIELD_ID)
-                .display(Discipline.FIELD_NAME)
+                .withValue(string(Discipline.FIELD_ID))
+                .withDisplay(string(Discipline.FIELD_NAME))
                 .enableTextSearch()
-                .identity();
+                ;
         tableDefinition
-                .column(Boolean.class)
+                .column()
                 .withHeading(I8n.Discipline.Columns.ACTIVE)
-                .forProperty(Discipline.FIELD_ACTIVE);
+                .withValue(bool(Discipline.FIELD_ACTIVE))
+                ;
+
         return tableDefinition;
     }
 }

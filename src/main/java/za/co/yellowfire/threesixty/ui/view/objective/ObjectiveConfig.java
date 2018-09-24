@@ -5,13 +5,8 @@ import com.github.markash.ui.component.EntityPersistFunction;
 import com.github.markash.ui.component.EntitySupplier;
 import com.github.markash.ui.component.notification.NotificationBuilder;
 import com.github.markash.ui.view.TableDefinition;
-import com.vaadin.annotations.Push;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.navigator.PushStateNavigation;
-import com.vaadin.navigator.View;
-import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.ui.DateField;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -24,6 +19,9 @@ import za.co.yellowfire.threesixty.ui.I8n;
 
 import java.io.Serializable;
 import java.util.Optional;
+
+import static com.github.markash.ui.view.ValueBuilder.bool;
+import static com.github.markash.ui.view.ValueBuilder.string;
 
 @Configuration
 @SuppressWarnings("unused")
@@ -68,14 +66,21 @@ public class ObjectiveConfig {
     @Bean
     TableDefinition<Objective> objectiveTableDefinition() {
 
-        TableDefinition<Objective> tableDefinition = new TableDefinition<>(ObjectiveEditView.VIEW_NAME);
-        tableDefinition.column(DateField.class).withHeading(I8n.Objective.Columns.NAME).forProperty(Objective.FIELD_ID).identity().display(Objective.FIELD_NAME);
-        tableDefinition.column(TextField.class).withHeading(I8n.Objective.Columns.TEXT).forProperty(Objective.FIELD_TEXT).enableTextSearch();
-        tableDefinition.column(Boolean.class).withHeading(I8n.Objective.Columns.ACTIVE).forProperty(Objective.FIELD_ACTIVE);
-
-        if (isPushStateNavigationEnabled()) {
-            tableDefinition.withPushUrls();
-        }
+        TableDefinition<Objective> tableDefinition = new TableDefinition<>(Objective.class, ObjectiveEditView.VIEW_NAME);
+        tableDefinition
+                .column(true)
+                .withHeading(I8n.Objective.Columns.NAME)
+                .withValue(string(Objective.FIELD_ID))
+                .withDisplay(string(Objective.FIELD_NAME));
+        tableDefinition
+                .column()
+                .withHeading(I8n.Objective.Columns.TEXT)
+                .withValue(string(Objective.FIELD_TEXT))
+                .enableTextSearch();
+        tableDefinition
+                .column()
+                .withHeading(I8n.Objective.Columns.ACTIVE)
+                .withValue(bool(Objective.FIELD_ACTIVE));
 
         return tableDefinition;
     }

@@ -6,7 +6,6 @@ import com.github.markash.ui.component.EntitySupplier;
 import com.github.markash.ui.component.notification.NotificationBuilder;
 import com.github.markash.ui.view.TableDefinition;
 import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.ui.DateField;
 import com.vaadin.ui.renderers.DateRenderer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +19,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.github.markash.ui.view.ValueBuilder.*;
 
 @Configuration
 @SuppressWarnings("unused")
@@ -69,12 +70,28 @@ public class PeriodConfig {
     @Bean
     TableDefinition<PeriodModel> periodTableDefinition() {
         DateRenderer dateRenderer = new DateRenderer("yyyy-MM-dd", "");
-        TableDefinition<PeriodModel> tableDefinition = new TableDefinition<>(PeriodEditView.VIEW_NAME);
-        tableDefinition.column(DateField.class).withHeading(I8n.Period.Columns.START).forProperty(PeriodModel.FIELD_ID).identity().display(PeriodModel.FIELD_START);
-        tableDefinition.column(DateField.class).withHeading(I8n.Period.Columns.END).forProperty(PeriodModel.FIELD_END).renderer(dateRenderer);
-        tableDefinition.column(DateField.class).withHeading(I8n.Period.Columns.DEADLINE_PUBLISH).forProperty(PeriodModel.FIELD_DEADLINE_PUBLISHED).renderer(dateRenderer);
-        tableDefinition.column(DateField.class).withHeading(I8n.Period.Columns.DEADLINE_COMPLETE).forProperty(PeriodModel.FIELD_DEADLINE_COMPLETED).renderer(dateRenderer);
-        tableDefinition.column(Boolean.class).withHeading(I8n.Period.Columns.ACTIVE).forProperty(PeriodModel.FIELD_ACTIVE);
+        TableDefinition<PeriodModel> tableDefinition = new TableDefinition<>(PeriodModel.class, PeriodEditView.VIEW_NAME);
+        tableDefinition
+                .column(true)
+                .withHeading(I8n.Period.Columns.START)
+                .withValue(string(PeriodModel.FIELD_ID))
+                .withDisplay(date(PeriodModel.FIELD_START).withRenderer(dateRenderer));
+        tableDefinition
+                .column()
+                .withHeading(I8n.Period.Columns.END)
+                .withValue(date(PeriodModel.FIELD_END).withRenderer(dateRenderer));
+        tableDefinition
+                .column()
+                .withHeading(I8n.Period.Columns.DEADLINE_PUBLISH)
+                .withValue(date(PeriodModel.FIELD_DEADLINE_PUBLISHED).withRenderer(dateRenderer));
+        tableDefinition
+                .column()
+                .withHeading(I8n.Period.Columns.DEADLINE_COMPLETE)
+                .withValue(date(PeriodModel.FIELD_DEADLINE_COMPLETED).withRenderer(dateRenderer));
+        tableDefinition
+                .column()
+                .withHeading(I8n.Period.Columns.ACTIVE)
+                .withValue(bool(PeriodModel.FIELD_ACTIVE));
         return tableDefinition;
     }
 }
