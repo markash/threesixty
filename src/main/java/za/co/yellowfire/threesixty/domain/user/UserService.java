@@ -7,17 +7,20 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Service;
 import za.co.yellowfire.threesixty.RequestResult;
 import za.co.yellowfire.threesixty.Response;
 import za.co.yellowfire.threesixty.domain.GridFsClient;
 import za.co.yellowfire.threesixty.domain.InvalidUserException;
+import za.co.yellowfire.threesixty.domain.mail.MailingEvent;
 import za.co.yellowfire.threesixty.domain.organization.Identity;
 import za.co.yellowfire.threesixty.domain.organization.IdentityService;
 import za.co.yellowfire.threesixty.domain.organization.IdentityType;
@@ -334,6 +337,19 @@ public class UserService /*implements UserDetailsService*/ {
 						aggregation, 
 						UserNotification.class, 
 						NotificationSummary.class).getMappedResults();
+	}
+
+	@Async
+	@EventListener
+	public void mailingKeyInvalid(
+			final MailingEvent event) {
+
+		notify(
+				findUser("admin"),
+				getCurrentUser(),
+				NotificationCategory.System,
+				event.getAction(),
+				event.getMessage());
 	}
 
 	public void notify(
