@@ -1,0 +1,14 @@
+/* Used to override the loginview class from ThreeSixty Theme */
+@mixin login-override {
+    .loginview {
+    	background-color: #fafafa;
+    	background-image: url('img/skyline-grey-500px.png');
+    	background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    	padding-top: 0 !important;
+    	-webkit-animation: valo-animate-in-fade 300ms 10ms backwards;
+    	-moz-animation: valo-animate-in-fade 300ms 10ms backwards;
+    	animation: valo-animate-in-fade 300ms 10ms backwards;
+    }
+}

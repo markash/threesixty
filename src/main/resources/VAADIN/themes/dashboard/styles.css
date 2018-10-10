@@ -1105,7 +1105,7 @@
  */
 
 .v-vaadin-version:after {
-	content: "8.4.5";
+	content: "8.5.2";
 }
 
 .v-widget {
@@ -5352,6 +5352,8 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
 	box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
 	border-right: 1px solid #d4d4d4;
+	position: relative;
+	z-index: 11;
 }
 
 .dashboard .v-grid-cell.frozen  + th, .dashboard .v-grid-cell.frozen  + td {
@@ -9964,6 +9966,8 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
 	box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
 	border-right: 1px solid #d4d4d4;
+	position: relative;
+	z-index: 11;
 }
 
 .dashboard .v-tree8-cell.frozen  + th, .dashboard .v-tree8-cell.frozen  + td {
@@ -11040,6 +11044,8 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
 	box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
 	border-right: 1px solid #d4d4d4;
+	position: relative;
+	z-index: 11;
 }
 
 .dashboard .v-treegrid-cell.frozen  + th, .dashboard .v-treegrid-cell.frozen  + td {
@@ -15767,6 +15773,104 @@ div.v-layout.v-horizontal.v-widget {
 	overflow: hidden;
 }
 
+.dashboard .loginview {
+	background-color: #fafafa;
+	background-image: -webkit-radial-gradient(50% 50%, circle, #f5f5f5, #e1e1e1);
+	background-image: radial-gradient(  circle at 50% 50%, #f5f5f5, #e1e1e1);
+	padding-top: 0 !important;
+	-webkit-animation: valo-animate-in-fade 300ms 10ms backwards;
+	-moz-animation: valo-animate-in-fade 300ms 10ms backwards;
+	animation: valo-animate-in-fade 300ms 10ms backwards;
+}
+
+.dashboard .loginview  > .v-loading-indicator {
+	display: none !important;
+}
+
+.dashboard .login-panel {
+	background: white;
+	color: #474747;
+	border-radius: 0px;
+	border: 1px solid #d5d5d5;
+	
+	
+	padding: 17px 17px;
+	min-width: 182px;
+	max-width: 90%;
+	-webkit-animation: valo-animate-in-slide-up 800ms 10ms backwards, valo-animate-in-fade 600ms 100ms backwards;
+	-moz-animation: valo-animate-in-slide-up 800ms 10ms backwards, valo-animate-in-fade 600ms 100ms backwards;
+	animation: valo-animate-in-slide-up 800ms 10ms backwards, valo-animate-in-fade 600ms 100ms backwards;
+}
+
+.dashboard .login-panel  > .v-spacing {
+	height: 13px;
+}
+
+.dashboard .login-panel .labels {
+	display: block;
+}
+
+.dashboard .login-panel .labels .h4 {
+	margin: 0;
+	vertical-align: baseline;
+}
+
+.dashboard .login-panel .labels .h3 {
+	margin: 0;
+	float: right;
+}
+
+.dashboard .login-panel .fields .v-icon {
+	opacity: 0.3;
+}
+
+.dashboard .login-panel[width-range~="0-364px"] .labels .h3 {
+	float: none;
+	display: block;
+	margin-top: 0.2em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.dashboard .login-panel[width-range~="0-364px"] .fields {
+	display: block;
+}
+
+.dashboard .login-panel[width-range~="0-364px"] .fields .v-slot {
+	display: block;
+}
+
+.dashboard .login-panel[width-range~="0-364px"] .fields .v-slot .v-widget {
+	width: 100%;
+}
+
+.dashboard .v-ui[width-range~="0-800px"] .login-panel {
+	-webkit-animation: animate-in-scale-up 500ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards;
+	-moz-animation: animate-in-scale-up 500ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards;
+	animation: animate-in-scale-up 500ms 10ms backwards, valo-animate-in-fade 300ms 100ms backwards;
+}
+
+.dashboard .login-help {
+	margin: 0 7px !important;
+}
+
+.dashboard .login-help.v-Notification-animate-in {
+	-webkit-animation: valo-animate-in-fade 500ms 1500ms backwards;
+	-moz-animation: valo-animate-in-fade 500ms 1500ms backwards;
+	animation: valo-animate-in-fade 500ms 1500ms backwards;
+}
+
+.dashboard .login-help p span {
+	display: block;
+	margin-top: 0.5em;
+}
+
+.dashboard .login-help p span a {
+	color: #fff;
+	text-decoration: none;
+	border-bottom: 1px solid #888;
+}
+
 .dashboard .active-filters-text {
 	font-weight: bold;
 	margin-top: 4px;
@@ -16050,4 +16154,16 @@ div.v-layout.v-horizontal.v-widget {
 	border-radius: 50%;
 	text-align: center;
 	height: 188px;
+}
+
+.dashboard .loginview {
+	background-color: #fafafa;
+	background-image: url('img/skyline-grey-500px.png');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	padding-top: 0 !important;
+	-webkit-animation: valo-animate-in-fade 300ms 10ms backwards;
+	-moz-animation: valo-animate-in-fade 300ms 10ms backwards;
+	animation: valo-animate-in-fade 300ms 10ms backwards;
 }

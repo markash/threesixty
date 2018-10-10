@@ -23,7 +23,6 @@ import org.vaadin.viritin.button.MButton;
 import org.vaadin.viritin.fields.MTextField;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
-import za.co.yellowfire.threesixty.domain.user.UserService;
 
 @PrototypeScope
 @SpringComponent
@@ -46,18 +45,16 @@ public class LoginView extends VerticalLayout implements View {
 
     private final VaadinSecurity vaadinSecurity;
     private final EventBus.SessionEventBus eventBus;
-	private final UserService userService;
-	
+
 	@Autowired
     public LoginView(
-            final UserService userService,
             final VaadinSecurity vaadinSecurity,
             final EventBus.SessionEventBus eventBus) {
 
 	    setSizeFull();
+	    setStyleName("loginview");
         Responsive.makeResponsive(this);
 
-        this.userService = userService;
         this.vaadinSecurity = vaadinSecurity;
         this.eventBus = eventBus;
 
@@ -71,13 +68,11 @@ public class LoginView extends VerticalLayout implements View {
     }
 
     private Component buildLoginForm() {
-        final MVerticalLayout loginPanel =
-                new MVerticalLayout()
+        return new MVerticalLayout()
                         .withUndefinedWidth()
                         .withSpacing(true)
                         .withStyleName("login-panel")
                         .with(buildLabels(), buildFields()/*, new CheckBox("Remember me", true)*/);
-        return loginPanel;
     }
 
     @SuppressWarnings("serial")
@@ -144,8 +139,6 @@ public class LoginView extends VerticalLayout implements View {
                     "Unexpected exception occurred.",
                     20000);
             LoggerFactory.getLogger(getClass()).error("Unexpected error while logging in", ex);
-        } finally {
-            //login.setEnabled(true);
         }
 
 
