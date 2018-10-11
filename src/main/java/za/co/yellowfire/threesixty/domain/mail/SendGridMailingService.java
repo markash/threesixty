@@ -1,7 +1,6 @@
 package za.co.yellowfire.threesixty.domain.mail;
 
-import com.sendgrid.SendGrid;
-import com.sendgrid.SendGridException;
+import com.sendgrid.*;
 import org.springframework.context.ApplicationContext;
 import za.co.yellowfire.threesixty.domain.user.notification.NotificationAction;
 
@@ -37,22 +36,40 @@ public class SendGridMailingService {
 		}
 
 		try {
-			SendGrid sendGrid = new SendGrid(properties.getKey());
-			SendGrid.Email email = new SendGrid.Email();
-			email.addTo("mp.ashworth@gmail.com");
-			email.setFrom("mp.ashworth@gmail.com");
-			email.setSubject("Hello World");
-			email.setTemplateId("167bbd99-dba1-4066-9f03-bd7ebadbac68");
-			email.setHtml("<strong>My first email with SendGrid Java!</strong>");
+//			TrackingSettings trackingSettings = new TrackingSettings();
+//			trackingSettings.getOpenTrackingSetting().setEnable(true);
 
-	        SendGrid.Response response = sendGrid.send(email);
+			Email to = new Email("mp.ashworth@gmail.com", "Mark Ashworth");
+			Email from = new Email("mp.ashworth@gmail.com", "ThreeSixty Performance");
+			Content content = new Content("text/html", "Test");
+
+			Mail mail = new Mail(from, "ThreeSixty Assessment", to, content);
+			mail.setTemplateId("d-11fbd64216564c4ebbc24d4349bfd4c1");
+
+
+			DynamicPersonalization personalization = new DynamicPersonalization();
+			personalization.addTo(to);
+			personalization.addDynamicTemplateData("fullName", "Mark P Ashworth");
+			personalization.addDynamicTemplateData("stage", "Final");
+
+			mail.addPersonalization(personalization);
+
+			SendGrid sendGrid = new SendGrid(properties.getKey());
+			Request request = new Request();
+			request.setMethod(Method.POST);
+			request.setEndpoint("mail/send");
+			request.setBody(mail.build());
+			Response response = sendGrid.api(request);
+			System.out.println(response.getStatusCode());
+			System.out.println(response.getBody());
+			System.out.println(response.getHeaders());
 
 	        this.context.publishEvent(
 	        		new MailingEvent(
 	        				this,
 							NotificationAction.Mailing.name(),
-							"Email sent to " + String.join(",", email.getTos()) + " with response " + response.getMessage()));
-	      } catch (SendGridException e) {
+							"Email sent to " + String.join(",", to.getEmail()) + " with response " + response.getStatusCode()));
+	      } catch (Exception e) {
 
 			this.context.publishEvent(
 					new MailingEvent(

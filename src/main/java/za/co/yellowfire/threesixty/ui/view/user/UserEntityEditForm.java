@@ -53,13 +53,15 @@ public class UserEntityEditForm extends AbstractEntityEditForm<User> {
             final UserService userService,
             final CurrentUserProvider<User> currentUserProvider) {
 
-		super(User.class);
+		super(User.class, true);
 
 		this.userService = userService;
 		this.currentUserProvider = currentUserProvider;
 
 		this.getIdField().setCaption("User Name");
         this.getIdField().setWidth(100, Unit.PERCENTAGE);
+//        this.getIdField().setReadOnly(false);
+//        this.getIdField().setRequiredIndicatorVisible(true);
 
 		this.salutationField = new ComboBox<>("Salutation", this.userService.findSalutations());
         this.salutationField.setWidth(100, Unit.PERCENTAGE);

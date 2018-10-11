@@ -23,10 +23,11 @@
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<threesixty-components.version>0.3.1-SNAPSHOT</threesixty-components.version>
+		<sendgrid.version>4.2.0</sendgrid.version>
+		<threesixty-components.version>0.3.2</threesixty-components.version>
 
-        <vaadin.version>8.4.5</vaadin.version>
-        <vaadin-plugin.version>8.4.5</vaadin-plugin.version>
+        <vaadin.version>8.5.2</vaadin.version>
+        <vaadin-plugin.version>8.5.2</vaadin-plugin.version>
         <vaadin-icons.version>2.0.0</vaadin-icons.version>
         <vaadin4spring.version>2.0.0.RELEASE</vaadin4spring.version>
         <vaadin-springboot.version>2.0.1</vaadin-springboot.version>
@@ -132,11 +133,11 @@
             <version>0.9.13</version>
             <optional>true</optional>
         </dependency>
-		<dependency>
-			<groupId>org.vaadin.addons</groupId>
-			<artifactId>vaadin-excel-exporter</artifactId>
-			<version>2.0</version>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.vaadin.addons</groupId>-->
+			<!--<artifactId>vaadin-excel-exporter</artifactId>-->
+			<!--<version>2.0</version>-->
+		<!--</dependency>-->
 		<!--
 		<dependency>
 		    <groupId>org.vaadin</groupId>
@@ -195,6 +196,7 @@
 	    <dependency>
 		    <groupId>com.sendgrid</groupId>
 		    <artifactId>sendgrid-java</artifactId>
+			<version>${sendgrid.version}</version>
 		</dependency>
 	    <dependency>
 	    	<groupId>javax.mail</groupId>
@@ -203,7 +205,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-poi</artifactId>
-			<version>3.13.4</version>
+			<version>3.19.0</version>
 		</dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
