@@ -2,6 +2,7 @@ package za.co.yellowfire.threesixty.ui.view.period;
 
 import com.github.markash.ui.component.card.CounterStatisticModel;
 import com.github.markash.ui.component.card.CounterStatisticsCard;
+import com.github.markash.ui.component.card.StatisticShow;
 import com.github.markash.ui.view.AbstractEntityEditForm;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.CheckBox;
@@ -67,22 +68,41 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> {
 
 		registeredAssessmentsCard = new CounterStatisticsCard(
 				VaadinIcons.USERS,
-				new CounterStatisticModel("Registered Assessments", 0),
+				new CounterStatisticModel(
+						"Registered",
+						0)
+						.withShow(StatisticShow.Sum)
+						.withIconHidden()
+						.withShowOnlyStatistic(true),
 				"");
 
         publishedAssessmentsCard = new CounterStatisticsCard(
                 VaadinIcons.USERS,
-                new CounterStatisticModel("Published Assessments", 0),
+                new CounterStatisticModel(
+                		"Published",
+						0)
+						.withShow(StatisticShow.Sum)
+						.withIconHidden()
+						.withShowOnlyStatistic(true),
                 "");
 
         submittedAssessmentsCard = new CounterStatisticsCard(
                 VaadinIcons.USERS,
-                new CounterStatisticModel("Submitted Assessments", 0),
+                new CounterStatisticModel(
+                		"Submitted",
+						0)
+						.withShow(StatisticShow.Sum)
+						.withIconHidden()
+						.withShowOnlyStatistic(true),
                 "");
 
         reviewedAssessmentsCard = new CounterStatisticsCard(
                 VaadinIcons.USERS,
-                new CounterStatisticModel("Reviewed Assessments", 0),
+                new CounterStatisticModel(
+                		"Reviewed", 0)
+						.withShow(StatisticShow.Sum)
+						.withIconHidden()
+						.withShowOnlyStatistic(true),
                 "");
 	}
 
@@ -120,15 +140,19 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> {
                 switch (key) {
                     case All:
                         this.registeredAssessmentsCard.getValue().setValue(e.getCount());
+                        this.registeredAssessmentsCard.refresh();
                         break;
                     case Created:
                         this.publishedAssessmentsCard.getValue().setValue(e.getCount());
+                        this.publishedAssessmentsCard.refresh();
                         break;
                     case EmployeeCompleted:
                         this.submittedAssessmentsCard.getValue().setValue(e.getCount());
+                        this.submittedAssessmentsCard.refresh();
                         break;
                     case Reviewed:
                         this.reviewedAssessmentsCard.getValue().setValue(e.getCount());
+                        this.reviewedAssessmentsCard.refresh();
                         break;
                 }
             });
