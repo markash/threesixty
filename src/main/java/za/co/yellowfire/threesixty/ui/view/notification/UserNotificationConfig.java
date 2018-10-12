@@ -4,21 +4,26 @@ import com.github.markash.ui.component.BlankSupplier;
 import com.github.markash.ui.component.EntityPersistFunction;
 import com.github.markash.ui.component.EntitySupplier;
 import com.github.markash.ui.component.notification.NotificationBuilder;
+import com.github.markash.ui.security.CurrentUserProvider;
 import com.github.markash.ui.view.TableDefinition;
-import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.data.provider.*;
+import com.vaadin.shared.Registration;
 import org.joda.time.DateTime;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.Formatter;
 import org.vaadin.spring.annotation.PrototypeScope;
+import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserRepository;
 import za.co.yellowfire.threesixty.domain.user.notification.UserNotification;
 import za.co.yellowfire.threesixty.domain.user.notification.UserNotificationRepository;
 import za.co.yellowfire.threesixty.ui.I8n;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.github.markash.ui.view.ValueBuilder.property;
 import static com.github.markash.ui.view.ValueBuilder.string;
@@ -67,6 +72,35 @@ public class UserNotificationConfig {
 
         return new ListDataProvider<>(repository.findAll());
     }
+
+//    @Bean
+//    @PrototypeScope
+//    AbstractDataProvider<UserNotification, UserNotificationFilter> notificationListDataProvider(
+//            final UserNotificationRepository repository,
+//            final CurrentUserProvider<User> currentUserProvider) {
+//
+//        return new AbstractBackEndDataProvider<UserNotification, UserNotificationFilter>() {
+//            @Override
+//            protected Stream<UserNotification> fetchFromBackEnd(
+//                    final Query<UserNotification, UserNotificationFilter> query) {
+//
+//                List<UserNotification> results;
+//                if (query.getFilter().isPresent()) {
+//                    results = repository.findNotifications(query.getFilter().get().getUserName());
+//                } else {
+//                    results = repository.findAll();
+//                }
+//                return results.stream();
+//            }
+//
+//            @Override
+//            protected int sizeInBackEnd(
+//                    final Query<UserNotification, UserNotificationFilter> query) {
+//
+//                return (int) fetchFromBackEnd(query).count();
+//            }
+//        };
+//    }
 
     @Bean
     TableDefinition<UserNotification> notificationTableDefinition() {

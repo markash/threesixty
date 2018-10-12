@@ -17,7 +17,10 @@ public interface UserNotificationRepository extends MongoRepository<UserNotifica
 	
 	@Query(count = true, value = "{user.$id: {$eq: ?0}, read: false, active: true}")
 	int findUnreadCount(final String userName);
-	
+
+	@Query("{user.$id: {$eq: ?0}, active: true}")
+	List<UserNotification> findNotifications(final String userName);
+
 	@Query("{user.$id: {$eq: ?0}, active: true}")
 	List<UserNotification> findNotifications(final String userName, final int limit, final Sort sort);
 }
