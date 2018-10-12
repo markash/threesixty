@@ -1,6 +1,5 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
-import com.github.markash.ui.component.card.CounterStatisticModel;
 import com.github.markash.ui.security.CurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -43,8 +42,8 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 		this.currentUserProvider = currentUserProvider;
         this.mailingService = mailingService;
 
-		this.possibleRatings = new ArrayList<>(Arrays.asList(new Double[] {1.0, 2.0, 3.0, 4.0, 5.0}));
-		this.possibleWeightings = new ArrayList<>(Arrays.asList(new Double[] {0.0, 10.0, 20.0, 25.0, 30.0, 40.0, 50.0, 60.0, 70.0, 75.0, 80.0, 90.0, 100.0}));
+		this.possibleRatings = new ArrayList<>(Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0));
+		this.possibleWeightings = new ArrayList<>(Arrays.asList(0.0, 10.0, 20.0, 25.0, 30.0, 40.0, 50.0, 60.0, 70.0, 75.0, 80.0, 90.0, 100.0));
 	}
 		
 	public List<User> findActiveUsers() {
@@ -61,7 +60,7 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 		for (Period assessedPeriod : findAssessmentPeriodsForEmployee(user, assessment)) {
 			periods.remove(assessedPeriod);
 		}
-		return new ArrayList<Period>(periods);
+		return new ArrayList<>(periods);
 	}
 	
 	public List<Period> findAssessmentPeriodsForEmployee(final User user, final Assessment assessment) {
@@ -77,7 +76,7 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 		for (Assessment value : assessments) {
 			periods.add(value.getPeriod());
 		}
-		return new ArrayList<Period>(periods);
+		return new ArrayList<>(periods);
 	}
 	
 	public List<Double> findPossibleRatings() {
@@ -117,32 +116,7 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
         this.currentUserProvider.get().ifPresent(assessment::auditChangedBy);
 		assessmentRepository.save(assessment);
 	}
-	
-	public long countAssessmentsFor(final Period period) {
-		if (period != null) {
-			return assessmentRepository.countByPeriod(period.getId());
-		}
-		return 0L;
-	}
 
-	public long countAssessmentsFor(
-			final Period period,
-			final AssessmentStatus status) {
-
-		if (period != null) {
-			return assessmentRepository.countByPeriod(period.getId(), status.name());
-		}
-		return 0L;
-	}
-
-	public CounterStatisticModel getAssessmentsDueCounterStatistic(final String userName) {
-		return new CounterStatisticModel("AssessmentsDueCounter", assessmentRepository.countActiveDue(userName));
-	}
-	
-	public CounterStatisticModel getPerformanceAreasCounterStatistic() {
-		return new CounterStatisticModel("PerformanceAreasCounter", disciplineRepository.countActive());
-	}
-	
 	public Map<AssessmentStatus, AssessmentStatusCount> countAssessmentsStatusFor(final Period period) {
 		return assessmentRepository.countAssessmentsFor(period);
 	}
