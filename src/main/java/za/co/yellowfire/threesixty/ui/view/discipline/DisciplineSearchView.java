@@ -16,7 +16,7 @@ import za.co.yellowfire.threesixty.Sections;
 import za.co.yellowfire.threesixty.domain.rating.Discipline;
 import za.co.yellowfire.threesixty.ui.I8n;
 
-@Secured({"ROLE_ADMIN", "ROLE_USER"})
+@Secured({"ROLE_ADMIN"})
 @SideBarItem(sectionId = Sections.DASHBOARD, caption = DisciplineEditView.TITLE, order = 3)
 @VaadinFontIcon(VaadinIcons.CHECK_CIRCLE_O)
 @SpringView(name = DisciplineSearchView.VIEW_NAME)
