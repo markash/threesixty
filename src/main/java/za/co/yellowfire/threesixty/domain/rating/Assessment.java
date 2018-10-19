@@ -142,7 +142,24 @@ public class Assessment implements Auditable<User, Serializable> {
 	public boolean hasParticipants() {
 		return this.employee != null && this.manager != null;
 	}
-	
+
+	/**
+	 * Returns whether the user has access to this assessment.
+	 * Either the user is null, in which case no access is allowed
+	 * Or the user is an administrator, in which case access is allowed
+	 * Or the user is either the manager or employee of this assessment in which case access is granted else not.
+	 * @param user Access requested by user
+	 * @return Whether the user has access to the assessment
+	 */
+	public boolean hasAccess(
+			final User user) {
+
+		if (user == null) return false;
+		if (user.isAdmin()) return true;
+
+		return (this.manager != null && this.manager.equals(user)) || (this.employee != null && this.employee.equals(user));
+	}
+
 	@Override
 	public boolean isNew() { return StringUtils.isBlank(this.id); }
 

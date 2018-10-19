@@ -13,11 +13,11 @@ import org.vaadin.spring.annotation.PrototypeScope;
 import org.vaadin.spring.events.EventBus;
 import za.co.yellowfire.threesixty.domain.rating.*;
 import za.co.yellowfire.threesixty.domain.user.User;
+import za.co.yellowfire.threesixty.domain.user.UserRepository;
 import za.co.yellowfire.threesixty.ui.I8n;
 import za.co.yellowfire.threesixty.ui.view.period.PeriodModel;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Optional;
 
 import static com.github.markash.ui.view.ValueBuilder.property;
@@ -60,14 +60,16 @@ public class AssessmentConfig {
 
     @Bean
     @PrototypeScope
-    ListDataProvider<Assessment> assessmentListDataProvider(final AssessmentService assessmentService) {
-        List<Assessment> list = assessmentService.getAssessmentRepository().findAll();
-        return new ListDataProvider<>(list);
+    ListDataProvider<Assessment> assessmentListDataProvider(
+            final AssessmentService assessmentService) {
+
+        return new ListDataProvider<>(assessmentService.findAssessmentsEntitledByUser());
     }
 
     @Bean
     TableDefinition<Assessment> assessmentTableDefinition(
-            final PeriodRepository periodRepository) {
+            final PeriodRepository periodRepository,
+            final UserRepository userRepository) {
 
         TableDefinition<Assessment> tableDefinition =
                 TableDefinition.forEntity(Assessment.class, AssessmentEditView.VIEW_NAME);
@@ -80,7 +82,7 @@ public class AssessmentConfig {
         tableDefinition
                 .column()
                 .withHeading(I8n.Assessment.Columns.EMPLOYEE)
-                .enableTextSearch()
+                .enableTextSearch(userRepository.findByActive(true))
                 .withValue(property(User.class, Assessment.FIELD_EMPLOYEE))
                 ;
         tableDefinition

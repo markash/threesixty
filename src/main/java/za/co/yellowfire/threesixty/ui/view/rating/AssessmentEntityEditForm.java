@@ -9,6 +9,7 @@ import com.vaadin.data.ValidationException;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.SerializablePredicate;
+import com.vaadin.server.UserError;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
@@ -277,6 +278,10 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 		if (!managerField.isReadOnly()) {
 			managerField.setEnabled(false);
 		}
+		//The manager field should have a value
+		if (getValue().getManager() == null) {
+			managerField.setComponentError(new UserError("User has no reporting structure defined!!"));
+		}
 
         this.summary.setAssessment(getValue());
         //this.ratingsField.setValue(getValue());
@@ -404,6 +409,14 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 		} else {
 			this.managerField.setSelectedItem(null);
 			this.managerField.markAsDirty();
+
+			/* Inform the user that user has no employee report to so appraisal is not really supported */
+			NotificationBuilder
+					.showNotification(
+							"No Report To",
+							"The employee does not have a reporting structure defined.",
+							500,
+							true);
 		}
 		/* Commit the employee and manager fields so that the ratings security can be determined */
 		//this.employeeField.commit();
@@ -411,7 +424,10 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
 		
 		/* Set the available period available for the employee assessment */
 		refreshAvailablePeriodsForEmployee();
-		
+
+
+
+
 		/*Fire the change */
 		//this.ratingsField.refresh();
 	}

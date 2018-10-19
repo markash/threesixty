@@ -11,6 +11,7 @@ import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserRepository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AssessmentService implements za.co.yellowfire.threesixty.domain.question.Service<Assessment> {
@@ -53,7 +54,31 @@ public class AssessmentService implements za.co.yellowfire.threesixty.domain.que
 	public List<Period> findActivePeriods() {
 		return periodRepository.findByActive(true, new Sort(Direction.DESC, Period.FIELD_START));
 	}
-	
+
+	/**
+	 * Finds the assessments that the user has access to. If the user is an administrator
+	 * then all assessments are retrieved else those assessments for employees reporting to
+	 * the user or their own assessment.
+	 *
+	 * @return The list of assessments the user is entitled to
+	 */
+	public List<Assessment> findAssessmentsEntitledByUser() {
+
+		Optional<User> currentUser = this.currentUserProvider.get();
+		if (currentUser.isPresent()) {
+
+			List<Assessment> assessments = this.assessmentRepository.findAll();
+			return assessments
+					.stream()
+					.filter(assessment -> assessment.hasAccess(currentUser.get()))
+					.collect(Collectors.toList());
+
+		} else {
+
+			return new ArrayList<>();
+		}
+	}
+
 	public List<Period> findAvailablePeriodsForEmployee(final User user, final Assessment assessment) {
 		Set<Period> periods = new HashSet<>(periodRepository.findByActive(true, new Sort(Direction.DESC, Period.FIELD_START)));
 		
