@@ -255,6 +255,7 @@ public class I8n {
 			String FIRST_NAME = "First Name";
 			String LAST_NAME = "Last Name";
 			String WEBSITE = "Website";
+			String REPORTS_TO = "Reports To";
 			String ROLE = "Role";
 			String ACTIVE = "Active";
 			String IMPORT_STATUS = "Status";

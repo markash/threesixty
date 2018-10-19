@@ -25,7 +25,7 @@ public class Role implements Persistable<String> {
 	}
 	
 	@Override
-	public String getId() { return null; }
+	public String getId() { return this.id; }
 	@Override
 	public boolean isNew() { return false; }
 	
@@ -46,18 +46,13 @@ public class Role implements Persistable<String> {
 		if (getClass() != obj.getClass()) { return false; }
 		
 		Role other = (Role) obj;
-		if (id == null) {
-			if (other.id != null) {
-				return false;
-			}
-		} else if (!id.equals(other.id)) {
-			return false;
-		}
-		return true;
+		if (this.id == null) {
+			return other.id == null;
+		} else return id.equals(other.id);
 	}
 	
 	@Override
 	public String toString() {
-		return id;
+		return this.id;
 	}
 }

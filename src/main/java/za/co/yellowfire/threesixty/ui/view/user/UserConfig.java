@@ -10,6 +10,7 @@ import com.vaadin.data.provider.ListDataProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.vaadin.spring.annotation.PrototypeScope;
+import za.co.yellowfire.threesixty.domain.user.Role;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.domain.user.UserService;
 import za.co.yellowfire.threesixty.ui.I8n;
@@ -19,9 +20,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static com.github.markash.ui.view.ValueBuilder.bool;
-import static com.github.markash.ui.view.ValueBuilder.string;
+import static com.github.markash.ui.view.ValueBuilder.*;
 
 @Configuration
 @SuppressWarnings("unused")
@@ -68,7 +69,22 @@ public class UserConfig {
     }
 
     @Bean
-    TableDefinition<User> userTableDefinition() {
+    TableDefinition<User> userTableDefinition(
+            final UserService userService) {
+
+        List<String> reportsTo =
+                userService
+                        .findUsers()
+                        .stream()
+                        .map(User::getFullName)
+                        .collect(Collectors.toList());
+
+        List<String> roles =
+                userService
+                    .findRoles()
+                    .stream()
+                    .map(Role::getId)
+                    .collect(Collectors.toList());
 
         TableDefinition<User> tableDefinition = new TableDefinition<>(User.class, UserEditView.VIEW_NAME);
         tableDefinition
@@ -89,11 +105,17 @@ public class UserConfig {
         tableDefinition
                 .column()
                 .withHeading(I8n.User.Columns.ROLE)
-                .withValue(string(User.FIELD_ROLE));
+                .withValue(string(User.FIELD_ROLE))
+                .enableTextSearch(roles);
         tableDefinition
                 .column()
-                .withHeading(I8n.User.Columns.WEBSITE)
-                .withValue(string(User.FIELD_WEBSITE));
+                .withHeading(I8n.User.Columns.REPORTS_TO)
+                .withValue(property(User.class, User.FIELD_REPORTS_TO))
+                .enableTextSearch(reportsTo);
+        tableDefinition
+                .column()
+                .withHeading(I8n.User.Columns.EMAIL)
+                .withValue(string(User.FIELD_EMAIL));
         tableDefinition
                 .column()
                 .withHeading(I8n.User.Columns.ACTIVE)
