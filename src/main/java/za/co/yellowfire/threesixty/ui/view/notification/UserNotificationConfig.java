@@ -6,8 +6,7 @@ import com.github.markash.ui.component.EntitySupplier;
 import com.github.markash.ui.component.notification.NotificationBuilder;
 import com.github.markash.ui.security.CurrentUserProvider;
 import com.github.markash.ui.view.TableDefinition;
-import com.vaadin.data.provider.*;
-import com.vaadin.shared.Registration;
+import com.vaadin.data.provider.ListDataProvider;
 import org.joda.time.DateTime;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,10 +19,10 @@ import za.co.yellowfire.threesixty.domain.user.notification.UserNotificationRepo
 import za.co.yellowfire.threesixty.ui.I8n;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import static com.github.markash.ui.view.ValueBuilder.property;
 import static com.github.markash.ui.view.ValueBuilder.string;
@@ -68,9 +67,18 @@ public class UserNotificationConfig {
     @Bean
     @PrototypeScope
     ListDataProvider<UserNotification> notificationListDataProvider(
-            final UserNotificationRepository repository) {
+            final UserNotificationRepository repository,
+            final CurrentUserProvider<User> currentUserProvider) {
 
-        return new ListDataProvider<>(repository.findAll());
+        return new ListDataProvider<>(
+                currentUserProvider
+                        .get()
+                        .map(user -> repository
+                                .findAll()
+                                .stream()
+                                .filter(notification -> notification.addressedTo(user)).collect(Collectors.toList())
+                        )
+                        .orElse(new ArrayList<>()));
     }
 
 //    @Bean

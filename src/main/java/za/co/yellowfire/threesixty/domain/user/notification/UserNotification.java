@@ -86,6 +86,17 @@ public final class UserNotification implements Auditable<User, Serializable> {
     public boolean isActive() { return active; }
 	public void setActive(boolean active) { this.active = active; }
 
+	/**
+	 * Determines whether the notification is address to the user
+	 * @param user The user to test
+	 * @return Whether the user is addressed by the notification
+	 */
+	public boolean addressedTo(
+			final User user) {
+
+		return this.user != null && this.user.equals(user);
+	}
+
 	@Override
 	public boolean isNew() { return StringUtils.isBlank(this.id); }
 	
