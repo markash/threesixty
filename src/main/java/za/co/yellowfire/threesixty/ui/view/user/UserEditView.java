@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @Secured("ROLE_ADMIN")
 @SpringView(name = UserEditView.VIEW_NAME)
-public class UserEditView extends AbstractEntityEditView<User> {
+public class UserEditView extends AbstractEntityEditView<String, User> {
 	private static final long serialVersionUID = 1L;
 
 	private EventBus.SessionEventBus eventBus;

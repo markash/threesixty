@@ -28,7 +28,7 @@ import java.util.Collections;
 
 
 @AccessType(Type.FIELD)
-public final class User implements Auditable<User, Serializable>, UserDetails {
+public final class User implements Auditable<User, String>, UserDetails {
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOG = LoggerFactory.getLogger(User.class);
 

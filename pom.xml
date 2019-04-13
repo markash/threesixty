@@ -23,16 +23,17 @@
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<sendgrid.version>4.2.0</sendgrid.version>
-		<threesixty-components.version>0.3.2</threesixty-components.version>
+		<sendgrid.version>4.3.0</sendgrid.version>
+		<threesixty-components.version>0.3.3-SNAPSHOT</threesixty-components.version>
 
-        <vaadin.version>8.5.2</vaadin.version>
-        <vaadin-plugin.version>8.5.2</vaadin-plugin.version>
-        <vaadin-icons.version>2.0.0</vaadin-icons.version>
+		<vaadin-chartjs.version>1.3.0</vaadin-chartjs.version>
+        <vaadin.version>8.8.0.beta1</vaadin.version>
+        <vaadin-plugin.version>8.8.0.beta1</vaadin-plugin.version>
+        <vaadin-icons.version>3.0.2</vaadin-icons.version>
         <vaadin4spring.version>2.0.0.RELEASE</vaadin4spring.version>
-        <vaadin-springboot.version>2.0.1</vaadin-springboot.version>
-		<vaadin-spring.version>3.0.1</vaadin-spring.version>
-        <viritin.version>2.6</viritin.version>
+        <vaadin-springboot.version>3.1.1</vaadin-springboot.version>
+		<vaadin-spring.version>3.1.1</vaadin-spring.version>
+        <viritin.version>2.9</viritin.version>
 	</properties>
 
 	<dependencies>
@@ -51,6 +52,11 @@
             <artifactId>components-theme</artifactId>
             <version>${threesixty-components.version}</version>
         </dependency>
+		<dependency>
+			<groupId>com.github.markash</groupId>
+			<artifactId>components-i18n</artifactId>
+			<version>${threesixty-components.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-spring</artifactId>
@@ -165,7 +171,7 @@
 		<dependency>
 		  <groupId>com.byteowls</groupId>
 		  <artifactId>vaadin-chartjs</artifactId>
-		  <version>1.3.0</version>
+		  <version>${vaadin-chartjs.version}</version>
 		</dependency>
 		<dependency>
 		  <groupId>com.google.guava</groupId>
@@ -212,7 +218,14 @@
             <artifactId>poi-ooxml</artifactId>
             <version>3.17</version>
         </dependency>
-
+		<!-- **************************************************************
+		                      Developer
+		*************************************************************** -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
         <!-- **************************************************************
                               Testing
         *************************************************************** -->

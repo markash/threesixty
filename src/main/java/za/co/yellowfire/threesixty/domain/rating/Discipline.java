@@ -9,7 +9,7 @@ import za.co.yellowfire.threesixty.domain.user.User;
 
 import java.io.Serializable;
 
-public class Discipline implements Auditable<User, Serializable> {
+public class Discipline implements Auditable<User, String> {
 	private static final long serialVersionUID = 1L;
     public static final String FIELD_ID = "id";
     public static final String FIELD_NAME = "name";

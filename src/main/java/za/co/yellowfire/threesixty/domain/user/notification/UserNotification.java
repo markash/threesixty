@@ -14,7 +14,7 @@ import java.io.Serializable;
 
 @SuppressWarnings("unused")
 @AccessType(Type.FIELD)
-public final class UserNotification implements Auditable<User, Serializable> {
+public final class UserNotification implements Auditable<User, String> {
 	private static final long serialVersionUID = 1L;
 
 	public static final String FIELD_ID = "id";

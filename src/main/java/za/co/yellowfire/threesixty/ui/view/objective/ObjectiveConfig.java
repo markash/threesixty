@@ -1,9 +1,5 @@
 package za.co.yellowfire.threesixty.ui.view.objective;
 
-import com.github.markash.ui.component.BlankSupplier;
-import com.github.markash.ui.component.EntityPersistFunction;
-import com.github.markash.ui.component.EntitySupplier;
-import com.github.markash.ui.component.notification.NotificationBuilder;
 import com.github.markash.ui.view.TableDefinition;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.navigator.PushStateNavigation;
@@ -16,9 +12,6 @@ import org.vaadin.spring.annotation.PrototypeScope;
 import za.co.yellowfire.threesixty.domain.rating.Objective;
 import za.co.yellowfire.threesixty.domain.rating.ObjectiveService;
 import za.co.yellowfire.threesixty.ui.I8n;
-
-import java.io.Serializable;
-import java.util.Optional;
 
 import static com.github.markash.ui.view.ValueBuilder.bool;
 import static com.github.markash.ui.view.ValueBuilder.string;
@@ -33,28 +26,6 @@ public class ObjectiveConfig {
     @Bean @PrototypeScope
     ObjectiveEntityEditForm objectiveEntityEditForm() {
         return new ObjectiveEntityEditForm();
-    }
-
-    @Bean
-    EntitySupplier<Objective, Serializable> objectiveSupplier(final ObjectiveService objectiveService) {
-        return id -> Optional.ofNullable(objectiveService.findById((String) id));
-    }
-
-    @Bean
-    BlankSupplier<Objective> blankObjectiveSupplier() {
-        return Objective::new;
-    }
-
-    @Bean
-    EntityPersistFunction<Objective> objectivePersistFunction(final ObjectiveService objectiveService) {
-        return objective -> {
-            try {
-                return objectiveService.save(objective);
-            } catch (Exception e) {
-                NotificationBuilder.showNotification("Persist", e.getMessage());
-            }
-            return objective;
-        };
     }
 
     @Bean

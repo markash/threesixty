@@ -1,10 +1,12 @@
 package za.co.yellowfire.threesixty.domain.rating;
 
+import com.github.markash.ui.component.EntitySupplier;
 import com.github.markash.ui.security.CurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import za.co.yellowfire.threesixty.domain.user.User;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Service
@@ -42,4 +44,5 @@ public class ObjectiveService implements za.co.yellowfire.threesixty.domain.ques
         this.currentUserProvider.get().ifPresent(objective::auditChangedBy);
 		objectiveRepository.save(objective);
 	}
+
 }

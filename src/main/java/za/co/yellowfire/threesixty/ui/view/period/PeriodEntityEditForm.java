@@ -24,15 +24,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 @SuppressWarnings("serial")
-public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> {
-
-	private DateField startField = new DateField(I8n.Period.Fields.START);
-	private DateField endField = new DateField(I8n.Period.Fields.END);
-	private DateField publishDeadlineField = new DateField(I8n.Period.Fields.DEADLINE_PUBLISH);
-	private DateField completeDeadlineField = new DateField(I8n.Period.Fields.DEADLINE_COMPLETE);
-	private DateField selfDeadlineField = new DateField(I8n.Period.Fields.DEADLINE_SELF_ASSESSMENT);
-	private DateField assessorDeadlineField = new DateField(I8n.Period.Fields.DEADLINE_ASSESSOR_ASSESSMENT);
-	private CheckBox activeField = new CheckBox(I8n.Period.Fields.ACTIVE);
+public class PeriodEntityEditForm extends AbstractEntityEditForm<String, PeriodModel> {
 
 	private CounterStatisticsCard registeredAssessmentsCard;
 	private CounterStatisticsCard publishedAssessmentsCard;
@@ -45,15 +37,28 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> {
 	PeriodEntityEditForm(
 			final AssessmentService assessmentService) {
 
-		super(PeriodModel.class);
+		super(PeriodModel.class, String.class);
 		this.assessmentService = assessmentService;
 
-		this.startField.setDateFormat(I8n.Format.DATE);
-		this.endField.setDateFormat(I8n.Format.DATE);
-		this.publishDeadlineField.setDateFormat(I8n.Format.DATE);
-		this.completeDeadlineField.setDateFormat(I8n.Format.DATE);
-		this.selfDeadlineField.setDateFormat(I8n.Format.DATE);
-		this.assessorDeadlineField.setDateFormat(I8n.Format.DATE);
+		DateField startField = new DateField(I8n.Period.Fields.START);
+		startField.setDateFormat(I8n.Format.DATE);
+
+		DateField endField = new DateField(I8n.Period.Fields.END);
+		endField.setDateFormat(I8n.Format.DATE);
+
+		DateField publishDeadlineField = new DateField(I8n.Period.Fields.DEADLINE_PUBLISH);
+		publishDeadlineField.setDateFormat(I8n.Format.DATE);
+
+		DateField completeDeadlineField = new DateField(I8n.Period.Fields.DEADLINE_COMPLETE);
+		completeDeadlineField.setDateFormat(I8n.Format.DATE);
+
+		DateField selfDeadlineField = new DateField(I8n.Period.Fields.DEADLINE_SELF_ASSESSMENT);
+		selfDeadlineField.setDateFormat(I8n.Format.DATE);
+
+		DateField assessorDeadlineField = new DateField(I8n.Period.Fields.DEADLINE_ASSESSOR_ASSESSMENT);
+		assessorDeadlineField.setDateFormat(I8n.Format.DATE);
+
+		CheckBox activeField = new CheckBox(I8n.Period.Fields.ACTIVE);
 
         getBinder().forField(startField).asRequired(I8n.Period.Validation.START_REQUIRED).bind(PeriodModel.FIELD_START);
         getBinder().forField(endField).asRequired(I8n.Period.Validation.END_REQUIRED).bind(PeriodModel.FIELD_END);
@@ -104,33 +109,28 @@ public class PeriodEntityEditForm extends AbstractEntityEditForm<PeriodModel> {
 						.withIconHidden()
 						.withShowOnlyStatistic(true),
                 "");
-	}
 
-	@Override
-	protected void internalLayout() {
+		MHorizontalLayout statsLine01 =
+				new MHorizontalLayout(registeredAssessmentsCard, publishedAssessmentsCard)
+						.withSpacing(true);
 
-        MHorizontalLayout statsLine01 =
-                new MHorizontalLayout(registeredAssessmentsCard, publishedAssessmentsCard)
-                        .withSpacing(true);
-
-        MHorizontalLayout statsLine02 =
-                new MHorizontalLayout(submittedAssessmentsCard, reviewedAssessmentsCard)
-                        .withSpacing(true);
+		MHorizontalLayout statsLine02 =
+				new MHorizontalLayout(submittedAssessmentsCard, reviewedAssessmentsCard)
+						.withSpacing(true);
 
 		VerticalLayout statsPanel =
-                new MVerticalLayout(
-                        statsLine01,
-                        statsLine02);
+				new MVerticalLayout(
+						statsLine01,
+						statsLine02);
 
-		Layout fieldsPanel = 
+		Layout fieldsPanel =
 				new MHorizontalLayout(
-                        new MFormLayout(startField, endField, publishDeadlineField, activeField),
-					    new MFormLayout(selfDeadlineField, assessorDeadlineField, completeDeadlineField)
+						new MFormLayout(startField, endField, publishDeadlineField, activeField),
+						new MFormLayout(selfDeadlineField, assessorDeadlineField, completeDeadlineField)
 				);
 
 		addComponents(fieldsPanel, statsPanel);
 	}
-
 
 	@Override
 	protected void updateDependentFields() {

@@ -9,10 +9,10 @@ import java.util.Map;
 
 public class DynamicPersonalization extends Personalization {
 
-    private Map<String, String> dynamicTemplateData;
+    private Map<String, Object> dynamicTemplateData;
 
     @JsonProperty("dynamic_template_data")
-    public Map<String, String> getDynamicTemplateData() {
+    public Map<String, Object> getDynamicTemplateData() {
         return this.dynamicTemplateData == null ? Collections.emptyMap() : this.dynamicTemplateData;
     }
 

@@ -20,7 +20,7 @@ import za.co.yellowfire.threesixty.ui.Style;
 import static com.github.markash.ui.view.ValueBuilder.property;
 import static com.github.markash.ui.view.ValueBuilder.string;
 
-public class IdentityEntityEditForm extends AbstractEntityEditForm<Identity> {
+public class IdentityEntityEditForm extends AbstractEntityEditForm<String, Identity> {
 	private static final long serialVersionUID = 1L;
 
 	private MTextField nameField =
@@ -41,7 +41,7 @@ public class IdentityEntityEditForm extends AbstractEntityEditForm<Identity> {
 			final UserService userService, 
 			final OrganizationIconResolver iconResolver) {
 
-		super(Identity.class);
+		super(Identity.class, String.class);
 
 		this.userService = userService;
 		this.iconResolver = iconResolver;
@@ -58,13 +58,9 @@ public class IdentityEntityEditForm extends AbstractEntityEditForm<Identity> {
 
         getBinder().bind(nameField, "name");
         getBinder().bind(typeField, "type");
-	}
 
-	@Override
-	protected void internalLayout() {
-		
 		OrganizationModelType modelType = OrganizationModelType.CHILD;
-		
+
 		if (getValue().getMetadata().isPresent()) {
 			OrganizationLevelMetadata metadata = getValue().getMetadata().get();
 			if (!metadata.hasParent()) {
@@ -81,7 +77,7 @@ public class IdentityEntityEditForm extends AbstractEntityEditForm<Identity> {
 				.with(nameField, typeField, new Label(modelType.display),  this.userTable);
 		addComponent(layout);
 	}
-	
+
 //	private Grid<UserModel> buildUserTable(final List<User> values) {
 //
 //		List<UserModel> list = new ArrayList<>();

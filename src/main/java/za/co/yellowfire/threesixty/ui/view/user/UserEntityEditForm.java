@@ -21,30 +21,13 @@ import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("serial")
-public class UserEntityEditForm extends AbstractEntityEditForm<User> {
-
-	private TextField firstNameField = new TextField("Name");
-	private TextField lastNameField = new TextField("Last Name");
-    private TextField emailField = new TextField("Email");
-    private TextField phoneField = new TextField("Phone");
-    private TextField websiteField = new TextField("Website");
-    private RichTextArea bioField = new RichTextArea("Bio");
-    private ComboBox<String> salutationField;
-    private ComboBox<String> genderField;
-    private ComboBox<Country> countryField;
-	private ComboBox<Role> roleField;
-	private ComboBox<Position> positionField;
-	private ComboBox<User> reportsToField;
-	private ComboBox<Identity> departmentField;
+public class UserEntityEditForm extends AbstractEntityEditForm<String, User> {
 
 	private List<User> reportsTo = new ArrayList<>();
 	private ListDataProvider<User> reportsToProvider = new ListDataProvider<>(reportsTo);
 	private Image pictureField = new Image(null, new ThemeResource("img/profile-pic-300px.jpg"));
 	private Window pictureWindow = new Window(I8n.Profile.PICTURE, new PictureSelectionForm(this::onSelectedPicture));
     private boolean pictureChanged = false;
-
-	private Button pictureButton = ButtonBuilder.CHANGE(this::onChangePicture);
-
 
     private final CurrentUserProvider<User> currentUserProvider;
     private final UserService userService;
@@ -53,7 +36,7 @@ public class UserEntityEditForm extends AbstractEntityEditForm<User> {
             final UserService userService,
             final CurrentUserProvider<User> currentUserProvider) {
 
-		super(User.class, true);
+		super(User.class, String.class);
 
 		this.userService = userService;
 		this.currentUserProvider = currentUserProvider;
@@ -63,35 +46,49 @@ public class UserEntityEditForm extends AbstractEntityEditForm<User> {
 //        this.getIdField().setReadOnly(false);
 //        this.getIdField().setRequiredIndicatorVisible(true);
 
-		this.salutationField = new ComboBox<>("Salutation", this.userService.findSalutations());
-        this.salutationField.setWidth(100, Unit.PERCENTAGE);
+        ComboBox<String> salutationField = new ComboBox<>("Salutation", this.userService.findSalutations());
+        salutationField.setWidth(100, Unit.PERCENTAGE);
 
-		this.genderField = new ComboBox<>("Gender", this.userService.findGenders());
-        this.genderField.setWidth(100, Unit.PERCENTAGE);
+        ComboBox<String> genderField = new ComboBox<>("Gender", this.userService.findGenders());
+        genderField.setWidth(100, Unit.PERCENTAGE);
 
-		this.countryField = new ComboBox<>("Country", this.userService.findCountries());
-        this.countryField.setWidth(100, Unit.PERCENTAGE);
+        ComboBox<Country> countryField = new ComboBox<>("Country", this.userService.findCountries());
+        countryField.setWidth(100, Unit.PERCENTAGE);
 
-		this.roleField = new ComboBox<>("Role", this.userService.findRoles());
-        this.roleField.setWidth(100, Unit.PERCENTAGE);
+        ComboBox<Role> roleField = new ComboBox<>("Role", this.userService.findRoles());
+        roleField.setWidth(100, Unit.PERCENTAGE);
 
-		this.reportsToField = new ComboBox<>("Reports To");
-		this.reportsToField.setDataProvider(this.reportsToProvider);
-        this.reportsToField.setWidth(100, Unit.PERCENTAGE);
+        ComboBox<User> reportsToField = new ComboBox<>("Reports To");
+		reportsToField.setDataProvider(this.reportsToProvider);
+        reportsToField.setWidth(100, Unit.PERCENTAGE);
 
-		this.positionField = new ComboBox<>("Position", this.userService.findPositions());
-        this.positionField.setWidth(100, Unit.PERCENTAGE);
+        ComboBox<Position>positionField = new ComboBox<>("Position", this.userService.findPositions());
+        positionField.setWidth(100, Unit.PERCENTAGE);
 
-		this.departmentField = new ComboBox<>("Department", this.userService.findDepartments());
-        this.departmentField.setWidth(100, Unit.PERCENTAGE);
+        ComboBox<Identity> departmentField = new ComboBox<>("Department", this.userService.findDepartments());
+        departmentField.setWidth(100, Unit.PERCENTAGE);
 
-        this.firstNameField.setWidth(100, Unit.PERCENTAGE);
-        this.lastNameField.setWidth(100, Unit.PERCENTAGE);
-        this.emailField.setWidth(100, Unit.PERCENTAGE);
-        this.phoneField.setWidth(100, Unit.PERCENTAGE);
-        this.websiteField.setWidth(100, Unit.PERCENTAGE);
-        this.bioField.setWidth(100, Unit.PERCENTAGE);
+        TextField firstNameField = new TextField("Name");
+        firstNameField.setWidth(100, Unit.PERCENTAGE);
+
+        TextField lastNameField = new TextField("Last Name");
+        lastNameField.setWidth(100, Unit.PERCENTAGE);
+
+        TextField emailField = new TextField("Email");
+        emailField.setWidth(100, Unit.PERCENTAGE);
+
+        TextField phoneField = new TextField("Phone");
+        phoneField.setWidth(100, Unit.PERCENTAGE);
+
+        TextField websiteField = new TextField("Website");
+        websiteField.setWidth(100, Unit.PERCENTAGE);
+
+        RichTextArea bioField = new RichTextArea("Bio");
+        bioField.setWidth(100, Unit.PERCENTAGE);
+
         this.pictureField.setStyleName("profile-image");
+
+        Button pictureButton = ButtonBuilder.CHANGE(this::onChangePicture);
 
         getBinder().forField(firstNameField).asRequired(I8n.User.Validation.FIRST_NAME_REQUIRED).bind(User.FIELD_FIRST_NAME);
         getBinder().forField(lastNameField).asRequired(I8n.User.Validation.LAST_NAME_REQUIRED).bind(User.FIELD_LAST_NAME);
@@ -110,17 +107,7 @@ public class UserEntityEditForm extends AbstractEntityEditForm<User> {
         firstNameField.setRequiredIndicatorVisible(true);
         lastNameField.setRequiredIndicatorVisible(true);
 
-	}
-
-    @Override
-    public boolean isModified() {
-        return super.isModified() || this.pictureChanged;
-    }
-
-	@Override
-	protected void internalLayout() {
-
-	    MHorizontalLayout picture =
+        MHorizontalLayout picture =
                 new MHorizontalLayout()
                         .withMargin(false)
                         .withFullWidth()
@@ -138,7 +125,7 @@ public class UserEntityEditForm extends AbstractEntityEditForm<User> {
                                         )
                         );
 
-	    MVerticalLayout left =
+        MVerticalLayout left =
                 new MVerticalLayout()
                         .withMargin(false)
                         .with(
@@ -148,7 +135,7 @@ public class UserEntityEditForm extends AbstractEntityEditForm<User> {
                                 new MHorizontalLayout(roleField, reportsToField).withMargin(false)
                         );
 
-	    MVerticalLayout right =
+        MVerticalLayout right =
                 new MVerticalLayout()
                         .withMargin(false)
                         .with(
@@ -170,6 +157,11 @@ public class UserEntityEditForm extends AbstractEntityEditForm<User> {
 
         addComponent(details);
 	}
+
+    @Override
+    public boolean isModified() {
+        return super.isModified() || this.pictureChanged;
+    }
 
     /**
      * Provide a hook for subclasses to update dependant fields

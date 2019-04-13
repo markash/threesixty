@@ -17,7 +17,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import za.co.yellowfire.threesixty.domain.user.User;
 
 @AccessType(Type.FIELD)
-public class Assessment implements Auditable<User, Serializable> {
+public class Assessment implements Auditable<User, String> {
 	private static final long serialVersionUID = 1L;
 	public static final String FIELD_ID = "id";
 	public static final String FIELD_EMPLOYEE = "employee";

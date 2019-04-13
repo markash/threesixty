@@ -17,7 +17,7 @@ import java.io.Serializable;
 import java.util.Optional;
 
 @SpringView(name = AssessmentEditView.VIEW_NAME)
-public class AssessmentEditView extends AbstractEntityEditView<Assessment> {
+public class AssessmentEditView extends AbstractEntityEditView<String, Assessment> {
 	private static final long serialVersionUID = 1L;
 	
 	public static final String TITLE = I8n.Assessment.SINGULAR;

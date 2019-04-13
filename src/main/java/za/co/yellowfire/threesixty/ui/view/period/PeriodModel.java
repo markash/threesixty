@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Optional;
 
-public class PeriodModel implements Persistable<Serializable> {
+public class PeriodModel implements Persistable<String> {
     public static final long serialVersionUID = 1L;
 
     static final String FIELD_ID = "id";

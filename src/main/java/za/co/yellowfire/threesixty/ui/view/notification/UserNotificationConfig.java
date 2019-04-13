@@ -31,39 +31,6 @@ import static com.github.markash.ui.view.ValueBuilder.string;
 @SuppressWarnings("unused")
 public class UserNotificationConfig {
 
-    @Bean @PrototypeScope
-    UserNotificationEntityEditForm notificationEntityEditForm(
-            final UserRepository userRepository) {
-
-        return new UserNotificationEntityEditForm(userRepository);
-    }
-
-    @Bean
-    EntitySupplier<UserNotification, Serializable> notificationSupplier(
-            final UserNotificationRepository repository) {
-
-        return id -> Optional.ofNullable(repository.findOne((String) id));
-    }
-
-    @Bean
-    BlankSupplier<UserNotification> blankNotificationSupplier() {
-        return UserNotification::new;
-    }
-
-    @Bean
-    EntityPersistFunction<UserNotification> notificationPersistFunction(
-            final UserNotificationRepository repository) {
-
-        return notification -> {
-            try {
-                return repository.save(notification);
-            } catch (Throwable e) {
-                NotificationBuilder.showNotification("Persist", e.getMessage());
-            }
-            return notification;
-        };
-    }
-
     @Bean
     @PrototypeScope
     ListDataProvider<UserNotification> notificationListDataProvider(

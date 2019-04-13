@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @Secured("ROLE_ADMIN")
 @SpringView(name = PeriodEditView.VIEW_NAME)
-public class PeriodEditView extends AbstractEntityEditView<PeriodModel> {
+public class PeriodEditView extends AbstractEntityEditView<String, PeriodModel> {
 	private static final long serialVersionUID = 1L;
 
 	private EventBus.SessionEventBus eventBus;

@@ -177,7 +177,7 @@ public class IdentityView extends AbstractDashboardView {
 
 		this.form = new IdentityEntityEditForm(userService, iconResolver);
 		this.form.setValue(identity);
-		this.form.layout();
+		//this.form.layout();
 		this.form.setWidth(100.0f, Unit.PERCENTAGE);
 		this.panel.setContent(this.form);
 		

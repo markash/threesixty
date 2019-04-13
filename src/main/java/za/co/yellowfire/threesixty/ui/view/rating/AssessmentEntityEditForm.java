@@ -33,7 +33,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @SuppressWarnings("serial")
-public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment> {
+public class AssessmentEntityEditForm extends AbstractEntityEditForm<String, Assessment> {
     /* Assessment */
 	private ComboBox<User> managerField;
 	private ComboBox<User> employeeField;
@@ -61,7 +61,7 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
             final AssessmentService service,
             final CurrentUserProvider<User> currentUserProvider) {
 
-	    super(Assessment.class);
+	    super(Assessment.class, String.class);
 
 	    this.service = service;
 		currentUserProvider.get().ifPresent(p -> this.currentUser = p);
@@ -100,35 +100,33 @@ public class AssessmentEntityEditForm extends AbstractEntityEditForm<Assessment>
         getBinder().forField(employeeField).bind(Assessment.FIELD_EMPLOYEE);
         getBinder().forField(periodField).withConverter(PeriodModel.converter()).bind(Assessment.FIELD_PERIOD);
         getBinder().forField(ratingsField).bind(Assessment.FIELD_RATINGS);
-	}
-	
-	@Override
-	protected void internalLayout() {
-//		this.ratingsField.setValue(getValue());
+
+		//		this.ratingsField.setValue(getValue());
 //		this.ratingsField.setAssessmentStatus(getValue().getStatus());
 //		this.ratingsField.setPossibleRatings(service.findPossibleRatings());
 //		this.ratingsField.setPossibleWeightings(service.findPossibleWeightings());
 
-        /* Create the header with the header buttons */
-        Label headerCaption = new MLabel(VaadinIcons.BARCODE.getHtml() + I8n.Assessment.Rating.PLURAL)
-                .withContentMode(ContentMode.HTML)
-                .withStyleName(ValoTheme.LABEL_H3, ValoTheme.LABEL_NO_MARGIN);
+		/* Create the header with the header buttons */
+		Label headerCaption = new MLabel(VaadinIcons.BARCODE.getHtml() + I8n.Assessment.Rating.PLURAL)
+				.withContentMode(ContentMode.HTML)
+				.withStyleName(ValoTheme.LABEL_H3, ValoTheme.LABEL_NO_MARGIN);
 
-        MHorizontalLayout header = new MHorizontalLayout(headerCaption, this.summary).withStyleName(Style.AssessmentRating.HEADER);
-        header.setExpandRatio(headerCaption, 1.0f);
-        header.setExpandRatio(this.summary, 2.0f);
-        header.withMargin(false);
+		MHorizontalLayout header = new MHorizontalLayout(headerCaption, this.summary).withStyleName(Style.AssessmentRating.HEADER);
+		header.setExpandRatio(headerCaption, 1.0f);
+		header.setExpandRatio(this.summary, 2.0f);
+		header.withMargin(false);
 
-        addComponents(
-                new MVerticalLayout(
-                        new MHorizontalLayout(getIdField(), employeeField, managerField, periodField).withFullWidth(),
-                        new MVerticalLayout(header, ratingsField).withMargin(false)
-                ).withMargin(false)
-        );
+		addComponents(
+				new MVerticalLayout(
+						new MHorizontalLayout(getIdField(), employeeField, managerField, periodField).withFullWidth(),
+						new MVerticalLayout(header, ratingsField).withMargin(false)
+				).withMargin(false)
+		);
 
 		//maintainAssessment();
 		restrictAvailablePeriodsForEmployee();
 	}
+	
 
 //	protected void onValueChange(final HasValue.ValueChangeEvent event) {
 //		super.onValueChange(event);

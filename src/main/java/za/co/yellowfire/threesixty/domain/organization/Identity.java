@@ -18,7 +18,7 @@ import za.co.yellowfire.threesixty.domain.user.User;
 
 
 @AccessType(Type.FIELD)
-public class Identity implements Auditable<User, Serializable> {
+public class Identity implements Auditable<User, String> {
 	private static final long serialVersionUID = 8006445483328831553L;
 
 	@Id
