@@ -1,8 +1,8 @@
 package za.co.yellowfire.threesixty.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import org.apache.commons.beanutils.BeanUtils;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+//import org.apache.commons.beanutils.BeanUtils;
 
 /**
  *  * JSR303 crossfield validator example by Patrick:
@@ -25,17 +25,17 @@ public class FieldMatchValidator implements ConstraintValidator<FieldMatch, Obje
     @Override
     public boolean isValid(final Object value,
             final ConstraintValidatorContext context) {
-        try {
-            final Object firstObj = BeanUtils.getProperty(value,
-                    firstFieldName);
-            final Object secondObj = BeanUtils.getProperty(value,
-                    secondFieldName);
-
-            return firstObj == null && secondObj == null || firstObj != null && firstObj.
-                    equals(secondObj);
-        } catch (final Exception ignore) {
-            // ignore
-        }
+//        try {
+//            final Object firstObj = BeanUtils.getProperty(value,
+//                    firstFieldName);
+//            final Object secondObj = BeanUtils.getProperty(value,
+//                    secondFieldName);
+//
+//            return firstObj == null && secondObj == null || firstObj != null && firstObj.
+//                    equals(secondObj);
+//        } catch (final Exception ignore) {
+//            // ignore
+//        }
         return true;
     }
 }

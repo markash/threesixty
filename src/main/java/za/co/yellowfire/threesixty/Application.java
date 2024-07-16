@@ -1,23 +1,24 @@
 package za.co.yellowfire.threesixty;
 
-import com.github.markash.ui.annotation.EnableThreeSixtyComponents;
-import com.vaadin.server.CustomizedSystemMessages;
-import com.vaadin.server.SystemMessages;
-import com.vaadin.server.SystemMessagesInfo;
-import com.vaadin.server.SystemMessagesProvider;
+import com.vaadin.flow.component.page.AppShellConfigurator;
+import com.vaadin.flow.server.CustomizedSystemMessages;
+import com.vaadin.flow.server.SystemMessages;
+import com.vaadin.flow.server.SystemMessagesInfo;
+import com.vaadin.flow.server.SystemMessagesProvider;
+import com.vaadin.flow.theme.Theme;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.autoconfigure.sql.init.SqlDataSourceScriptDatabaseInitializer;
+import org.springframework.boot.autoconfigure.sql.init.SqlInitializationProperties;
 import org.springframework.context.annotation.Bean;
-import org.vaadin.spring.security.annotation.EnableVaadinManagedSecurity;
-import za.co.yellowfire.threesixty.domain.kudos.BadgeProperties;
-import za.co.yellowfire.threesixty.domain.mail.MailingProperties;
+import za.co.yellowfire.threesixty.domain.user.CountryRepository;
 
-@EnableThreeSixtyComponents
-@EnableVaadinManagedSecurity
-@EnableConfigurationProperties({MailingProperties.class, BadgeProperties.class})
-@SpringBootApplication(exclude = org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration.class)
-public class Application {
+import javax.sql.DataSource;
+
+//@EnableConfigurationProperties({MailingProperties.class, BadgeProperties.class})
+@Theme(value = "my-vaadin-app")
+@SpringBootApplication(/*exclude = org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration.class*/)
+public class Application implements AppShellConfigurator {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -34,6 +35,24 @@ public class Application {
                 CustomizedSystemMessages systemMessages = new CustomizedSystemMessages();
                 systemMessages.setSessionExpiredNotificationEnabled(false);
                 return systemMessages;
+            }
+        };
+    }
+
+    @Bean
+    SqlDataSourceScriptDatabaseInitializer dataSourceScriptDatabaseInitializer(
+            DataSource dataSource,
+            SqlInitializationProperties properties,
+            CountryRepository repository) {
+
+        // This bean ensures the database is only initialized when empty
+        return new SqlDataSourceScriptDatabaseInitializer(dataSource, properties) {
+            @Override
+            public boolean initializeDatabase() {
+                if (repository.count() == 0L) {
+                    return super.initializeDatabase();
+                }
+                return false;
             }
         };
     }

@@ -2,14 +2,17 @@ package za.co.yellowfire.threesixty.domain.user;
 
 import java.io.Serializable;
 
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
+@Entity
 public class Country implements Serializable {
-	private static final long serialVersionUID = 1L;
-	
+
 	private int number;
+
 	@Id
 	private String commonName;
+
 	private String formalName;
 	private String type;
 	private String subType;
@@ -22,7 +25,9 @@ public class Country implements Serializable {
 	private String iso316613LetterCode;
 	private String countryCode;
 	private String tldCode;
-	
+
+	public Country() {}
+
 	public Country(int number, String commonName, String formalName, String type, String subType, String sovereignty,
 			String capital, String currencyCode, String currencyName, String telephoneCode, String iso316612LetterCode,
 			String iso316613LetterCode, String countryCode, String tldCode) {

@@ -5,7 +5,6 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.UI;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import za.co.yellowfire.threesixty.MainUI;
 import za.co.yellowfire.threesixty.domain.kudos.Ideal;
 import za.co.yellowfire.threesixty.domain.kudos.IdealRepository;
 import za.co.yellowfire.threesixty.domain.user.User;

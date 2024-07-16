@@ -1,29 +1,24 @@
 package za.co.yellowfire.threesixty.config;
 
-import com.microsoft.azure.spring.boot.autoconfigure.aad.AADAuthenticationFilter;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+//import com.microsoft.azure.spring.boot.autoconfigure.aad.AADAuthenticationFilter;
+//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 //@Configuration
 //@EnableOAuth2Sso
 //@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig /*extends WebSecurityConfigurerAdapter*/ {
     //@Autowired
-    private AADAuthenticationFilter aadAuthFilter;
+//    private AADAuthenticationFilter aadAuthFilter;
 
     //@Override
-    protected void configure(HttpSecurity http) throws Exception {
+//    protected void configure(HttpSecurity http) throws Exception {
 
-        http.authorizeRequests().antMatchers("/**").authenticated();
-//        http.authorizeRequests().antMatchers("/api/**").authenticated();
-
-        http.logout().logoutSuccessUrl("/").permitAll();
-        http.authorizeRequests().anyRequest().permitAll();
-        http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-        http.addFilterBefore(aadAuthFilter, UsernamePasswordAuthenticationFilter.class);
-    }
+//        http.authorizeRequests().antMatchers("/**").authenticated();
+//        http.logout().logoutSuccessUrl("/").permitAll();
+//        http.authorizeRequests().anyRequest().permitAll();
+//        http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+//        http.addFilterBefore(aadAuthFilter, UsernamePasswordAuthenticationFilter.class);
+//    }
 //
 //    @Bean
 //    public SpringSecurityCurrentUserProvider<User> currentUserProvider() {

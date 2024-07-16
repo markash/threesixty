@@ -12,7 +12,6 @@ import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.vaadin.dialogs.ConfirmDialog;
-import za.co.yellowfire.threesixty.MainUI;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.component.button.CrudHeaderButtonConfig;
 import za.co.yellowfire.threesixty.ui.component.button.CrudHeaderButtons;

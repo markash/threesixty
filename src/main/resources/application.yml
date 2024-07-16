@@ -23,7 +23,7 @@ threesixty:
 
 vaadin:
   servlet:
-    production-mode: true
+    production-mode: false
 
 #threesixty.badge.uri=http://localhost:8080/api/badge/image
 
@@ -35,52 +35,67 @@ logging:
 ########################################################################################################################
 # DEVELOPMENT
 ########################################################################################################################
-spring:
-  profiles: dev
-  data:
-    mongodb:
-      uri: "mongodb://127.0.0.1:27017/threesixty"
-server:
-  port: 8082
+#spring:
+#  profiles: dev
+#  data:
+#    mongodb:
+#      uri: "mongodb://127.0.0.1:27017/threesixty"
+#server:
+#  port: 8082
 
 ---
 ########################################################################################################################
 # AZURE
 ########################################################################################################################
-spring:
-  profiles: azure
-server:
-  port: 9001
-
-logging:
-  level: DEBUG
-  level.org.springframework: DEBUG
-  file: /home/LogFiles/boot.log
+#spring:
+#  profiles: azure
+#server:
+#  port: 9001
+#
+#logging:
+#  level: DEBUG
+#  level.org.springframework: DEBUG
+#  file: /home/LogFiles/boot.log
 
 ---
 ########################################################################################################################
 # HEROKU
 ########################################################################################################################
-spring:
-  profiles: heroku
-  data:
-    mongodb:
-    uri: "mongodb://heroku_kv4pr8rw:le879u6618ar2ipeim43sqtsgi@ds045465.mongolab.com:45465/heroku_kv4pr8rw"
-server:
-  port: 9001
-logging:
-  level: DEBUG
-  level.org.springframework: DEBUG
-  file: /home/LogFiles/boot.log
+#spring:
+#  profiles: heroku
+#  data:
+#    mongodb:
+#    uri: "mongodb://heroku_kv4pr8rw:le879u6618ar2ipeim43sqtsgi@ds045465.mongolab.com:45465/heroku_kv4pr8rw"
+#server:
+#  port: 9001
+#logging:
+#  level: DEBUG
+#  level.org.springframework: DEBUG
+#  file: /home/LogFiles/boot.log
 
 ---
 ########################################################################################################################
 # VAGRANT
 ########################################################################################################################
+#spring:
+#  profiles: vagrant
+#  data:
+#    mongodb:
+#      uri: "mongodb://127.0.0.1:27017/test"
+#spring:
+#  datasource:
+#    url: jdbc:h2:file:./data/testDb;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
+#    driverClassName: org.h2.Driver
+
 spring:
-  profiles: vagrant
-  data:
-    mongodb:
-      uri: "mongodb://127.0.0.1:27017/test"
+  jpa:
+    defer-datasource-initialization: true
+
 server:
   port: 8080
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+

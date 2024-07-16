@@ -8,7 +8,6 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Notification.Type;
 import org.springframework.data.domain.Persistable;
 import org.vaadin.dialogs.ConfirmDialog;
-import za.co.yellowfire.threesixty.MainUI;
 import za.co.yellowfire.threesixty.domain.question.Service;
 import za.co.yellowfire.threesixty.domain.user.User;
 import za.co.yellowfire.threesixty.ui.component.ButtonBuilder;

@@ -1,5 +1,6 @@
 package za.co.yellowfire.threesixty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 
@@ -9,6 +10,7 @@ import java.io.Serializable;
  * @version 0.0.1
  */
 public class Response<T> implements Serializable {
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private RequestResult result;

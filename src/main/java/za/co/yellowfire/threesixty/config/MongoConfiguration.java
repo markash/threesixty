@@ -1,34 +1,24 @@
 package za.co.yellowfire.threesixty.config;
 
-import java.util.ArrayList;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+//import org.springframework.boot.autoconfigure.mongo.MongoProperties;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.context.annotation.Import;
+//import org.springframework.data.mongodb.MongoDatabaseFactory;
+//import org.springframework.data.mongodb.config.EnableMongoAuditing;
+//import org.springframework.data.mongodb.core.convert.MongoConverter;
+//import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.data.mongodb.MongoDbFactory;
-import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
-import org.springframework.data.mongodb.config.EnableMongoAuditing;
-import org.springframework.data.mongodb.core.convert.MongoConverter;
-import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-
-import com.mongodb.Mongo;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
-
-@Configuration
-@EnableMongoAuditing
-@Import(value = MongoAutoConfiguration.class)
+//@Configuration
+//@EnableMongoAuditing
+//@Import(value = MongoAutoConfiguration.class)
 public class MongoConfiguration /*extends AbstractMongoConfiguration*/ {
 
 
-    @Autowired
-    private MongoProperties mongoProperties;
+//    @Autowired
+//    private MongoProperties mongoProperties;
     
     //@Bean
     //public ValidatingMongoEventListener validatingMongoEventListener() {
@@ -68,8 +58,8 @@ public class MongoConfiguration /*extends AbstractMongoConfiguration*/ {
 //		return client;
 //	}
 
-	@Bean
-	public GridFsTemplate gridFsTemplate(MongoDbFactory mongoDbFactory, MongoConverter mappingMongoConverter) throws Exception {
-		return new GridFsTemplate(mongoDbFactory, mappingMongoConverter);
-	}
+//	@Bean
+//	public GridFsTemplate gridFsTemplate(MongoDatabaseFactory mongoDbFactory, MongoConverter mappingMongoConverter) throws Exception {
+//		return new GridFsTemplate(mongoDbFactory, mappingMongoConverter);
+//	}
 }
