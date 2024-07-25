@@ -68,7 +68,7 @@ src/main/archive/ui/component/chart/
 src/main/archive/ui/component/kudos/
 src/main/java/za/co/yellowfire/threesixty/domain/notification/
 src/main/java/za/co/yellowfire/threesixty/security/
-src/main/resources/templates/Copy of Upload User.xlsx
+Web/src/main/resources/templates/Copy of Upload User.xlsx
 src/main/resources/za/
 
 #############################################################

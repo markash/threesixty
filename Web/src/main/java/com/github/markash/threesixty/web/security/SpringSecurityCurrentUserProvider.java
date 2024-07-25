@@ -1,4 +1,4 @@
-package com.github.markash.ui.security;
+package com.github.markash.threesixty.web.security;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

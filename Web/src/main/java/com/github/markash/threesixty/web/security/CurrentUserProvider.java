@@ -1,4 +1,4 @@
-package com.github.markash.ui.security;
+package com.github.markash.threesixty.web.security;
 
 import java.util.Optional;
 import java.util.function.Supplier;

@@ -1,4 +1,4 @@
-package za.co.yellowfire.threesixty.domain.user;
+package com.github.markash.threesixty.country.domain;
 
 import java.io.Serializable;
 
