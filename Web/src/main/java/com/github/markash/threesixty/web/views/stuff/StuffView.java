@@ -1,6 +1,8 @@
 package com.github.markash.threesixty.web.views.stuff;
 
 import com.github.markash.threesixty.web.Person;
+import com.github.markash.threesixty.web.security.CurrentUserProvider;
+import com.github.markash.threesixty.web.service.UserInfo;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -12,10 +14,15 @@ import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
+import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.Optional;
+
+@PermitAll
 @PageTitle("Stuff")
 @Menu(icon = "line-awesome/svg/pencil-ruler-solid.svg", order = 0)
 @Route(value = "")
@@ -25,9 +32,13 @@ public class StuffView extends Composite<VerticalLayout> {
 
     //private CountryService countryService;
 
+
     @Autowired
-    public StuffView(/*final CountryService countryService*/) {
+    public StuffView(CurrentUserProvider userProvider/*final CountryService countryService*/) {
         //this.countryService = countryService;
+
+        Optional<UserInfo> currentUser = userProvider.getCurrentUser();
+        currentUser.ifPresent(userInfo -> System.out.println("UserInfo = " + userInfo));
 
         Button buttonPrimary = new Button();
 //        Grid<Country> basicGrid = new Grid<>(Country.class);

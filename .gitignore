@@ -64,15 +64,17 @@ mvnw.cmd
 .mvn/
 .settings/
 .vagrant/
-src/main/archive/ui/component/chart/
-src/main/archive/ui/component/kudos/
-src/main/java/za/co/yellowfire/threesixty/domain/notification/
-src/main/java/za/co/yellowfire/threesixty/security/
-Web/src/main/resources/templates/Copy of Upload User.xlsx
-src/main/resources/za/
+Web/target/
+Web/src/main/frontend/generated/
+Country/target/
 
 #############################################################
 # Includes
 #############################################################
 !/dist/threesixty-0.1.0.jar
 !/dist/threesixty-0.1.2.alpha.jar
+
+#############################################################
+# Node
+#############################################################
+node_modules/

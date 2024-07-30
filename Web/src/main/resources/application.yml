@@ -18,7 +18,7 @@ threesixty:
   badge:
     uri: "https://yellowfire-threesixty.herokuapp.com/api/badge/image"
   tracking:
-    code: UA-81670605-1
+    code: ${GOOGLE_TAG_CODE}
     url: www.threesixty.co.za
 
 vaadin:
@@ -28,9 +28,13 @@ vaadin:
 #threesixty.badge.uri=http://localhost:8080/api/badge/image
 
 logging:
-  level.org.springframework.web: INFO
-  level.org.springframework.data: INFO
-
+  level:
+    org.springframework.web: INFO
+    org.springframework.data: INFO
+    #org.springframework.security: trace
+    #com.azure.spring.cloud: trace
+    #com.vaadin.flow.spring.security: trace
+    #com.vaadin.flow.server.auth: trace
 ---
 ########################################################################################################################
 # DEVELOPMENT
@@ -57,45 +61,52 @@ logging:
 #  level.org.springframework: DEBUG
 #  file: /home/LogFiles/boot.log
 
----
+
 ########################################################################################################################
 # HEROKU
 ########################################################################################################################
-#spring:
-#  profiles: heroku
-#  data:
-#    mongodb:
-#    uri: "mongodb://heroku_kv4pr8rw:le879u6618ar2ipeim43sqtsgi@ds045465.mongolab.com:45465/heroku_kv4pr8rw"
-#server:
-#  port: 9001
-#logging:
-#  level: DEBUG
-#  level.org.springframework: DEBUG
-#  file: /home/LogFiles/boot.log
 
----
+
 ########################################################################################################################
 # VAGRANT
 ########################################################################################################################
-#spring:
-#  profiles: vagrant
-#  data:
-#    mongodb:
-#      uri: "mongodb://127.0.0.1:27017/test"
-#spring:
-#  datasource:
-#    url: jdbc:h2:file:./data/testDb;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
-#    driverClassName: org.h2.Driver
 
 spring:
   jpa:
     defer-datasource-initialization: true
+  security:
+    oauth2:
+      client:
+        registration:
+          azure:
+            client-id: ${OID_CLIENT_ID}
+            client-secret: ${OID_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
+            scope:
+              - User.Read
+              - openid
+              - email
+              - profile
+            client-name: Microsoft
+            client-alias: microsoft
+        provider:
+          azure:
+            issuer-uri: ${OID_ISSUER_URI}
+            user-name-attribute: name
 
 server:
   port: 8080
+  ssl:
+    key-alias: localhost
+    key-store: file:C://Source/Data/TrustStore/keyStore.p12
+    key-store-password: ${KEY_STORE_PASSWORD:changeit}
+    enabled: false
+  servlet:
+    session:
+      timeout: 1m
   jpa:
     show-sql: false
     properties:
       hibernate:
         format_sql: true
-

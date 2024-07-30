@@ -1,0 +1,16 @@
+.login-view {
+    background-image: var(--login-image);
+    background-position: center;
+    background-size: cover;
+    display: flex;
+    height: 500px;
+  }
+  
+  .login-view vaadin-login-form {
+    align-items: center;
+    display: flex;
+    max-width: 300px;
+  }
+  .login-view vaadin-login-form-wrapper {
+    background-image: none;
+  }
