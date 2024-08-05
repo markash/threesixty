@@ -1,9 +1,5 @@
 package com.github.markash.threesixty.web.service;
 
-import com.vaadin.flow.server.auth.AnonymousAllowed;
-import com.vaadin.hilla.BrowserCallable;
-import org.springframework.stereotype.Service;
-
 import java.time.ZoneId;
 import java.util.Optional;
 
