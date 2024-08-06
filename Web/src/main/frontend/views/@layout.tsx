@@ -1,6 +1,6 @@
 import { createMenuItems, useViewConfig } from '@vaadin/hilla-file-router/runtime.js';
 import { effect, signal, useSignal } from '@vaadin/hilla-react-signals';
-import { AppLayout, DrawerToggle, Icon, SideNav, SideNavItem, Avatar } from '@vaadin/react-components';
+import { AppLayout, DrawerToggle, Icon, SideNav, SideNavItem, Avatar, VerticalLayout } from '@vaadin/react-components';
 import { Suspense, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import UserInfo  from "Frontend/generated/com/github/markash/threesixty/web/service/UserInfo";
@@ -34,15 +34,13 @@ export default function MainLayout() {
   return (
     <AppLayout primarySection="drawer">
       <div slot="drawer" className="flex flex-col justify-between h-full p-m">
-        <header className="flex flex-col gap-m">
-          <span className="text-xxxl text-center">Three<span className="font-semibold">Sixty</span></span>
-          <span className="text-center">
-              <Avatar
-                name={`${person.value?.firstName} ${person.value?.lastName}`}
-                theme="xlarge" />
-              <br />
-              <span className="text-center">{`${person.value?.firstName} ${person.value?.lastName}`}</span>
-          </span>
+        <header className="flex flex-col">
+          <span className="text-xl self-center gap-x-xs">Three<span className="font-semibold">Sixty</span></span>
+          <Avatar
+            className="self-center"
+            name={`${person.value?.firstName} ${person.value?.lastName}`}
+            theme="xlarge" />
+          <span className="self-center">{`${person.value?.firstName} ${person.value?.lastName}`}</span>
           <SideNav onNavigate={({ path }) => navigate(path!)} location={location}>
             {createMenuItems().map(({ to, title, icon }) => (
               <SideNavItem path={to} key={to}>

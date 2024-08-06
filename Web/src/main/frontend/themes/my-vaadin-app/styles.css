@@ -5,3 +5,11 @@
 .text-xxxl {
     font-size: var(--lumo-font-size-xxxl);
 }
+
+.flex-justify-c {
+    justify-content: center;
+}
+
+.flex-align-c {
+    align-content: center;
+}
