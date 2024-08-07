@@ -31,10 +31,10 @@ logging:
   level:
     org.springframework.web: INFO
     org.springframework.data: INFO
-    #org.springframework.security: trace
-    #com.azure.spring.cloud: trace
-    #com.vaadin.flow.spring.security: trace
-    #com.vaadin.flow.server.auth: trace
+#    org.springframework.security: trace
+#    com.azure.spring.cloud: trace
+#    com.vaadin.flow.spring.security: trace
+#    com.vaadin.flow.server.auth: trace
 ---
 ########################################################################################################################
 # DEVELOPMENT
