@@ -24,7 +24,7 @@ import java.util.Optional;
 
 @PermitAll
 @PageTitle("Stuff")
-@Menu(icon = "line-awesome/svg/pencil-ruler-solid.svg", order = 0)
+@Menu(icon = "line-awesome/svg/pencil-ruler-solid.svg", order = 1)
 @Route(value = "")
 @RouteAlias(value = "")
 @Uses(Icon.class)

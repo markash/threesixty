@@ -7,6 +7,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 
@@ -46,6 +47,7 @@ class SecurityConfig extends VaadinWebSecurity {
         // Logout with oauth2 must be handled with Keycloak
         http.logout(c -> c.logoutSuccessHandler(logoutSuccessHandler));
         super.configure(http);
+
         /*
         super.configure(http);
         http

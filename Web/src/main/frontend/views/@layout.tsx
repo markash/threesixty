@@ -1,6 +1,14 @@
 import { createMenuItems, useViewConfig } from '@vaadin/hilla-file-router/runtime.js';
 import { effect, signal, useSignal } from '@vaadin/hilla-react-signals';
-import { AppLayout, DrawerToggle, Icon, SideNav, SideNavItem, Avatar, VerticalLayout } from '@vaadin/react-components';
+import {
+    AppLayout,
+    DrawerToggle,
+    Icon,
+    SideNav,
+    SideNavItem,
+    Avatar,
+    MenuBar
+} from '@vaadin/react-components';
 import { Suspense, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import UserInfo  from "Frontend/generated/com/github/markash/threesixty/web/service/UserInfo";
@@ -21,6 +29,11 @@ export default function MainLayout() {
   const location = useLocation();
   const person = useSignal<UserInfo | undefined>(undefined)
   
+  const items = [
+    { text: 'View' },
+    { text: 'Edit' }
+  ];
+
   async function updatePerson() {
     person.value = await CurrentUserProvider.getCurrentUser();
     console.log(person);
@@ -39,6 +52,7 @@ export default function MainLayout() {
           <Avatar
             className="self-center"
             name={`${person.value?.firstName} ${person.value?.lastName}`}
+            title={`${person.value?.firstName} ${person.value?.lastName}`}
             theme="xlarge" />
           <span className="self-center">{`${person.value?.firstName} ${person.value?.lastName}`}</span>
           <SideNav onNavigate={({ path }) => navigate(path!)} location={location}>
@@ -53,9 +67,11 @@ export default function MainLayout() {
       </div>
 
       <DrawerToggle slot="navbar" aria-label="Menu toggle"></DrawerToggle>
-      <h1 slot="navbar" className="text-l m-0">
-        {documentTitleSignal}
+      <h1 slot="navbar" className="flex flex-row text-l m-0">
+        <span className="pad-top-10px pad-right-10px">{documentTitleSignal}</span>
+        <MenuBar items={items} />
       </h1>
+
 
       <Suspense>
         <Outlet />

@@ -6,8 +6,28 @@
     font-size: var(--lumo-font-size-xxxl);
 }
 
+.pad-top-10px {
+    padding-top: 10px;
+}
+
+.pad-right-10px {
+    padding-right: 10px;
+}
+
 .flex-justify-c {
     justify-content: center;
+}
+
+.flex-justify-self-end {
+    justify-self: flex-end;
+}
+
+.flex-justify-self-start {
+    justify-self: flex-start;
+}
+
+.flex-align-self-end {
+    align-self: flex-end;
 }
 
 .flex-align-c {
