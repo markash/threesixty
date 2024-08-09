@@ -41,5 +41,49 @@
         <vaadin4spring.version>2.0.0.RELEASE</vaadin4spring.version>
         <vaadin-springboot.version>24.4.4</vaadin-springboot.version>
 		<vaadin-spring.version>24.4.4</vaadin-spring.version>
+
+		<intellij.coverage.agent.version>1.0.746</intellij.coverage.agent.version>
+		<intellij.agent.options>${project.basedir}/.qodana/code-coverage/output.ic,true,true,true,false</intellij.agent.options>
 	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.6.1</version>
+				<executions>
+					<execution>
+						<id>intellij-coverage-agent</id>
+						<phase>process-test-classes</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<!-- IntelliJ Coverage Agent -->
+								<artifactItem>
+									<groupId>org.jetbrains.intellij.deps</groupId>
+									<artifactId>intellij-coverage-agent</artifactId>
+									<version>${intellij.coverage.agent.version}</version>
+									<destFileName>intellij-coverage-agent.jar</destFileName>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.2.5</version>
+				<configuration>
+					<!-- Specify the IntelliJ coverage agent -->
+					<argLine>
+						-javaagent:${project.build.directory}/dependency/intellij-coverage-agent.jar=${intellij.agent.options}
+					</argLine>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
