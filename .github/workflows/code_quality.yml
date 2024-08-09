@@ -17,7 +17,7 @@ jobs:
       pull-requests: write
       checks: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
         with:
           args: project.open.type=Maven
           ref: ${{ github.event.pull_request.head.sha }}  # to check out the actual pull request commit, not the merge commit
