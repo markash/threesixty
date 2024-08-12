@@ -7,7 +7,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 
@@ -16,28 +15,15 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
  */
 @Configuration
 @EnableWebSecurity
-//@EnableMethodSecurity(securedEnabled = true)
 class SecurityConfig extends VaadinWebSecurity {
-
-//    final ClientRegistrationRepository clientRegistrationRepository;
-//    final GrantedAuthoritiesMapper authoritiesMapper;
 
     private final OidcClientInitiatedLogoutSuccessHandler logoutSuccessHandler;
 
     public SecurityConfig(@Autowired ClientRegistrationRepository clientRegistrationRepository) {
-        logoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
-        // Where Keycloak will redirect after logging out
-        logoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:8080/unsecured");
-    }
 
-//    SecurityConfig(
-//            final ClientRegistrationRepository clientRegistrationRepository,
-//            final GrantedAuthoritiesMapper authoritiesMapper) {
-//
-//        this.clientRegistrationRepository = clientRegistrationRepository;
-//        this.authoritiesMapper = authoritiesMapper;
-//        SecurityContextHolder.setStrategyName(VaadinAwareSecurityContextHolderStrategy.class.getName());
-//    }
+        this.logoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
+        this.logoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:8080/unsecured"); /* or logged-out */
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -47,50 +33,14 @@ class SecurityConfig extends VaadinWebSecurity {
         // Logout with oauth2 must be handled with Keycloak
         http.logout(c -> c.logoutSuccessHandler(logoutSuccessHandler));
         super.configure(http);
-
-        /*
-        super.configure(http);
-        http
-                // Enable OAuth2 login
-                .oauth2Login(oauth2Login ->
-                        oauth2Login
-                                .clientRegistrationRepository(clientRegistrationRepository)
-                                .userInfoEndpoint(userInfoEndpoint ->
-                                        userInfoEndpoint
-                                                // Use a custom authorities mapper to get the roles from the identity provider into the Authentication token
-                                                .userAuthoritiesMapper(authoritiesMapper)
-                                )
-                                // Use a Vaadin aware authentication success handler
-                                .successHandler(new VaadinSuccessHandler())
-                )
-                // Configure logout
-                .logout(logout ->
-                        logout
-                                // Enable OIDC logout (requires that we use the 'openid' scope when authenticating)
-                                .logoutSuccessHandler(logoutSuccessHandler())
-                                // When CSRF is enabled, the logout URL normally requires a POST request with the CSRF
-                                // token attached. This makes it difficult to perform a logout from within a Vaadin
-                                // application (since Vaadin uses its own CSRF tokens). By changing the logout endpoint
-                                // to accept GET requests, we can redirect to the logout URL from within Vaadin.
-                                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
-                );
-
-         */
     }
 
-//    private OidcClientInitiatedLogoutSuccessHandler logoutSuccessHandler() {
-//        var logoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
-//        logoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}/logged-out");
-//        return logoutSuccessHandler;
-//    }
-//
-//    @Override
-//    public void configure(WebSecurity web) throws Exception {
-//        super.configure(web);
-//        // Don't apply security rules on our static pages
-//        // /back-channel-logout should only be accessible from certain hosts/IPs. In this case we assume this has
-//        // been taken care of in a firewall outside this application.
-//        web.ignoring().requestMatchers("/logged-out", "/session-expired", "/back-channel-logout");
-//    }
-
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        super.configure(web);
+        // Don't apply security rules on our static pages
+        // /back-channel-logout should only be accessible from certain hosts/IPs. In this case we assume this has
+        // been taken care of in a firewall outside this application.
+        web.ignoring().requestMatchers("/logged-out", "/session-expired", "/back-channel-logout");
+    }
 }

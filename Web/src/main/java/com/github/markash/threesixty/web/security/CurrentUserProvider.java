@@ -5,8 +5,6 @@ import com.github.markash.threesixty.web.service.UserInfo;
 import com.vaadin.flow.spring.security.AuthenticationContext;
 import com.vaadin.hilla.BrowserCallable;
 import jakarta.annotation.security.PermitAll;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -20,8 +18,6 @@ import static java.util.Objects.requireNonNullElse;
 @PermitAll
 @BrowserCallable
 public class CurrentUserProvider implements CurrentSession {
-    private static final Logger LOG = LoggerFactory.getLogger(CurrentUserProvider.class);
-
     @Autowired
     private AuthenticationContext authenticationContext;
 
@@ -49,7 +45,7 @@ public class CurrentUserProvider implements CurrentSession {
         });
     }
 
-    private Optional<OidcUser> getOauth2User() {
+    protected Optional<OidcUser> getOauth2User() {
         return authenticationContext.getAuthenticatedUser(OidcUser.class);
     }
 
