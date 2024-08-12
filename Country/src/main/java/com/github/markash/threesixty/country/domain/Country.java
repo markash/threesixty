@@ -48,7 +48,7 @@ public class Country implements Serializable {
 		this.tldCode = tldCode;
 	}
 
-	public int geNumber() { return this.number; }
+	public int getNumber() { return this.number; }
 	
 	public String getCommonName() {
 		return commonName;
@@ -104,6 +104,7 @@ public class Country implements Serializable {
 
 	@Override
 	public String toString() {
-		return commonName == null ? "null" : commonName + (formalName != null ? " (" + formalName + ")" : "");
+		final String formalNameSection = formalName != null ? " (" + formalName + ")" : "";
+		return commonName == null ? "null" : commonName + formalNameSection;
 	}
 }
