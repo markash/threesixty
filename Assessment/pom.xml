@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>Assessment</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <name>Assessment</name>
     <url>http://maven.apache.org</url>
