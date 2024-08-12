@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
-public class OidcSecurityTest {
+class OidcSecurityTest {
 
     private DefaultCurrentUserProvider userProvider;
 
@@ -80,11 +80,11 @@ public class OidcSecurityTest {
                     LocalDateTime.now().plusDays(1).atZone(ZoneId.systemDefault()).toInstant(),
                     claims);
 
-            final Map<String, Object> claims = new HashMap<>();
-            claims.put("roles", List.of("User.Read", "Assessment.Read"));
-            claims.put("name", "Charlie Brown");
+            final Map<String, Object> userClaims = new HashMap<>();
+            userClaims.put("roles", List.of("User.Read", "Assessment.Read"));
+            userClaims.put("name", "Charlie Brown");
 
-            final OidcUserAuthority authority = new OidcUserAuthority(token, new OidcUserInfo(claims));
+            final OidcUserAuthority authority = new OidcUserAuthority(token, new OidcUserInfo(userClaims));
 
             final List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
             grantedAuthorities.add(authority);
