@@ -1,9 +1,11 @@
-package za.co.yellowfire.threesixty.domain.rating;
+package com.github.markash.threesixty.assessment.model;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface PeriodRepository extends JpaRepository<Period, String>, JpaSpecificationExecutor<Period> {
+public interface TimelineRepository extends JpaRepository<Timeline, String>, JpaSpecificationExecutor<Timeline> {
+    Timeline findByName(final String name);
+
 //	@Query("{active: {$eq: ?0}}")
 //	List<Period> findByActive(final boolean active);
 //	@Query("{active: {$eq: ?0}}")

@@ -67,6 +67,7 @@ mvnw.cmd
 Web/target/
 Web/src/main/frontend/generated/
 Country/target/
+Assessment/target/
 
 #############################################################
 # Includes
