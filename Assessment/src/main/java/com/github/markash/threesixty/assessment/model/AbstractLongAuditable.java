@@ -25,9 +25,9 @@ public abstract class AbstractLongAuditable implements Auditable<String, Long, L
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
 
-    public AbstractLongAuditable() {}
+    protected AbstractLongAuditable() {}
 
-    public AbstractLongAuditable(final Long id) {
+    protected AbstractLongAuditable(final Long id) {
         this.id = id;
     }
 
