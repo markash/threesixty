@@ -5,6 +5,28 @@ import org.springframework.stereotype.Service;
 @Service
 public class TimelineService /*implements za.co.yellowfire.threesixty.domain.question.Service<Period>*/ {
 
+    private TimelineRepository timelineRepository;
+    private ActivityRepository activityRepository;
+
+    public TimelineService(final TimelineRepository timelineRepository, final ActivityRepository activityRepository) {
+        this.timelineRepository = timelineRepository;
+        this.activityRepository = activityRepository;
+    }
+
+    public Timeline persist(final Timeline timeline) {
+
+        assert timeline != null : "The timeline provided is null";
+
+
+
+        if (timeline.getId() != null && timelineRepository.existsById(timeline.getId())) {
+
+
+        }
+
+        return null;
+    }
+
 //	private PeriodRepository periodRepository;
 //	private final CurrentUserProvider<String> currentUserProvider;
 //

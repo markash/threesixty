@@ -1,11 +1,10 @@
 package com.github.markash.threesixty.assessment.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import org.springframework.data.annotation.AccessType;
 import org.springframework.data.annotation.AccessType.Type;
+import org.springframework.data.jpa.domain.AbstractAuditable;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.lang.NonNull;
 
 import java.time.LocalDate;
@@ -20,7 +19,8 @@ import java.util.stream.Collectors;
  */
 @Entity
 @AccessType(Type.FIELD)
-public class Timeline extends AbstractLongAuditable {
+@EntityListeners(AuditingEntityListener.class)
+public class Timeline extends AbstractAuditable<User, Long> {
 	public static final String FIELD_ID = "id";
 	public static final String FIELD_START = "start";
 	public static final String FIELD_END = "end";
@@ -39,11 +39,7 @@ public class Timeline extends AbstractLongAuditable {
 	@JoinColumn(name="TIMELINE_ID")
 	private final List<Activity> activities = new ArrayList<>();
 
-	public Timeline() { }
-
-	public Timeline(final Long id) {
-		super(id);
-	}
+	private boolean active = true;
 
 	public String getName() { return name; }
 	public void setName(String name) { this.name = name; }
@@ -53,6 +49,36 @@ public class Timeline extends AbstractLongAuditable {
 	
 	public LocalDate getEnd() { return end; }
 	public void setEnd(final LocalDate end) { this.end = end; }
+
+	public boolean isActive() { return active; }
+	public void setActive(boolean active) { this.active = active; }
+
+	public void merge(final Timeline timeline) {
+
+		if (Objects.isNull(getId())) {
+			setId(timeline.getId());
+		}
+
+		setName(timeline.getName());
+		setStart(timeline.getStart());
+		setEnd(timeline.getEnd());
+
+		List<Activity> activitiesToRemove = new ArrayList<>();
+		List<Long> activitiesInOther = timeline.getActivities().stream().map(Activity::getId).toList();
+
+		for (Activity activity : getActivities()) {
+
+			if (!activitiesInOther.contains(activity.getId())) {
+				activitiesToRemove.add(activity);
+				continue;
+			}
+
+
+
+		}
+
+
+	}
 
 	@NonNull
 	public List<Activity> getActivities() {
@@ -109,7 +135,19 @@ public class Timeline extends AbstractLongAuditable {
 				.ifPresent(this::setEnd);
 	}
 
+	/**
+	 * Retrieve the activity from the collection by the activity id.
+	 * This will only work once the activities are persisted.
+	 * @param id The identifier of the activity
+	 * @return The activity corresponding to the id or empty
+	 */
+	private Optional<Activity> getActivity(final Long id) {
+
+		return getActivities().stream().filter(activity -> activity.getId() != null && activity.getId().equals(id)).findFirst();
+	}
+
 	@Override
+	@NonNull
 	public String toString() {
 		return Optional.ofNullable(start).map(date -> date.format(DateTimeFormatter.ISO_DATE)).orElse("")  +
 				" - " +

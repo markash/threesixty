@@ -1,12 +1,25 @@
+INSERT INTO USER_DETAIL
+(
+    USER_NAME
+) VALUES (
+    'MarkA'
+);
+
 INSERT INTO TIMELINE
 (
-    NAME
+    ID
+  , NAME
 	, START_DATE
 	,	END_DATE
-	,	ACTIVE 
+	,	ACTIVE
+	, CREATED_DATE
+	, CREATED_BY_USER_NAME
 ) VALUES (
-    'Test Timeline'
+    NEXT VALUE FOR timeline_seq
+  , 'Test Timeline'
 	, '2024-05-01'
 	,	'2024-05-31'
 	,	1
+	, '2024-05-31'
+	, 'MarkA'
 );

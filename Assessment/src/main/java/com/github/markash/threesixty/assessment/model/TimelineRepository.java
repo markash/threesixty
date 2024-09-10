@@ -3,7 +3,7 @@ package com.github.markash.threesixty.assessment.model;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface TimelineRepository extends JpaRepository<Timeline, String>, JpaSpecificationExecutor<Timeline> {
+public interface TimelineRepository extends JpaRepository<Timeline, Long>, JpaSpecificationExecutor<Timeline> {
     Timeline findByName(final String name);
 
 //	@Query("{active: {$eq: ?0}}")

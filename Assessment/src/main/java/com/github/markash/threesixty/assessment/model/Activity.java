@@ -1,6 +1,8 @@
 package com.github.markash.threesixty.assessment.model;
 
 import jakarta.persistence.*;
+import org.springframework.data.jpa.domain.AbstractAuditable;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,12 +14,15 @@ import java.util.Objects;
  * @author Mark P Ashworth
  */
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Activity extends AbstractLongAuditable {
+public class Activity extends AbstractAuditable<User, Long> {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "activity_type")
 	private ActivityTypes type;
+
+	private boolean active = true;
 
 	public Activity() { }
 
@@ -31,6 +36,9 @@ public class Activity extends AbstractLongAuditable {
 
 	@Transient
 	public List<LocalDateTime> getTimelineDates() { return new ArrayList<>(); }
+
+	public boolean isActive() { return active; }
+	public void setActive(boolean active) { this.active = active; }
 
 	@Override
 	public boolean equals(Object o) {

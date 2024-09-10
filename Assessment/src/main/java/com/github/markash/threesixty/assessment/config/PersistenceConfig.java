@@ -1,27 +1,31 @@
-package com.github.markash.threesixty.assessment;
+package com.github.markash.threesixty.assessment.config;
 
 import com.github.markash.threesixty.assessment.audit.AuditorAwareImpl;
-import com.github.markash.threesixty.assessment.config.PersistenceConfig;
 import com.github.markash.threesixty.assessment.model.Timeline;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.auditing.AuditingHandler;
+import org.springframework.data.auditing.IsNewAwareAuditingHandler;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.mapping.context.AbstractMappingContext;
+import org.springframework.data.mapping.context.PersistentEntities;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+@Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackageClasses = {Timeline.class})
-@EnableJpaAuditing(auditorAwareRef = "auditorProvider")
-@SpringBootApplication(scanBasePackageClasses = PersistenceConfig.class)
-public class AssessmentApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(AssessmentApplication.class, args);
-    }
+public class PersistenceConfig {
 
     @Bean("auditorProvider")
     public AuditorAware<String> auditorProvider() {
         return new AuditorAwareImpl();
+    }
+
+    @Bean
+    IsNewAwareAuditingHandler isNewAwareAuditingHandler(PersistentEntities context) {
+
+        return new IsNewAwareAuditingHandler(context);
     }
 }
