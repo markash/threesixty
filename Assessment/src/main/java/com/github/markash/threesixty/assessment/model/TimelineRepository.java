@@ -2,8 +2,10 @@ package com.github.markash.threesixty.assessment.model;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface TimelineRepository extends JpaRepository<Timeline, Long>, JpaSpecificationExecutor<Timeline> {
+public interface TimelineRepository extends PagingAndSortingRepository<Timeline, Long>, JpaSpecificationExecutor<Timeline>, CrudRepository<Timeline, Long> {
     Timeline findByName(final String name);
 
 //	@Query("{active: {$eq: ?0}}")

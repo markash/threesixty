@@ -48,7 +48,6 @@ class TimelineJpaTests {
         assertThat(timeline.getEnd()).isEqualTo(LocalDate.parse("2024-06-24"));
 
         Timeline x = timelineRepository.save(timeline);
-        timelineRepository.flush();
 
         timeline = timelineRepository.findByName("Test Timeline");
         assertThat(timeline.getId()).isNotNull();

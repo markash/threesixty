@@ -18,10 +18,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories(basePackageClasses = {Timeline.class})
 public class PersistenceConfig {
 
-    @Bean("auditorProvider")
-    public AuditorAware<String> auditorProvider() {
-        return new AuditorAwareImpl();
-    }
+    // Clash with system provided bean after adding Spring Data Rest
+//    @Bean("auditorProvider")
+//    public AuditorAware<String> auditorProvider() {
+//        return new AuditorAwareImpl();
+//    }
 
     @Bean
     IsNewAwareAuditingHandler isNewAwareAuditingHandler(PersistentEntities context) {

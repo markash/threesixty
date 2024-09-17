@@ -11,9 +11,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@EnableTransactionManagement
-@EnableJpaRepositories(basePackageClasses = {Timeline.class})
-@EnableJpaAuditing(auditorAwareRef = "auditorProvider")
 @SpringBootApplication(scanBasePackageClasses = PersistenceConfig.class)
 public class AssessmentApplication {
     public static void main(String[] args) {

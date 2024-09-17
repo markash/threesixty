@@ -8,6 +8,9 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
+/**
+ * DataJpaTest uses the embedded database by default
+ */
 @DataJpaTest
 @TestPropertySource(properties = {
         "spring.jpa.hibernate.ddl-auto=create-drop",
@@ -23,7 +26,7 @@ class ActivityJpaTests {
     @Sql("timeline_create_01.sql")
     void whenInitializedByDbUnit_thenFindsByName() {
 
-        List<Activity> activities = activityRepository.findAll();
+        Iterable<Activity> activities = activityRepository.findAll();
         activities.forEach(System.out::println);
     }
 }
